@@ -1,0 +1,233 @@
+"""生物体实现"""
+
+from typing import Dict, List, Tuple, Optional
+import random
+import numpy as np
+from ..tools import (
+    TouchSensor, LightSensor, MuscleActuator, CiliaActuator, Connection,
+    SensorTool, ActuatorTool
+)
+from .memory import MemoryGene
+
+
+class Organism:
+    """生物体 - 包含Tool系统和记忆继承"""
+    
+    def __init__(self, organism_id: str, position: Tuple[float, float]):
+        self.id = organism_id
+        self.position = np.array(position, dtype=float)
+        self.velocity = np.array([0.0, 0.0])
+        self.energy = 100.0
+        self.age = 0
+        self.generation = 0
+        
+        # Tool系统
+        self.sensors: Dict[str, SensorTool] = {}
+        self.actuators: Dict[str, ActuatorTool] = {}
+        self.connections: List[Connection] = []
+        
+        # 记忆系统
+        self.memory_bank: List[MemoryGene] = []  # 遗传记忆
+        self.learned_memories: List[MemoryGene] = []  # 学习记忆
+        
+        # AI控制状态
+        self.current_action = "explore"
+        self.control_signals: Dict[str, float] = {}  # 当前控制信号
+        
+        # 外观
+        self.color = (random.randint(100, 200), random.randint(100, 200), random.randint(100, 200))
+        self.radius = 30
+        
+    def add_sensor(self, sensor: SensorTool):
+        """添加传感器"""
+        self.sensors[sensor.tool_id] = sensor
+        
+    def add_actuator(self, actuator: ActuatorTool):
+        """添加效应器"""
+        self.actuators[actuator.tool_id] = actuator
+        self.control_signals[actuator.tool_id] = 0.0
+        
+    def connect_tools(self, source_id: str, target_id: str, weight: float = 1.0):
+        """连接两个Tool"""
+        source = self.sensors.get(source_id) or self.actuators.get(source_id)
+        target = self.sensors.get(target_id) or self.actuators.get(target_id)
+        
+        if source and target:
+            connection = Connection(source, target, weight)
+            self.connections.append(connection)
+            source.connections.append(connection)
+            
+    def perceive_environment(self, environment) -> str:
+        """感知环境，返回情境描述"""
+        perceptions = []
+        
+        # 传感器感知
+        for sensor in self.sensors.values():
+            sensor_value = sensor.sense(environment, self.position)
+            if sensor_value > 0.5:
+                perceptions.append(f"{sensor.get_icon()}_high")
+            elif sensor_value > 0.1:
+                perceptions.append(f"{sensor.get_icon()}_low")
+                
+        # 内部状态
+        if self.energy < 30:
+            perceptions.append("low_energy")
+        if self.age > 200:
+            perceptions.append("old")
+            
+        return "_".join(perceptions) if perceptions else "neutral"
+    
+    def decide_action(self, situation: str) -> Dict[str, float]:
+        """基于记忆决定控制信号"""
+        # 检索相关记忆
+        relevant_memories = [m for m in self.memory_bank + self.learned_memories \
+                           if any(s in m.situation for s in situation.split("_"))]
+        
+        if not relevant_memories:
+            # 无记忆，随机探索
+            return self._random_control()
+            
+        # 选择最佳记忆
+        best_memory = max(relevant_memories, key=lambda m: m.success_rate * m.strength)
+        return best_memory.action_pattern.copy()
+    
+    def _random_control(self) -> Dict[str, float]:
+        """生成随机控制信号"""
+        controls = {}
+        for actuator_id in self.actuators:
+            controls[actuator_id] = random.uniform(-1, 1)
+        return controls
+        
+    def apply_controls(self, controls: Dict[str, float]):
+        """应用控制信号到效应器"""
+        total_force = np.array([0.0, 0.0])
+        
+        for actuator_id, control_signal in controls.items():
+            if actuator_id in self.actuators:
+                actuator = self.actuators[actuator_id]
+                force = actuator.apply_force(control_signal)
+                total_force += force
+                self.control_signals[actuator_id] = control_signal
+                
+        # 应用物理
+        self.velocity = total_force * 0.1
+        self.position += self.velocity
+        
+        # 能量消耗
+        energy_cost = sum(abs(signal) for signal in controls.values()) * 0.1
+        self.energy -= energy_cost
+        
+    def learn_from_experience(self, situation: str, controls: Dict[str, float], success: bool):
+        """从经验中学习"""
+        # 寻找类似记忆
+        for memory in self.learned_memories:
+            if memory.situation == situation:
+                # 强化或削弱现有记忆
+                if memory.success == success:
+                    memory.strength = min(1.0, memory.strength + 0.1)
+                else:
+                    memory.strength = max(0.1, memory.strength - 0.2)
+                return
+                
+        # 创建新记忆
+        new_memory = MemoryGene(situation, controls, success)
+        self.learned_memories.append(new_memory)
+        
+    def reproduce(self) -> 'Organism':
+        """繁殖后代"""
+        child = Organism(f"child_of_{self.id}", self.position.copy())
+        child.generation = self.generation + 1
+        
+        # 继承Tool结构
+        for sensor in self.sensors.values():
+            new_sensor = type(sensor)(sensor.tool_id, sensor.position + random.uniform(-5, 5))
+            child.add_sensor(new_sensor)
+            
+        for actuator in self.actuators.values():
+            new_actuator = type(actuator)(actuator.tool_id, actuator.position + random.uniform(-5, 5))
+            child.add_actuator(new_actuator)
+            
+        # 继承连接
+        for connection in self.connections:
+            child.connect_tools(connection.source.tool_id, connection.target.tool_id, connection.weight)
+            
+        # 记忆继承
+        all_memories = self.memory_bank + self.learned_memories
+        for memory in all_memories:
+            if random.random() < memory.strength:
+                inherited_memory = MemoryGene(
+                    memory.situation,
+                    memory.action_pattern.copy(),
+                    memory.success_rate
+                )
+                inherited_memory.mutate()
+                child.memory_bank.append(inherited_memory)
+                
+        return child
+    
+    def update(self, environment):
+        """每帧更新"""
+        self.age += 1
+        
+        # 感知环境
+        situation = self.perceive_environment(environment)
+        
+        # 决策
+        controls = self.decide_action(situation)
+        
+        # 执行
+        old_position = self.position.copy()
+        self.apply_controls(controls)
+        
+        # 学习
+        success = self._evaluate_success(old_position, environment)
+        self.learn_from_experience(situation, controls, success)
+        
+        # 记忆衰减
+        for memory in self.memory_bank + self.learned_memories:
+            memory.decay()
+    
+    def _evaluate_success(self, old_position: np.ndarray, environment) -> bool:
+        """评估行动是否成功"""
+        # 简化评估：如果能量增加或靠近食物则成功
+        food_nearby = len(environment.get_nearby_food(self.position, 50)) > 0
+        energy_increased = self.energy > 50
+        return food_nearby or energy_increased
+    
+    def draw(self, surface):
+        """绘制生物体"""
+        import pygame
+        # 绘制主体
+        x, y = int(self.position[0]), int(self.position[1])
+        pygame.draw.circle(surface, self.color, (x, y), self.radius)
+        pygame.draw.circle(surface, (0, 0, 0), (x, y), self.radius, 2)
+        
+        # 绘制所有Tool（相对于生物体位置）
+        for sensor in self.sensors.values():
+            tool_pos = (x + sensor.position[0], y + sensor.position[1])
+            original_pos = sensor.position.copy()
+            sensor.position = np.array(tool_pos)
+            sensor.draw(surface)
+            sensor.position = original_pos
+            
+        for actuator in self.actuators.values():
+            tool_pos = (x + actuator.position[0], y + actuator.position[1])
+            original_pos = actuator.position.copy()
+            actuator.position = np.array(tool_pos)
+            actuator.draw(surface)
+            actuator.position = original_pos
+            
+        # 绘制连接
+        for connection in self.connections:
+            source_pos = (x + connection.source.position[0], y + connection.source.position[1])
+            target_pos = (x + connection.target.position[0], y + connection.target.position[1])
+            
+            original_source_pos = connection.source.position.copy()
+            original_target_pos = connection.target.position.copy()
+            
+            connection.source.position = np.array(source_pos)
+            connection.target.position = np.array(target_pos)
+            connection.draw(surface)
+            
+            connection.source.position = original_source_pos
+            connection.target.position = original_target_pos
