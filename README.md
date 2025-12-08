@@ -1,401 +1,562 @@
-# 基于记忆继承算法的AI生命体模拟器
+# Lotucosm: VitaLoom 🌌✨
 
-[![Python Version](https://img.shields.io/badge/python-3.12+-blue.svg)](https://python.org)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+## 🌸 莲池宇宙 · 生命织机
 
-## 📖 项目概述
+### 项目介绍
 
-### 项目愿景与设计理念
+Lotucosm: VitaLoom 是一个基于 **感知-验证自主演化循环 (PVAEC)** 的数字生命模拟框架，构建了名为"莲池宇宙"的虚拟演化环境，让智能通过生命自身的经验"编织"而成。
 
-本项目是一个创新的AI生命体模拟器，实现了基于**记忆继承算法**的智能进化系统。我们的愿景是构建一个**以"结构化记忆遗传"为核心机制、以"可扩展工具"为身体组件、以"AI学习控制"为驱动力的数字生命进化模拟沙盒**，验证记忆遗传机制的有效性，观察智能行为的涌现和进化过程。
+### 灵感来源
 
-核心设计理念：
-- **工具系统**：将生物的基本功能单元抽象为"工具"，所有"工具"的核心是一个**输入输出函数**，确保系统的高度可扩展性
-- **AI学习与身体控制**：使用AI模型作为生物的"大脑"，负责接收传感器输入、生成控制信号、通过结果反馈学习控制策略
-- **记忆继承算法**：将经验封装为"记忆基因"数据结构，通过继承和变异机制传递给后代，实现智能行为的累积进化
+我们摒弃了传统AI从静态数据中学习的范式，转向模拟生命在其生命周期内通过自身经验建构智能的过程。在"莲池宇宙"中，智能不是被编程的，而是通过：
 
-### 当前状态表格
-
-| 功能类别 | 功能项 | 状态 | 备注 |
-|---------|-------|------|------|
-| **核心架构** | 工具系统 | ✅ 已实现 | 统一的Tool基类和接口 |
-| **工具组件** | 传感器工具 | ✅ 已实现 | 触觉传感器、光感传感器 |
-| **工具组件** | 执行器工具 | ✅ 已实现 | 肌肉效应器、纤毛效应器 |
-| **工具组件** | 中枢管理器 | ✅ 已实现 | AI控制和决策中心 |
-| **工具组件** | 细胞膜 | ✅ 已实现 | 细胞边界和交互接口 |
-| **工具组件** | 连接系统 | ✅ 已实现 | 工具间信号传递机制 |
-| **AI学习** | 感知-决策-行动循环 | ✅ 已实现 | 完整的行为控制流程 |
-| **AI学习** | 基于记忆的决策 | ✅ 已实现 | 遗传记忆和学习记忆 |
-| **AI学习** | 经验学习机制 | ✅ 已实现 | 从结果中学习和调整 |
-| **记忆继承** | 记忆基因数据结构 | ✅ 已实现 | 结构化的经验封装 |
-| **记忆继承** | 记忆遗传机制 | ✅ 已实现 | 后代继承父辈记忆 |
-| **记忆继承** | 记忆变异机制 | ✅ 已实现 | 遗传过程中的微调 |
-| **记忆继承** | 记忆衰减和强化 | ✅ 已实现 | 动态调整记忆强度 |
-| **可视化** | Pygame可视化 | ✅ 已实现 | 实时模拟显示 |
-| **可视化** | 工具和连接展示 | ✅ 已实现 | 直观的生物结构展示 |
-| **可视化** | 生物状态监控 | ✅ 已实现 | 能量、年龄、记忆等 |
-| **编辑器** | PyQt6编辑器 | ✅ 已实现 | 现代化GUI编辑器 |
-| **编辑器** | 生物编辑功能 | ✅ 已实现 | 创建和修改AI生命体 |
-| **待实现** | 3D可视化 | ⏳ 计划中 | 升级为3D模拟界面 |
-| **待实现** | 神经网络支持 | ⏳ 计划中 | 增强AI学习能力 |
-| **待实现** | 多物种模拟 | ⏳ 计划中 | 复杂生态系统 |
-| **待实现** | 数据分析工具 | ⏳ 计划中 | 模拟结果分析 |
-
-## ⚡ 5分钟快速开始指南
-
-### 1. 安装依赖
-
-```bash
-# 克隆项目（替换为实际项目地址）
-git clone <项目地址>
-cd ai_organism_based_on_inheritance_algorithm
-
-# 创建并激活虚拟环境
-python -m venv .venv
-.venv\Scripts\activate  # Windows
-# source .venv/bin/activate  # macOS/Linux
-
-# 安装依赖
-uv install  # 推荐，更快
-# 或使用 pip install -r requirements.txt
+```text
+感知 → 记忆 → 尝试 → 验证（利用新感知） → 再记忆 → ...
 ```
 
-### 2. 运行模拟
+这一递归循环自主涌现的。这个感知-验证自主演化循环 (PVAEC) 定义了数字生命"编织"智能的根本法则。
 
-```bash
-# 启动模式选择器
-uv run main.py
-```
+### 核心特点
 
-在模式选择器中，输入 `1` 选择 **Tool继承算法模拟器**，观察AI生命体的进化过程。
+- **组件生态系统**：所有组件（传感器、执行器、复合器）均为独立文件存储，支持组件漂浮、自组装和生命周期管理
+- **遗传与演化机制**：支持记忆遗传、组件遗传和体外获取机制
+- **莲池存档系统**：完整环境存档、增量保存和存档版本管理
+- **记忆编辑系统**：演化产生的生物可保存为新模板，其记忆系统可编辑
+- **组件位置系统**：支持体内组件、体外组件和通用组件的动态管理
 
-### 3. 交互控制
+### 当前实现状态
 
-- `Space`：暂停/继续模拟
-- `+`：增加模拟速度
-- `-`：降低模拟速度
-- `Q`：退出模拟
-- 点击生物：查看详细信息
-- 点击空地：添加食物
+- ✅ 感知-验证自主演化循环 (PVAEC) 核心机制
+- ✅ 莲池存档系统（完整环境存档、增量保存、存档版本管理）
+- ✅ 组件生态系统（组件模板、漂浮机制、自组装、生命周期）
+- ✅ 遗传与演化新机制（记忆遗传、组件遗传、体外获取）
+- ✅ 组件位置系统（体内组件、体外组件、通用组件、动态迁移）
+- ✅ 记忆编辑系统
+- ✅ 复合器组件
 
-### 4. 查看结果
+### 未来发展方向
 
-观察AI生命体如何：
-- 通过传感器感知环境
-- 使用执行器与环境交互
-- 积累经验并将记忆遗传给后代
-- 逐渐进化出更智能的行为
+- ⏳ 跨莲池组件交换
+- ⏳ 记忆迁移工具
+- ⏳ 支持分布式模拟
+- ⏳ 在线组件共享平台
+- ⏳ 可视化编辑界面优化
 
-## 🎯 核心功能
+### 技术栈
 
-### 记忆继承算法
-- 实现了结构化记忆的遗传机制
-- 支持AI生命体通过经验学习和记忆遗传进化
-- 可观察智能行为的涌现过程
-- 优化的记忆检索和匹配算法，提高运行效率
+- Python 3.9+
+- PyQt6 (图形界面)
+- JSON (数据存储)
+- 模块化设计
 
-### 单模式模拟系统
-- **AI生命体模式**：从简单细胞开始，通过学习和记忆遗传进化
+### 许可证
 
-### 可视化界面
-- 基于Pygame的实时可视化模拟
-- 支持模拟速度调节和暂停/继续
-- 实时显示模拟统计数据
-- 增强的按钮交互效果和状态显示
-
-### 编辑器支持
-- 传统Pygame编辑器，提供基本编辑功能
-- 全新PyQt6编辑器原型，提供IDE风格的编辑体验
-- 支持项目管理、生物编辑和属性调整
-
-### 优化的性能
-- 核心算法性能优化，支持更大规模模拟
-- 记忆管理优化，防止内存无限增长
-- 高效的记忆检索和匹配机制
-
-### 可扩展架构
-- 模块化设计，支持添加新的物种和行为
-- 易于扩展的记忆遗传机制
-- 支持自定义环境参数
-
-## 🏗️ 核心架构与设计要点
-
-### 1. "工具"系统
-
-#### 设计理念
-将生物的基本功能单元抽象为"工具"，所有"工具"的核心是一个**输入输出函数**。这种设计确保了系统的**高度可扩展性**，可以轻松添加新的功能单元。
-
-#### 工具类别
-
-| 工具类型 | 功能描述 | 输入 | 输出 | 示例 |
-|---------|---------|------|------|------|
-| 传感器工具 | 感知环境信息 | 环境信息 | 神经信号 | 触觉传感器、光感传感器 |
-| 效应器工具 | 执行物理动作 | 控制信号 | 物理力 | 肌肉效应器、纤毛效应器 |
-| 中枢管理器 | AI控制和决策 | 传感器信号 | 控制信号 | 中枢大脑 |
-| 细胞膜 | 细胞边界管理 | 环境信息 | 控制信号 | 细胞边界 |
-| 连接 | 信号传递通道 | 输入信号 | 输出信号 | 单向连接、双向连接 |
-
-### 2. AI学习与身体控制
-
-#### 学习过程
-
-1. **初始状态**：生物出生时拥有基本的遗传记忆和本能行为
-2. **感知环境**：通过传感器获取环境信息
-3. **决策行动**：基于遗传记忆和当前感知生成控制信号
-4. **执行动作**：效应器执行动作，影响环境
-5. **学习反馈**：根据结果更新记忆
-
-#### 学习产出
-
-AI在试错中形成：
-- **即时控制策略**：如何直接控制身体
-- **条件反射**：特定情境下的固定反应模式
-- **高级策略记忆**：复杂情境下的最优行为序列
-
-### 3. 记忆继承算法
-
-#### 记忆内容
-
-需要被继承的是结构化的"经验知识"，而非原始感官数据流：
-```
-在 [某感官情境] 下，采取 [某套动作模式]，获得了 [高/低] 的奖励
-```
-
-#### 记忆基因
-
-将经验封装为"记忆基因"数据结构，包含：
-- **情境描述**：触发该记忆的环境条件
-- **行动模式**：对应的效应器控制信号
-- **成功概率**：该行动模式的成功率
-- **记忆强度**：记忆的可靠性和遗传概率
-
-#### 继承与变异机制
-
-1. **继承选择**：后代以概率继承父辈的记忆基因，概率与记忆强度正相关
-2. **记忆变异**：遗传过程中，记忆内容可能发生微调
-3. **记忆衰减**：记忆随时间逐渐减弱，无用记忆被自然淘汰
-4. **记忆强化**：成功经验会强化对应记忆的强度
-
-## 📁 项目结构
-
-```
-ai_organism_based_on_inheritance_algorithm/
-├── ai_organism/              # 核心包
-│   ├── core/                 # 核心组件
-│   │   ├── event_system.py   # 事件系统实现
-│   │   ├── memory.py         # 记忆基因实现
-│   │   └── organism.py       # 生命体基类
-│   ├── ecosystem/            # 生态系统模块
-│   ├── editor/               # 编辑器模块
-│   │   └── ui/               # UI组件
-│   ├── environment/          # 环境模块
-│   ├── launcher/             # 启动器模块
-│   │   └── modern_launcher.py # 现代化GUI启动器
-│   ├── simulation/           # AI生命体模拟
-│   │   ├── simulation.py     # 基础模拟实现
-│   │   └── inheritance_simulation.py # Tool继承算法模拟
-│   └── tools/                # 工具组件
-│       ├── actuators.py      # 执行器工具
-│       ├── base.py           # 工具基类
-│       ├── central_brain.py  # 中枢管理器
-│       ├── connection.py     # 连接类
-│       ├── membrane.py       # 细胞膜实现
-│       └── sensors.py        # 传感器工具
-├── examples/                 # 示例代码
-├── scripts/                  # 辅助脚本
-├── templates/                # 模板文件
-├── tests/                    # 测试代码
-├── main.py                   # 模式选择器
-├── move_ecosystem_files.py   # 生态系统文件迁移脚本
-├── pyproject.toml            # 项目配置
-├── requirements.txt          # 依赖列表
-├── uv.lock                   # uv依赖锁定文件
-├── LICENSE                   # 许可证文件
-└── README.md                 # 项目说明
-```
-
-## 🚀 详细安装与配置
-
-### 环境要求
-
-- Python 3.12+
-- 支持的操作系统：Windows、macOS、Linux
-
-### 安装依赖
-
-1. **克隆项目**
-   ```bash
-   git clone <项目地址>
-   cd ai_organism_based_on_inheritance_algorithm
-   ```
-
-2. **创建虚拟环境（可选但推荐）**
-   ```bash
-   python -m venv .venv
-   # Windows
-   .venv\Scripts\activate
-   # macOS/Linux
-   source .venv/bin/activate
-   ```
-
-3. **安装依赖**
-   ```bash
-   # 使用uv安装（推荐，更快）
-   uv install
-
-   # 或使用pip
-   pip install -r requirements.txt
-   ```
-
-### 运行模拟
-
-```bash
-# 启动模式选择器
-python main.py
-```
-或者 uv run main.py
-
-在模式选择器中，您可以选择运行：
-1. **Tool继承算法模拟器** - 模拟AI生命体通过工具学习和记忆遗传的进化过程
-2. **AI生命体编辑器** - 基于PyQt6的可视化编辑器，用于创建和编辑AI生命体
-3. **退出系统**
-
-## 🎮 使用说明
-
-### Tool继承算法模拟器
-
-#### 控制键
-- `Space`：暂停/继续模拟
-- `+`：增加模拟速度
-- `-`：降低模拟速度
-- `Q`：退出模拟
-
-#### 模拟内容
-- 观察AI生命体如何通过传感器感知环境
-- 查看AI生命体如何通过执行器与环境交互
-- 观察记忆如何在代际间遗传
-- 查看智能行为的涌现和进化过程
-
-### AI生命体编辑器
-
-#### 功能特点
-- 基于PyQt6的现代化GUI界面
-- 支持创建和编辑AI生命体的结构和属性
-- 可视化编辑细胞膜、传感器、执行器和中枢管理器
-- 支持连接和配置各组件之间的关系
-- 实时预览AI生命体的结构
-
-## 📋 核心模块说明
-
-### 1. Core模块
-
-**核心组件定义和实现**
-- `event_system.py`：事件系统，用于组件间通信
-- `memory.py`：记忆基因实现，支持结构化记忆存储和遗传
-- `organism.py`：AI生命体基类，定义了生命体的基本属性和行为
-
-### 2. Tools模块
-
-**AI生命体的工具组件**
-- `actuators.py`：执行器工具，如肌肉、纤毛等，用于与环境交互
-- `base.py`：工具基类，定义了所有工具的通用接口
-- `central_brain.py`：中枢管理器，实现AI控制和决策
-- `connection.py`：连接类，用于组件间的信号传递
-- `membrane.py`：细胞膜实现，作为细胞边界和交互接口
-- `sensors.py`：传感器工具，如触觉、光感等，用于感知环境
-
-### 3. Simulation模块
-
-**模拟系统实现**
-- `simulation.py`：基础模拟实现，提供模拟框架
-- `tool_inheritance_simulation.py`：Tool继承算法模拟，实现基于工具的AI生命体进化
-
-### 4. Launcher模块
-
-**启动器实现**
-- `modern_launcher.py`：现代化GUI启动器，提供环境存档管理、模拟器和编辑器的启动功能
-
-## ⚙️ 配置说明
-
-### 模拟参数配置
-
-您可以在模拟类中调整以下关键参数：
-
-| 参数类型 | 参数说明 | 默认值 |
-|---------|---------|-------|
-| 种群参数 | 初始种群数量 | 10 |
-| 环境参数 | 环境大小 | 800x600 |
-| 资源参数 | 初始食物数量 | 50 |
-| 记忆参数 | 记忆遗传率 | 0.8 |
-| 记忆参数 | 记忆突变率 | 0.1 |
-| 学习参数 | 学习率 | 0.1 |
-| 生命参数 | 最大年龄 | 500 |
-
-### 配置文件
-
-- `pyproject.toml`：项目配置文件，包含依赖和构建信息
-- 各模块内部的参数可以通过修改代码中的默认值进行配置
-
-## 🔧 开发指南
-
-### 模块开发流程
-
-1. **确定模块功能**：明确新模块的职责和接口
-2. **实现基类接口**：继承相应的基类，实现必要的方法
-3. **添加测试用例**：为新模块编写测试用例
-4. **集成到系统**：将新模块集成到现有系统中
-5. **更新文档**：更新README和相关文档
-
-### 代码风格
-
-- 遵循PEP 8代码风格指南
-- 使用类型注解提高代码可读性和类型安全性
-- 为所有类、函数和重要变量添加详细注释
-- 使用清晰、描述性的命名
-
-### 测试
-
-```bash
-# 运行测试
-pytest
-# 或使用以下命令运行特定测试
-pytest tests/test_organism.py -v
-```
-
-## 🔧 技术栈
-
-- **Python 3.12+**：核心开发语言
-- **Pygame**：传统可视化界面和编辑器
-- **PyQt6**：现代化GUI框架和编辑器原型
-- **uv**：包管理工具
-- **面向对象设计**：模块化架构
-- **命令模式**：实现undo/redo功能支持
-
-## 📚 文档
-
-- **README.md**：项目概述和快速开始指南
-- **docs/项目说明文档.md**：详细的项目设计和实现文档
-
-## 📄 许可证
-
-本项目采用MIT许可证，详见[LICENSE](LICENSE)文件。
-
-## 🤝 贡献
-
-欢迎提交Issue和Pull Request来帮助改进项目！
-
-## 🔍 未来计划
-
-- [ ] 实现更复杂的记忆遗传机制
-- [ ] 添加神经网络学习能力
-- [ ] 支持多环境和多物种模拟
-- [ ] 实现3D可视化界面
-- [ ] 添加更详细的统计分析工具
-
-## 📞 联系方式
-
-如有问题或建议，请通过GitHub Issues联系我们。
+MIT License
 
 ---
 
-感谢您对本项目的关注和支持！
+[![python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![核心](https://img.shields.io/badge/%E6%A0%B8%E5%BF%83-PVAEC_%E5%BE%AA%E7%8E%AF-important)](README.md)
+
+## 🌟 核心哲学
+
+我们摒弃了传统AI从静态数据中学习的范式，转向模拟生命在其生命周期内通过自身经验建构智能的过程。在"莲池宇宙"中，智能不是被编程的，而是通过：
+
+```text
+感知 → 记忆 → 尝试 → 验证（利用新感知） → 再记忆 → ...
+```
+
+这一递归循环自主涌现的。这个感知-验证自主演化循环 (PVAEC) 定义了数字生命"编织"智能的根本法则。
+
+## 🆕 新增核心机制
+
+### 1. 莲池存档系统
+
+- 完整环境存档：莲池可以完整保存为本地文件，包含环境状态、生物体、组件、资源分布等
+- 增量保存：支持快照和增量保存，便于长期实验记录
+- 存档版本管理：莲池演化历史可追溯和对比
+
+### 2. 组件生态系统
+
+- 组件模板系统：所有组件（传感器、执行器、复合器）均为独立文件存储
+- 组件漂浮机制：死亡细胞释放的组件在莲池中漂浮，可被其他生物捕获
+- 组件自组装：不同类属组件碰撞时可自动连线形成简单系统
+- 组件生命周期：组件随时间分解为食物，食物可重组为新组件
+
+### 3. 遗传与演化新机制
+
+- 记忆遗传：细胞分裂时继承绝大部分记忆，但后天获得的记忆有概率继承
+- 组件遗传：分裂时继承所有先天组件，后天获得的组件通过变异概率继承
+- 体外获取机制：生物体可通过捕获漂浮组件获得新能力
+- 记忆编辑系统：演化产生的生物可保存为新模板，其记忆系统可编辑
+
+### 4. 组件位置系统
+
+- 体内组件：只能在细胞膜内部，参与生物体内部信号传递
+- 体外组件：附着在细胞膜表面，直接与环境交互
+- 通用组件：既可位于体内也可在体外，捕获时随机确定位置
+- 动态迁移：部分组件可根据需要在体内外迁移
+
+## 🚀 快速开始
+
+### 安装
+
+```bash
+# 克隆项目
+git clone https://github.com/Void-Creator-Deity/Lotucosm-VitaLoom.git
+cd Lotucosm-VitaLoom
+
+# 创建虚拟环境
+python -m venv .venv
+
+# 激活虚拟环境
+# Windows
+.venv\Scripts\activate
+# macOS/Linux
+source .venv/bin/activate
+
+# 安装依赖
+pip install -r requirements.txt
+```
+
+### 快速体验
+
+```bash
+# 启动主程序
+python src/main.py
+
+# 加载预设莲池
+python examples/load_saved_pond.py
+
+# 组件生态系统演示
+python examples/component_ecosystem.py
+```
+
+### 基本使用示例
+
+```python
+from src.vitalloom.core.pvaec_cycle import PVAECCycle
+from src.vitalloom.components.PVAECEngine import PVAECEngine
+
+# 创建一个PVAEC循环实例
+pvaec = PVAECCycle()
+
+# 创建PVAEC引擎组件（原中枢大脑）
+brain = PVAECEngine(organism_id="test_organism")
+
+# 运行完整的PVAEC循环
+print("启动感知-验证自主演化循环...")
+print("1. 生物体感知环境状态")
+print("2. 检索相关经验记忆")
+print("3. 基于记忆生成探索性行动")
+print("4. 利用新感知验证行动效果")
+print("5. 更新记忆结构，完成智能建构")
+```
+
+## 📁 项目架构（更新版）
+
+```text
+Lotucosm-VitaLoom/
+├── src/                          # 源代码
+│   ├── lotucosm/                # 莲池核心
+│   │   ├── environment/        # 环境系统（增强）
+│   │   │   ├── lotus_pond.py   # 莲池环境（增强存档功能）
+│   │   │   ├── physics_engine.py # 物理引擎（增强碰撞检测）
+│   │   │   ├── resource_manager.py # 资源管理
+│   │   │   ├── floating_system.py # 新增：漂浮系统（组件、食物）
+│   │   │   ├── assembly_system.py # 新增：自组装系统
+│   │   │   └── pond_serializer.py # 新增：莲池序列化器
+│   │   ├── evolution/          # 演化机制（增强）
+│   │   │   ├── inheritance.py  # 遗传机制（增强记忆遗传）
+│   │   │   ├── mutation.py     # 变异机制
+│   │   │   ├── selection.py    # 新增：选择机制
+│   │   │   └── component_inheritance.py # 新增：组件遗传系统
+│   │   ├── persistence/        # 新增：持久化系统
+│   │   │   ├── __init__.py
+│   │   │   ├── pond_saver.py   # 莲池保存
+│   │   │   ├── organism_serializer.py # 生物体序列化
+│   │   │   ├── component_serializer.py # 组件序列化
+│   │   │   └── memory_storage.py # 记忆存储系统
+│   │   └── simulator/          # 模拟器（增强）
+│   ├── vitalloom/              # 生命织机编辑器（核心生物系统）
+│   │   ├── core/               # 核心算法
+│   │   │   ├── pvaec_cycle.py  # PVAEC循环实现
+│   │   │   ├── perception.py   # 感知系统
+│   │   │   ├── memory.py       # 记忆系统
+│   │   │   └── memory_editor.py # 新增：记忆编辑器
+│   │   ├── components/         # 组件系统（增强）
+│   │   │   ├── __init__.py     # 组件导出
+│   │   │   ├── components_base.py  # 组件基类（新增位置属性）
+│   │   │   ├── sensors.py      # 传感器实现
+│   │   │   ├── actuators.py    # 执行器实现
+│   │   │   ├── hybrid.py       # 新增：复合器（兼具传感和执行功能）
+│   │   │   ├── membrane.py     # 细胞膜实现（一个细胞容器）
+│   │   │   ├── PVAECEngine.py  # PVAEC引擎（也有复合器功能但不继承复合器，留好扩展后面有可能对接ai智能体，现在不考虑）
+│   │   │   ├── connection.py   # 连接系统
+│   │   │   ├── component_library.py # 新增：组件库管理器
+│   │   │   └── component_factory.py # 新增：组件工厂
+│   │   ├── organisms/          # 生物体系（增强）
+│   │   │   ├── __init__.py     # 生物体导出
+│   │   │   ├── organism.py     # 生物体基类（增强遗传机制）
+│   │   │   ├── simple_organism.py  # 简单生物（无PVAEC引擎）
+│   │   │   ├── intelligent_organism.py  # 智能生物（有PVAEC引擎）
+│   │   │   ├── reproduction.py # 新增：繁殖与分裂系统
+│   │   │   └── component_acquisition.py # 新增：组件获取系统
+│   │   └── editor/             # 编辑器核心（增强）
+│   └── main.py                 # 主入口（调用启动器）
+├── data/                       # 项目数据（重构）
+│   ├── components/             # 组件模板库
+│   │   ├── sensors/           # 传感器模板
+│   │   │   ├── cilia_sensor.json  # 纤毛传感器
+│   │   │   ├── light_sensor.json  # 光传感器
+│   │   │   └── chemical_sensor.json # 化学传感器
+│   │   ├── actuators/         # 执行器模板
+│   │   │   ├── cilia_actuator.json # 纤毛执行器
+│   │   │   ├── muscle.json    # 肌肉执行器
+│   │   │   └── secretor.json  # 分泌器
+│   │   ├── hybrids/           # 复合器模板
+│   │   │   ├── cilia_hybrid.json # 纤毛复合器
+│   │   │   └── flagellum.json # 鞭毛复合器
+│   │   └── special/           # 特殊组件
+│   │       ├── PVAEC_engine.json # PVAEC引擎模板
+│   │       └── membrane.json  # 细胞膜模板
+│   ├── organisms/             # 生物体模板库
+│   │   ├── predefined/        # 预设生物
+│   │   │   ├── basic_cell.json # 基础细胞
+│   │   │   ├── predator.json  # 捕食者
+│   │   │   └── photosynthesizer.json # 光合作用者
+│   │   ├── evolved/           # 演化产生生物
+│   │   │   └── pond_{id}/     # 按莲池分类
+│   │   └── user_created/      # 用户创建生物
+│   ├── ponds/                 # 莲池存档
+│   │   ├── experimental/      # 实验莲池
+│   │   │   ├── pond_001/
+│   │   │   │   ├── config.json # 莲池配置
+│   │   │   │   ├── snapshot.json # 当前快照
+│   │   │   │   ├── history/    # 历史版本
+│   │   │   │   ├── statistics/ # 统计数据
+│   │   │   │   └── components/ # 莲池内组件存档
+│   │   │   └── pond_002/
+│   │   └── templates/         # 莲池模板
+│   ├── memories/              # （可选，记忆和那个PVAEC引擎有关系，没有这个的没有记忆，没于这个组件连接的组件也不会记录，细胞变异后原有记忆不适应会慢慢淡忘）新增：记忆库
+│   │   ├── inherited/         # 遗传记忆模板
+│   │   ├── learned/           # 学习记忆存档
+│   │   └── edited/            # 编辑后的记忆
+│   └── system/                # 系统数据
+│       ├── config.json        # 系统配置
+│       └── component_registry.json # 组件注册表
+├── examples/                   # 示例代码
+├── docs/                       # 项目文档
+├── tests/                      # 测试代码
+├── scripts/                    # 辅助脚本
+├── assets/                     # 静态资源
+├── requirements.txt            # 依赖清单
+└── README.md                   # 本文件
+```
+
+## 🔧 新增核心模块详解
+
+### 1. 记忆编辑器 (src/vitalloom/core/memory_editor.py)
+
+```python
+class MemoryEditor:
+    """
+    记忆编辑系统，允许用户：
+    1. 查看生物体的记忆结构
+    2. 编辑记忆内容（情境、行动模式、成功率）
+    3. 导出记忆为模板
+    4. 导入记忆到生物体
+    5. 可视化记忆关联网络
+    """
+```
+
+### 2. 复合器组件 (src/vitalloom/components/hybrid.py)
+
+```python
+class HybridComponent(ComponentBase):
+    """
+    复合器组件，兼具传感和执行功能
+    例如：纤毛复合器 - 既能感知水流，又能产生推进力
+    属性：
+    - is_sensor: bool = True
+    - is_actuator: bool = True
+    - sensor_sensitivity: float  # 传感灵敏度
+    - actuator_strength: float   # 执行强度
+    - mode: str = 'auto'  # 'sensor', 'actuator', 'auto'
+    """
+```
+
+### 3. 组件位置系统 (src/vitalloom/components/components_base.py)
+
+```python
+class ComponentBase:
+    """
+    组件基类增强：
+    - location: str = 'internal'  # 'internal', 'external', 'both'
+    - acquired: bool = False  # 是否是后天获得的
+    - congenital: bool = True  # 是否是先天组件
+    - attach_point: Optional[str]  # 附着点（对于体外组件）
+    """
+```
+
+### 4. 莲池漂浮系统 (src/lotucosm/environment/floating_system.py)
+
+```python
+class FloatingSystem:
+    """
+    管理莲池中漂浮的组件和食物：
+    1. 组件漂浮：死亡细胞释放的组件在环境中漂浮
+    2. 组件碰撞：不同类型组件碰撞可能自动连线
+    3. 组件分解：组件随时间分解为食物粒子
+    4. 食物重组：食物粒子碰撞可能重组为新组件
+    5. 捕获机制：生物体可捕获漂浮的组件
+    """
+```
+
+### 5. 遗传增强系统 (src/lotucosm/evolution/component_inheritance.py)
+
+```python
+class ComponentInheritance:
+    """
+    组件遗传规则：
+    1. 先天组件：100%遗传给子代
+    2. 后天组件：根据变异率概率遗传
+    3. 组件位置：遗传时保持相同位置属性
+    4. 组件状态：遗传时重置为初始状态
+    5. 记忆关联：组件相关的记忆有更高遗传概率
+    """
+```
+
+## 🎯 新机制使用示例
+
+### 1. 创建和保存莲池
+
+```python
+from src.lotucosm.environment.lotus_pond import LotusPond
+from src.lotucosm.persistence.pond_saver import PondSaver
+
+# 创建新莲池
+pond = LotusPond(
+    name="演化实验场",
+    size=(1200, 800),
+    initial_components=50,  # 初始漂浮组件数量
+    component_variety="all"  # 导入所有组件类型
+)
+
+# 运行一段时间
+for _ in range(1000):
+    pond.update()
+    
+# 保存莲池
+saver = PondSaver()
+pond_id = saver.save_pond(pond, "data/ponds/experimental/pond_001")
+
+print(f"莲池已保存，ID: {pond_id}")
+```
+
+### 2. 组件捕获和整合
+
+```python
+from src.vitalloom.organisms.intelligent_organism import IntelligentOrganism
+
+# 生物体捕获漂浮组件
+organism = IntelligentOrganism("cell_001", (400, 300))
+
+# 扫描周围漂浮组件
+nearby_components = pond.get_nearby_components(organism.position, radius=50)
+
+for component in nearby_components:
+    if organism.can_capture(component):
+        captured = organism.capture_component(component)
+        if captured:
+            print(f"捕获组件: {component.type}")
+            # 组件自动整合到生物体
+            # 体外组件附着在细胞膜
+            # 体内组件整合到内部系统
+```
+
+### 3. 细胞分裂和遗传
+
+```python
+# 细胞达到分裂条件时
+if organism.ready_to_reproduce():
+    # 创建子代
+    offspring = organism.reproduce()
+    
+    # 遗传机制：
+    # 1. 继承所有先天组件
+    # 2. 后天组件按变异率继承
+    # 3. 继承大部分记忆（后天记忆概率继承）
+    # 4. 记忆强度可能衰减
+    
+    print(f"子代创建成功，继承组件: {len(offspring.components)}")
+    print(f"继承记忆: {len(offspring.memory_system.memories)}")
+```
+
+### 4. 组件自组装
+
+```python
+# 莲池中漂浮组件的自组装
+# 不同类型组件碰撞时可能自动连线
+
+# 传感器 + 执行器 → 简单反射弧
+# 传感器 + 传感器 → 复合感知系统
+# 执行器 + 执行器 → 协同运动系统
+
+# 这些自组装的系统可被生物体整体捕获
+# 加速复杂功能的获得
+```
+
+### 5. 记忆编辑和导出
+
+```python
+from src.vitalloom.core.memory_editor import MemoryEditor
+from src.vitalloom.persistence.organism_serializer import load_organism
+
+# 加载演化产生的生物体
+organism = load_organism("data/organisms/evolved/smart_cell_042.json")
+
+# 创建记忆编辑器
+editor = MemoryEditor(organism)
+
+# 查看记忆结构
+memories = editor.list_memories()
+for memory in memories:
+    print(f"情境: {memory.situation}")
+    print(f"行动模式: {memory.action_pattern}")
+    print(f"成功率: {memory.success_rate}")
+
+# 编辑特定记忆
+editor.edit_memory(
+    memory_id="memory_001",
+    situation="light_high_food_near",
+    action_pattern={"move_towards": 0.8, "extend_cilia": 0.3},
+    success_rate=0.85
+)
+
+# 导出生物体为模板
+editor.export_organism_template("data/organisms/user_created/my_design.json")
+```
+
+## 📊 实验与数据分析
+
+### 新数据收集维度
+
+- 组件获取轨迹：记录生物体如何获得新组件
+- 记忆演化路径：追踪记忆的创建、强化、衰减过程
+- 遗传成功率：统计不同组件的遗传成功率
+- 自组装效率：漂浮组件形成功能系统的比率
+- 环境适应性：不同组件配置对环境的适应度
+
+### 实验配置示例
+
+```python
+experiment_config = {
+    "pond": {
+        "size": (1600, 1200),
+        "initial_component_count": 100,
+        "component_variety": ["sensor", "actuator", "hybrid"],
+        "floating_system": {
+            "assembly_enabled": True,
+            "decay_rate": 0.001,
+            "reassembly_probability": 0.01
+        }
+    },
+    "organisms": {
+        "initial_count": 20,
+        "reproduction_energy": 80,
+        "inheritance": {
+            "congenital_inheritance_rate": 1.0,
+            "acquired_inheritance_rate": 0.3,
+            "memory_inheritance_rate": 0.8
+        }
+    },
+    "data_collection": {
+        "save_interval": 1000,  # 每1000步保存一次
+        "track_component_acquisition": True,
+        "record_memory_changes": True
+    }
+}
+```
+
+## 🧪 研究应用扩展
+
+新增机制支持以下研究方向：
+
+### 1. 模块化演化
+
+- 研究组件如何通过获取、整合、遗传实现功能模块化
+- 分析模块化对演化速度和适应度的影响
+
+### 2. 记忆-组件共演化
+
+- 探索记忆系统如何与组件系统协同演化
+- 研究后天获得的组件如何影响记忆结构
+
+### 3. 生态系统动力学
+
+- 分析组件漂浮、捕获、重组形成的生态系统
+- 研究资源（组件、食物）循环对演化的影响
+
+### 4. 人工设计辅助
+
+- 使用记忆编辑器分析演化产生的智能
+- 将自然演化与人工设计相结合
+
+## 🔬 新增示例演示
+
+| 示例文件 | 功能描述 | 运行命令 |
+|---------|---------|---------|
+| component_ecosystem.py | 组件生态系统演示 | python examples/component_ecosystem.py |
+| memory_inheritance.py | 记忆遗传实验 | python examples/memory_inheritance.py |
+| pond_save_load.py | 莲池存档演示 | python examples/pond_save_load.py |
+| hybrid_component_demo.py | 复合器功能演示 | python examples/hybrid_component_demo.py |
+| capture_and_integrate.py | 组件捕获演示 | python examples/capture_and_integrate.py |
+
+## 🚧 开发路线图
+
+### 近期目标
+
+- 实现基础组件漂浮和捕获系统
+- 完成记忆编辑器的基本功能
+- 实现莲池完整序列化
+- 添加组件遗传规则
+
+### 中期目标
+
+- 实现组件自组装系统
+- 完善记忆-组件关联系统
+- 添加可视化编辑界面
+- 优化性能以支持大规模模拟
+
+### 长期目标
+
+- 实现跨莲池组件交换
+- 开发记忆迁移工具
+- 支持分布式模拟
+- 构建在线组件共享平台
+
+## 🤝 贡献指南
+
+欢迎对新增机制的贡献！特别需要以下方向的帮助：
+
+- 组件设计：创建新的传感器、执行器、复合器模板
+- 遗传算法：改进组件遗传和变异规则
+- 记忆系统：增强记忆编辑和可视化工具
+- 性能优化：提升大规模组件漂浮系统的性能
+- 文档完善：编写新机制的使用教程和API文档
+
+## 📄 许可证
+
+本项目采用MIT许可证 - 查看 LICENSE 文件了解详情。
+
+## 📞 联系方式
+
+- 项目主页: [https://github.com/Void-Creator-Deity/Lotucosm-VitaLoom](https://github.com/Void-Creator-Deity/Lotucosm-VitaLoom)
+- 问题反馈: GitHub Issues
+- 讨论交流: 欢迎在GitHub Discussions中参与讨论
+
+🌌 在莲池宇宙中，每一个组件都是可重用的智慧碎片。
+🧬 每一段记忆都是可编辑的经验传承。
+🔬 加入我们，探索模块化智能的涌现与演化！
