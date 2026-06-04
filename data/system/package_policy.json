@@ -1,0 +1,5 @@
+{
+  "schema_version": 1,
+  "enable_constraint_mode": "warn",
+  "package_manager_open_mode": "floating"
+}

@@ -1,0 +1,793 @@
+# -*- coding: utf-8 -*-
+"""项目资源面板（Unity Project / UE Content Browser 式浏览）"""
+
+import os
+from typing import Any, Optional, List, Dict
+from PyQt6.QtWidgets import (
+    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QTreeWidget, QTreeWidgetItem,
+    QListWidget, QListWidgetItem, QLineEdit, QSplitter, QPushButton,
+    QMenu, QFileIconProvider, QListView, QTreeView
+)
+from PyQt6.QtCore import Qt, pyqtSignal, QPoint, QDir, QModelIndex, QMimeData, QUrl
+from PyQt6.QtGui import QAction, QIcon, QFileSystemModel, QDrag
+
+from core.VitaLoom.ui.base_editor_widget import BaseEditorWidget
+from core.VitaLoom.core.editor_context import get_editor_context
+from core.VitaLoom.core.signal_bus import get_signal_bus, SignalType
+from core.VitaLoom.core.logger import get_logger
+
+
+logger = get_logger("ProjectPanel")
+
+# 与常见引擎约定一致：资源 / 场景 / 脚本（磁盘名小写）
+_ASSET_FOLDER_ORDER = {"assets": 0, "scenes": 1, "scripts": 2}
+_STANDARD_PROJECT_SUBDIRS = frozenset({"assets", "scenes", "scripts"})
+
+
+def _folder_sort_key(name: str) -> tuple:
+    return (_ASSET_FOLDER_ORDER.get(name.lower(), 99), name.lower())
+
+
+class DraggableListWidget(QListWidget):
+    """支持拖拽文件的列表控件"""
+    def startDrag(self, supportedActions):
+        item = self.currentItem()
+        if not item:
+            return
+            
+        file_path = item.data(Qt.ItemDataRole.UserRole)
+        if not file_path:
+            return
+            
+        drag = QDrag(self)
+        mime_data = QMimeData()
+        # 将文件路径转换为 URL，这样 Inspector 就能识别并接收
+        if os.path.exists(file_path):
+            mime_data.setUrls([QUrl.fromLocalFile(file_path)])
+            drag.setMimeData(mime_data)
+            
+            # 设置一个漂亮的拖拽图标
+            drag.setPixmap(item.icon().pixmap(32, 32))
+            drag.exec(supportedActions)
+
+
+class ProjectPanel(BaseEditorWidget):
+    """Project 面板 — 对齐 Unity Project / UE Content Browser / Godot 文件系统的浏览习惯。
+
+    约定：
+    - 树根显示「项目名称」（来自 project.json），对应打开的工程根、Godot 的 res:// 项目部分，
+      避免根节点写「Assets」与磁盘上 ``assets/`` 文件夹语义混淆。
+    - ``assets/``、``scenes/``、``scripts/`` 在树上使用友好显示名（磁盘路径不变）。
+    - 完整路径放在 Tooltip；右侧列表上方显示面包屑。
+    """
+
+    # 自定义信号
+    asset_selected = pyqtSignal(str)  # 资源被选中
+    asset_double_clicked = pyqtSignal(str)  # 资源被双击
+
+    def __init__(self, canvas: Optional[Any] = None):
+        """初始化Project面板"""
+        super().__init__()
+        
+        # 获取编辑器上下文和信号总线
+        self.editor_context = get_editor_context()
+        self.signal_bus = get_signal_bus()
+        
+        self.canvas: Optional[Any] = canvas
+        self.current_project_path: Optional[str] = None
+        
+        # 预设组件分类 (用于 Add Component 菜单)
+        self._component_categories = {
+            "Sensors": [
+                {"name": "LightSensor", "description": "检测光强"},
+                {"name": "CollisionSensor", "description": "检测碰撞"},
+                {"name": "EnergySensor", "description": "检测能量轨迹"}
+            ],
+            "Actuators": [
+                {"name": "Motor", "description": "控制移动"},
+                {"name": "Rotator", "description": "控制旋转"}
+            ],
+            "Physics": [
+                {"name": "Rigidbody", "description": "物理刚体"},
+                {"name": "BoxCollider", "description": "矩形碰撞体"},
+                {"name": "CircleCollider", "description": "圆形碰撞体"}
+            ]
+        }
+        
+        # 初始化界面
+        self._init_ui()
+        
+        # 订阅项目打开事件
+        self.editor_context.event_bus.subscribe("project_opened", self.on_project_opened)
+        
+        # 如果没有项目，显示默认内容
+        if not self.current_project_path:
+            self.folder_tree.clear()
+            self.asset_list.clear()
+            placeholder = QListWidgetItem(
+                self._t(
+                    "project_panel.placeholder.no_project",
+                    "没有打开的项目\n\n请在 'File' 菜单中创建或打开项目",
+                )
+            )
+            placeholder.setFlags(Qt.ItemFlag.NoItemFlags)
+            placeholder.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            self.asset_list.addItem(placeholder)
+
+    def _t(self, key: str, default: str = "") -> str:
+        tr_fn = getattr(self.editor_context, "i18n_tr", None)
+        if callable(tr_fn):
+            return tr_fn(key, default)
+        return default or key
+
+    def _asset_type_label(self, asset_type: str) -> str:
+        mapping = {
+            "folder": self._t("project_panel.asset_type.folder", "文件夹"),
+            "scene": self._t("project_panel.asset_type.scene", "场景"),
+            "entity": self._t("project_panel.asset_type.entity", "空实体"),
+            "organism": self._t("project_panel.asset_type.organism", "生物体"),
+            "food": self._t("project_panel.asset_type.food", "食物"),
+            "component": self._t("project_panel.asset_type.script", "脚本"),
+        }
+        return mapping.get(asset_type, asset_type)
+
+    def _project_display_name(self) -> str:
+        """树根显示名：优先 project.json 的 name。"""
+        cfg = getattr(self.editor_context, "current_project_config", None)
+        if isinstance(cfg, dict):
+            name = cfg.get("name")
+            if isinstance(name, str) and name.strip():
+                return name.strip()
+        if self.current_project_path:
+            base = os.path.basename(self.current_project_path.rstrip("/\\"))
+            return base or self.current_project_path
+        return self._t("project_panel.tree.assets_root", "Assets")
+
+    def _folder_display_label(self, dirname: str) -> str:
+        """标准子目录友好名（磁盘文件夹名不变）。"""
+        low = dirname.lower()
+        if low == "assets":
+            return self._t("project_panel.folder.assets", "美术与资源")
+        if low == "scenes":
+            return self._t("project_panel.folder.scenes", "场景")
+        if low == "scripts":
+            return self._t("project_panel.folder.scripts", "脚本")
+        return dirname
+
+    def _list_row_label(self, item_path: str, item_name: str) -> str:
+        """列表行展示：文件夹用友好名 + 原文件名小号提示。"""
+        if os.path.isdir(item_path):
+            friendly = self._folder_display_label(item_name)
+            low = item_name.lower()
+            if low in _STANDARD_PROJECT_SUBDIRS and friendly != item_name:
+                return f"📁 {friendly}   ({item_name})"
+            return f"📁 {friendly}"
+        if item_name.lower() == "project.json":
+            return f"📋 {self._t('project_panel.file.project_config', 'project.json（工程配置）')}"
+        if item_path.endswith(".pond"):
+            return f"🌊 {item_name}"
+        if item_path.endswith(".aiorganism"):
+            return f"🧬 {item_name}"
+        if item_path.endswith(".json"):
+            return f"📄 {item_name}"
+        if item_path.lower().endswith((".png", ".jpg", ".jpeg", ".bmp", ".gif")):
+            return f"🖼️  {item_name}"
+        if item_path.endswith(".py"):
+            return f"🐍  {item_name}"
+        return item_name
+
+    def _set_breadcrumb(self, folder_path: str) -> None:
+        if not hasattr(self, "_breadcrumb"):
+            return
+        proj = self.current_project_path
+        if not proj or not folder_path:
+            self._breadcrumb.setText("")
+            return
+        proj = os.path.normpath(proj)
+        fp = os.path.normpath(folder_path)
+        root_name = self._project_display_name()
+        try:
+            rel = os.path.relpath(fp, proj)
+        except ValueError:
+            self._breadcrumb.setText(fp)
+            return
+        if rel in (".", ""):
+            self._breadcrumb.setText(
+                self._t(
+                    "project_panel.breadcrumb.at_project_root",
+                    "{name}  （资源根 · 类似 Unity 的工程资源区 / Godot 的 res://）",
+                ).format(name=root_name)
+            )
+            return
+        parts = [p for p in rel.split(os.sep) if p]
+        segments = [root_name]
+        for p in parts:
+            segments.append(self._folder_display_label(p))
+        sep = self._t("project_panel.breadcrumb.sep", " › ")
+        self._breadcrumb.setText(sep.join(segments))
+
+    def _init_ui(self):
+        """初始化界面（左树右表 + 搜索，对齐常见引擎资源浏览器）"""
+        main_layout = QVBoxLayout(self)
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setSpacing(0)
+
+        # 顶部工具栏（参考Unity）
+        toolbar_layout = QHBoxLayout()
+        toolbar_layout.setContentsMargins(4, 4, 4, 4)
+        toolbar_layout.setSpacing(4)
+        
+        # 搜索框（Unity风格）
+        self.search_box = QLineEdit()
+        self.search_box.setPlaceholderText(self._t("project_panel.search_placeholder", "搜索资源..."))
+        self.search_box.setStyleSheet("""
+            QLineEdit {
+                background-color: #3c3c3c;
+                border: 1px solid #555555;
+                border-radius: 3px;
+                padding: 4px 8px;
+                color: #d4d4d4;
+                font-size: 12px;
+            }
+            QLineEdit:focus {
+                border: 1px solid #0e639c;
+            }
+        """)
+        self.search_box.textChanged.connect(self._on_search_changed)  # type: ignore
+        toolbar_layout.addWidget(self.search_box)
+        
+        # 视图切换按钮（Unity风格）
+        self.list_view_btn = QPushButton(self._t("project_panel.view.list", "列表"))
+        self.list_view_btn.setCheckable(True)
+        self.list_view_btn.setChecked(True)
+        self.list_view_btn.setMaximumWidth(50)
+        self.list_view_btn.clicked.connect(lambda: self._set_view_mode("list"))  # type: ignore
+        toolbar_layout.addWidget(self.list_view_btn)
+        
+        self.grid_view_btn = QPushButton(self._t("project_panel.view.grid", "网格"))
+        self.grid_view_btn.setCheckable(True)
+        self.grid_view_btn.setMaximumWidth(50)
+        self.grid_view_btn.clicked.connect(lambda: self._set_view_mode("grid"))  # type: ignore
+        toolbar_layout.addWidget(self.grid_view_btn)
+        
+        toolbar_layout.addStretch()
+        main_layout.addLayout(toolbar_layout)
+
+        # 主分割器：左侧文件夹树，右侧资源列表（Unity风格）
+        self.main_splitter = QSplitter(Qt.Orientation.Horizontal)
+        self.main_splitter.setChildrenCollapsible(False)
+        
+        # 左侧：文件夹树（Unity的Assets树）
+        self.folder_tree = QTreeWidget()
+        self.folder_tree.setHeaderLabel(self._t("project_panel.header.project_tree", "项目"))
+        self.folder_tree.setMaximumWidth(250)
+        self.folder_tree.setMinimumWidth(150)
+        self.folder_tree.setStyleSheet("""
+            QTreeWidget {
+                background-color: #252526;
+                color: #d4d4d4;
+                border: none;
+                border-right: 1px solid #404040;
+            }
+            QTreeWidget::item {
+                height: 22px;
+                padding: 2px;
+            }
+            QTreeWidget::item:hover {
+                background-color: #2a2d2e;
+            }
+            QTreeWidget::item:selected {
+                background-color: #264f78;
+                color: #ffffff;
+            }
+            QTreeWidget::branch {
+                background-color: #252526;
+            }
+        """)
+        self.folder_tree.itemSelectionChanged.connect(self._on_folder_selected)  # type: ignore
+        self.folder_tree.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.folder_tree.customContextMenuRequested.connect(self._show_folder_context_menu)  # type: ignore
+        self.main_splitter.addWidget(self.folder_tree)
+
+        # 右侧：面包屑 + 资源列表（对齐 Unity 地址栏 / Godot 当前路径反馈）
+        self._breadcrumb = QLabel("")
+        self._breadcrumb.setStyleSheet(
+            "color:#bbbbbb; background-color:#2d2d30; padding:6px 10px; font-size:11px; "
+            "border-bottom:1px solid #3f3f46;"
+        )
+        self._breadcrumb.setWordWrap(True)
+        self._breadcrumb.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
+
+        self.asset_list = DraggableListWidget()
+        self.asset_list.setDragEnabled(True)
+        self.asset_list.setViewMode(QListWidget.ViewMode.ListMode)
+        self.asset_list.setStyleSheet("""
+            QListWidget {
+                background-color: #252526;
+                color: #d4d4d4;
+                border: none;
+            }
+            QListWidget::item {
+                padding: 4px;
+                border-bottom: 1px solid #333333;
+            }
+            QListWidget::item:hover {
+                background-color: #2a2d2e;
+            }
+            QListWidget::item:selected {
+                background-color: #264f78;
+                color: #ffffff;
+            }
+        """)
+        self.asset_list.itemDoubleClicked.connect(self._on_asset_double_clicked)  # type: ignore
+        self.asset_list.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.asset_list.customContextMenuRequested.connect(self._show_asset_context_menu)  # type: ignore
+
+        right_stack = QWidget()
+        right_layout = QVBoxLayout(right_stack)
+        right_layout.setContentsMargins(0, 0, 0, 0)
+        right_layout.setSpacing(0)
+        right_layout.addWidget(self._breadcrumb)
+        right_layout.addWidget(self.asset_list)
+        self.main_splitter.addWidget(right_stack)
+        
+        # 设置分割比例（Unity风格：左侧较窄，右侧较宽）
+        self.main_splitter.setSizes([200, 600])  # type: ignore
+        
+        main_layout.addWidget(self.main_splitter)
+
+    def _show_default_content(self):
+        """显示默认内容（当没有项目时）"""
+        self.folder_tree.clear()
+        self.asset_list.clear()
+        if hasattr(self, "_breadcrumb"):
+            self._breadcrumb.setText("")
+        placeholder = QListWidgetItem(
+            self._t(
+                "project_panel.placeholder.no_project",
+                "没有打开的项目\n\n请在 'File' 菜单中创建或打开项目",
+            )
+        )
+        placeholder.setFlags(Qt.ItemFlag.NoItemFlags)
+        placeholder.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.asset_list.addItem(placeholder)
+
+    def on_project_opened(self, data):
+        """项目打开时更新项目树"""
+        try:
+            project_path = data if isinstance(data, str) else data.get("path", "")
+            if project_path and os.path.exists(project_path):
+                self.current_project_path = project_path
+                self._update_project_tree(project_path)
+                logger.info("项目文件树已更新: %s", project_path)
+        except Exception as e:
+            logger.exception("更新项目文件树失败: %s", e)
+
+    def _update_project_tree(self, project_path: str):
+        """更新项目文件树（根节点为项目名称，子节点为磁盘文件夹）"""
+        self.folder_tree.clear()
+        
+        if not os.path.exists(project_path):
+            self._show_default_content()
+            return
+        
+        # 根节点：项目名称（project.json），磁盘路径放在 tooltip
+        root_item = QTreeWidgetItem(self.folder_tree)
+        root_item.setText(0, self._project_display_name())
+        root_item.setToolTip(
+            0,
+            self._t(
+                "project_panel.tree.resource_root_tooltip",
+                "资源根（当前项目）\n{path}\n\n"
+                "对应 Unity 中为工程打开的文件夹、Godot 中计入版本的项目内容（res://）。",
+            ).format(path=project_path),
+        )
+        root_item.setData(0, Qt.ItemDataRole.UserRole, project_path)
+        root_item.setExpanded(True)
+        
+        # 递归添加项目文件夹
+        self._add_directory_to_tree(root_item, project_path)
+        
+        # 选中根节点
+        self.folder_tree.setCurrentItem(root_item)
+        
+        # 更新资源列表
+        self._update_asset_list(project_path)
+
+    def _add_directory_to_tree(self, parent_item: QTreeWidgetItem, dir_path: str):
+        """递归添加目录到树"""
+        try:
+            if not os.path.isdir(dir_path):
+                return
+            
+            # 获取目录内容（只取文件夹）
+            items = sorted(
+                [d for d in os.listdir(dir_path) if os.path.isdir(os.path.join(dir_path, d))],
+                key=_folder_sort_key,
+            )
+            
+            for item_name in items:
+                item_path = os.path.join(dir_path, item_name)
+                
+                # 跳过隐藏文件夹
+                if item_name.startswith('.'):
+                    continue
+                
+                tree_item = QTreeWidgetItem(parent_item)
+                label = self._folder_display_label(item_name)
+                low = item_name.lower()
+                if low in _STANDARD_PROJECT_SUBDIRS and label != item_name:
+                    tree_item.setText(0, f"{label}   ({item_name})")
+                else:
+                    tree_item.setText(0, label)
+                tree_item.setToolTip(0, item_path)
+                tree_item.setData(0, Qt.ItemDataRole.UserRole, item_path)
+                
+                # 递归添加子目录
+                self._add_directory_to_tree(tree_item, item_path)
+                tree_item.setExpanded(False)  # 默认折叠
+        except Exception as e:
+            logger.warning("添加目录到树失败: %s", e)
+
+    def _update_asset_list(self, folder_path: str):
+        """更新资源列表（显示选中文件夹的内容）"""
+        self.asset_list.clear()
+        self._set_breadcrumb(folder_path)
+
+        if not os.path.exists(folder_path):
+            return
+        
+        # 获取文件夹内容
+        try:
+            items = sorted(os.listdir(folder_path), key=lambda x: (not os.path.isdir(os.path.join(folder_path, x)), x.lower()))
+            
+            for item_name in items:
+                item_path = os.path.join(folder_path, item_name)
+                
+                # 跳过隐藏文件
+                if item_name.startswith('.'):
+                    continue
+                
+                # 创建列表项（展示名与磁盘名区分标准文件夹）
+                row_label = self._list_row_label(item_path, item_name)
+                item = QListWidgetItem(row_label)
+                item.setData(Qt.ItemDataRole.UserRole, item_path)
+                item.setToolTip(item_path)
+                
+                self.asset_list.addItem(item)
+        except Exception as e:
+            logger.warning("更新资源列表失败: %s", e)
+
+    def _on_folder_selected(self):
+        """文件夹选择变化处理"""
+        selected_items = self.folder_tree.selectedItems()
+        if selected_items:
+            folder_path = selected_items[0].data(0, Qt.ItemDataRole.UserRole)
+            if folder_path:
+                self._update_asset_list(folder_path)
+
+    def _on_search_changed(self, text: str):
+        """搜索文本变化处理"""
+        query = text.strip().lower()
+
+        # 空搜索时显示全部
+        if not query:
+            for i in range(self.asset_list.count()):
+                item = self.asset_list.item(i)
+                item.setHidden(False)
+            return
+
+        # 基于资源文件名过滤（优先使用真实路径，避免 emoji 前缀干扰）
+        for i in range(self.asset_list.count()):
+            item = self.asset_list.item(i)
+            raw_path = item.data(Qt.ItemDataRole.UserRole)
+            display_text = item.text()
+
+            if isinstance(raw_path, str) and raw_path:
+                match_text = os.path.basename(raw_path).lower()
+            else:
+                match_text = display_text.lower()
+
+            item.setHidden(query not in match_text)
+
+    def _on_asset_double_clicked(self, item: QListWidgetItem):
+        """资源双击处理"""
+        asset_path = item.data(Qt.ItemDataRole.UserRole)
+        if asset_path:
+            self.asset_double_clicked.emit(asset_path)
+            logger.info("打开资源: %s", asset_path)
+
+    def _set_view_mode(self, mode: str):
+        """设置视图模式"""
+        if mode == "list":
+            self.asset_list.setViewMode(QListWidget.ViewMode.ListMode)
+            self.list_view_btn.setChecked(True)
+            self.grid_view_btn.setChecked(False)
+        elif mode == "grid":
+            self.asset_list.setViewMode(QListWidget.ViewMode.IconMode)
+            self.list_view_btn.setChecked(False)
+            self.grid_view_btn.setChecked(True)
+
+    def _show_folder_context_menu(self, pos: QPoint):
+        """显示文件夹上下文菜单（Unity风格）"""
+        item = self.folder_tree.itemAt(pos)
+        menu = QMenu(self)
+        
+        if item:
+            # 创建菜单项
+            create_folder_action = QAction(self._t("project_panel.menu.create_folder", "创建文件夹"), self)
+            create_folder_action.triggered.connect(lambda: self._create_asset("folder")) # type: ignore
+            menu.addAction(create_folder_action)
+            
+            menu.addSeparator()
+
+            create_scene_action = QAction(self._t("project_panel.menu.create_scene", "创建/场景 (.pond)"), self)
+            create_scene_action.triggered.connect(lambda: self._create_asset("scene"))  # type: ignore
+            menu.addAction(create_scene_action)
+            
+            create_entity_action = QAction(self._t("project_panel.menu.create_entity", "创建/空实体 (.json)"), self)
+            create_entity_action.triggered.connect(lambda: self._create_asset("entity"))  # type: ignore
+            menu.addAction(create_entity_action)
+            
+            create_organism_action = QAction(self._t("project_panel.menu.create_organism", "创建/生物体 (.json)"), self)
+            create_organism_action.triggered.connect(lambda: self._create_asset("organism")) # type: ignore
+            menu.addAction(create_organism_action)
+
+            create_food_action = QAction(self._t("project_panel.menu.create_food", "创建/食物 (.json)"), self)
+            create_food_action.triggered.connect(lambda: self._create_asset("food")) # type: ignore
+            menu.addAction(create_food_action)
+            
+            create_component_action = QAction(self._t("project_panel.menu.create_script", "创建/脚本 (.py)"), self)
+            create_component_action.triggered.connect(lambda: self._create_asset("component"))  # type: ignore
+            menu.addAction(create_component_action)
+
+            menu.addSeparator()
+            
+            import_action = QAction(self._t("project_panel.menu.import", "导入资源..."), self)
+            import_action.triggered.connect(self._import_asset) # type: ignore
+            menu.addAction(import_action)
+            
+            menu.addSeparator()
+            
+            refresh_action = QAction(self._t("project_panel.menu.refresh", "刷新"), self)
+            refresh_action.triggered.connect(self._refresh_folder)  # type: ignore
+            menu.addAction(refresh_action)
+        else:
+            refresh_action = QAction(self._t("project_panel.menu.refresh", "刷新"), self)
+            refresh_action.triggered.connect(self._refresh_folder)  # type: ignore
+            menu.addAction(refresh_action)
+        
+        global_pos = self.folder_tree.mapToGlobal(pos)
+        menu.exec(global_pos)  # type: ignore
+
+    def _show_asset_context_menu(self, pos: QPoint):
+        """显示资源上下文菜单（Unity风格）"""
+        item = self.asset_list.itemAt(pos)
+        menu = QMenu(self)
+        
+        if item:
+            asset_path = item.data(Qt.ItemDataRole.UserRole)
+            if asset_path:
+                open_action = QAction(self._t("project_panel.menu.open", "打开"), self)
+                open_action.triggered.connect(lambda: self._on_asset_double_clicked(item))  # type: ignore
+                menu.addAction(open_action)
+                
+                if asset_path.endswith(".pond"):
+                    set_active_action = QAction(self._t("project_panel.menu.set_active_scene", "设为主场景"), self)
+                    # 设为主场景其实就是打开它，因为 load_scene 已经会更新 project.json
+                    set_active_action.triggered.connect(lambda: self._on_asset_double_clicked(item)) # type: ignore
+                    menu.addAction(set_active_action)
+
+                menu.addSeparator()
+                
+                delete_action = QAction(self._t("project_panel.menu.delete", "删除"), self)
+                delete_action.triggered.connect(lambda: self._delete_asset(asset_path))  # type: ignore
+                menu.addAction(delete_action)
+        else:
+            # 空白区域右键菜单
+            create_folder_action = QAction(self._t("project_panel.menu.create_folder", "创建文件夹"), self)
+            create_folder_action.triggered.connect(lambda: self._create_asset("folder")) # type: ignore
+            menu.addAction(create_folder_action)
+
+            menu.addSeparator()
+
+            create_scene_action = QAction(self._t("project_panel.menu.create_scene", "创建/场景 (.pond)"), self)
+            create_scene_action.triggered.connect(lambda: self._create_asset("scene"))  # type: ignore
+            menu.addAction(create_scene_action)
+            
+            create_entity_action = QAction(self._t("project_panel.menu.create_entity", "创建/空实体 (.json)"), self)
+            create_entity_action.triggered.connect(lambda: self._create_asset("entity"))  # type: ignore
+            menu.addAction(create_entity_action)
+            
+            create_organism_action = QAction(self._t("project_panel.menu.create_organism", "创建/生物体 (.json)"), self)
+            create_organism_action.triggered.connect(lambda: self._create_asset("organism")) # type: ignore
+            menu.addAction(create_organism_action)
+
+            create_food_action = QAction(self._t("project_panel.menu.create_food", "创建/食物 (.json)"), self)
+            create_food_action.triggered.connect(lambda: self._create_asset("food")) # type: ignore
+            menu.addAction(create_food_action)
+            
+            create_component_action = QAction(self._t("project_panel.menu.create_script", "创建/脚本 (.py)"), self)
+            create_component_action.triggered.connect(lambda: self._create_asset("component"))  # type: ignore
+            menu.addAction(create_component_action)
+            
+            menu.addSeparator()
+            
+            import_action = QAction(self._t("project_panel.menu.import", "导入资源..."), self)
+            import_action.triggered.connect(self._import_asset) # type: ignore
+            menu.addAction(import_action)
+        
+        global_pos = self.asset_list.mapToGlobal(pos)
+        menu.exec(global_pos)  # type: ignore
+
+    def _import_asset(self):
+        """导入外部资源"""
+        from PyQt6.QtWidgets import QFileDialog
+        files, _ = QFileDialog.getOpenFileNames(
+            self,
+            self._t("project_panel.dialog.import.title", "导入资源"),
+            "",
+            self._t(
+                "project_panel.dialog.import.filter",
+                "所有文件 (*.*);;图片 (*.png *.jpg *.jpeg *.bmp);;场景 (*.pond);;脚本 (*.py)",
+            ),
+        )
+        
+        if files:
+            import shutil
+            target_folder = self._get_current_folder_path()
+            if not target_folder:
+                return
+                
+            for file_path in files:
+                try:
+                    target_path = os.path.join(target_folder, os.path.basename(file_path))
+                    if file_path != target_path:
+                        shutil.copy2(file_path, target_path)
+                    logger.info("已导入资源: %s", target_path)
+                except Exception as e:
+                    logger.exception("导入资源失败: %s", e)
+            
+            self._refresh_folder()
+
+    def _create_asset(self, asset_type: str):
+        """创建资源（参考Unity的创建菜单）"""
+        from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QLineEdit, QDialogButtonBox
+        
+        dialog = QDialog(self)
+        dialog.setWindowTitle(
+            self._t("project_panel.dialog.create_asset.title", "创建 {type}").format(type=self._asset_type_label(asset_type))
+        )
+        dialog.setMinimumWidth(300)
+        
+        layout = QVBoxLayout(dialog)
+        
+        name_label = QLabel(self._t("project_panel.field.name", "名称:"))
+        name_input = QLineEdit()
+        name_input.setPlaceholderText(
+            self._t("project_panel.placeholder.asset_name", "输入 {type} 名称...").format(type=self._asset_type_label(asset_type))
+        )
+        layout.addWidget(name_label)
+        layout.addWidget(name_input)
+        
+        buttons = QDialogButtonBox(
+            QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
+        )
+        buttons.accepted.connect(dialog.accept)  # type: ignore
+        buttons.rejected.connect(dialog.reject)  # type: ignore
+        layout.addWidget(buttons)
+        
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            asset_name = name_input.text().strip()
+            if asset_name:
+                # 通过事件总线发送创建资源事件
+                self.editor_context.event_bus.publish("create_asset", {
+                    'type': asset_type,
+                    'name': asset_name,
+                    'folder': self._get_current_folder_path()
+                })
+                logger.info("创建资源: %s (%s)", asset_name, asset_type)
+
+    def _get_current_folder_path(self) -> Optional[str]:
+        """获取当前选中的文件夹路径"""
+        selected_items = self.folder_tree.selectedItems()
+        if selected_items:
+            return selected_items[0].data(0, Qt.ItemDataRole.UserRole)
+        return self.current_project_path
+
+    def _refresh_folder(self):
+        """刷新文件夹"""
+        if self.current_project_path:
+            self._update_project_tree(self.current_project_path)
+
+    def _delete_asset(self, asset_path: str):
+        """删除资源"""
+        from PyQt6.QtWidgets import QMessageBox
+        
+        # 检查资源是否在当前场景中被使用
+        usage_info = self._check_asset_usage(asset_path)
+        if usage_info:
+            msg = self._t(
+                "project_panel.dialog.delete.in_use.prefix",
+                "资源 '{name}' 正在当前场景中被以下实体使用：\n\n",
+            ).format(name=os.path.basename(asset_path))
+            msg += "\n".join([f"- {name} ({id})" for id, name in usage_info])
+            msg += self._t(
+                "project_panel.dialog.delete.in_use.suffix",
+                "\n\n确定要删除吗？这可能会导致场景显示异常。",
+            )
+            
+            reply = QMessageBox.warning(
+                self,
+                self._t("project_panel.dialog.delete.in_use.title", "资源正在使用中"),
+                msg,
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                QMessageBox.StandardButton.No
+            )
+        else:
+            reply = QMessageBox.question(
+                self,
+                self._t("project_panel.dialog.delete.confirm.title", "确认删除"),
+                self._t("project_panel.dialog.delete.confirm.content", "确定要删除 '{name}' 吗？").format(
+                    name=os.path.basename(asset_path)
+                ),
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                QMessageBox.StandardButton.No
+            )
+        
+        if reply == QMessageBox.StandardButton.Yes:
+            try:
+                if os.path.isfile(asset_path):
+                    os.remove(asset_path)
+                elif os.path.isdir(asset_path):
+                    import shutil
+                    shutil.rmtree(asset_path)
+                logger.info("已删除资源: %s", asset_path)
+                self._refresh_folder()
+                
+                # 通知其它组件资源已删除
+                self.editor_context.event_bus.publish("asset_deleted", {"path": asset_path})
+            except Exception as e:
+                QMessageBox.critical(
+                    self,
+                    self._t("dialog.error.title", "错误"),
+                    self._t("project_panel.dialog.delete.failed", "删除失败: {error}").format(error=e),
+                )
+
+    def _check_asset_usage(self, asset_path: str) -> List[tuple]:
+        """检查资源在当前场景中的使用情况"""
+        usage = []
+        try:
+            from core.VitaLoom.scene.scene_manager import get_scene_manager
+            sm = get_scene_manager()
+            scene_data = sm.get_scene_data()
+            if not scene_data:
+                return usage
+            
+            entities = scene_data.get("entities", [])
+            abs_asset_path = os.path.abspath(asset_path).replace("\\", "/")
+            
+            for entity in entities:
+                # 检查 sprite_path
+                sprite_path = entity.get("sprite_path")
+                if sprite_path:
+                    abs_sprite_path = os.path.abspath(sprite_path).replace("\\", "/")
+                    if abs_sprite_path == abs_asset_path:
+                        usage.append((entity.get("id"), entity.get("name", self._t("project_panel.unnamed", "未命名"))))
+                        continue
+                
+                # 检查 prefab_path
+                prefab_path = entity.get("prefab_path")
+                if prefab_path:
+                    abs_prefab_path = os.path.abspath(prefab_path).replace("\\", "/")
+                    if abs_prefab_path == abs_asset_path:
+                        usage.append((entity.get("id"), entity.get("name", self._t("project_panel.unnamed", "未命名"))))
+                        continue
+        except Exception as e:
+            logger.warning("检查资源使用情况失败: %s", e)
+            
+        return usage
+
+
+# 为了向后兼容，保留ComponentEditorWidget作为别名
+ComponentEditorWidget = ProjectPanel

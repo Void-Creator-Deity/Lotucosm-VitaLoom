@@ -1,0 +1,20 @@
+{
+  "name": "pvaec_homeostasis",
+  "notes": "PS 双循环：每 tick PVAEC 六步 + 每 N tick 世代编排。内稳态验证用 energy/health。",
+  "ticks": 300,
+  "seed": 42,
+  "pond_size": [640, 480],
+  "max_population": 32,
+  "initial_organisms": 12,
+  "initial_components": 0,
+  "evolution_generation_interval": 60,
+  "enable_generation_orchestrator": true,
+  "enable_pvaec_cycle_per_tick": true,
+  "equip_sensor_actuator": true,
+  "equip_pvaec_engine": false,
+  "snapshot_interval": 15,
+  "output_dir": "data/experiment_runs",
+  "selection_pressure": 0.55,
+  "elitism_rate": 0.12,
+  "mutation_rate": 0.04
+}

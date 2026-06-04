@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "registries": [
+    {
+      "name": "builtin",
+      "type": "file",
+      "path": "builtin/package_index.json"
+    }
+  ]
+}
+

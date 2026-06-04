@@ -1,99 +1,92 @@
-"""AI生命体模拟系统主入口 - 现代化GUI启动器"""
+"""Lotucosm-VitaLoom 主入口：注入 sys.path 并启动 EditorKernel。
 
+职责: 解析 project_root、可选 VITALOOM_DEBUG_STARTUP 写 .cursor/debug.log。
+时机: run_editor.bat / python main.py；插件目录由本文件传入 PluginLoader。
+排错: 闪退 → VITALOOM_DEBUG_STARTUP=1；跳过启动打开项目 → VITALOOM_SKIP_AUTO_OPEN=1；插件缺失 → core/VitaLoom/README.md。
+"""
+
+import json
+import os
 import sys
+import time
+
+
+if sys.stdout and hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if sys.stderr and hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
+project_root = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, project_root)
+
+STARTUP_DEBUG = os.environ.get("VITALOOM_DEBUG_STARTUP", "0") == "1"
+
+
+def _startup_log(message: str, **data):
+    if not STARTUP_DEBUG:
+        return
+    log_dir = os.path.join(project_root, ".cursor")
+    os.makedirs(log_dir, exist_ok=True)
+    log_path = os.path.join(log_dir, "debug.log")
+    payload = {
+        "message": message,
+        "data": data,
+        "timestamp": int(time.time() * 1000),
+    }
+    with open(log_path, "a", encoding="utf-8") as f:
+        f.write(json.dumps(payload, ensure_ascii=False) + "\n")
 
 
 def main():
-    """主函数"""
+    """主函数 - 启动插件化编辑器内核"""
+    print("🌌 VitaLoom Engine - 极简内核启动中...")
+    _startup_log("main() 开始执行")
+
     try:
-        # 导入并运行现代化GUI启动器
-        from ai_organism.launcher.ai_organism_launcher import main as launcher_main
-        launcher_main()
+        from core.VitaLoom.kernel import EditorKernel
+        from core.VitaLoom.ui.splash_screen import finish_splash, show_vitaloom_splash, splash_message
+        from PyQt6 import QtWidgets
+
+        _startup_log("核心模块导入完成")
+        app = QtWidgets.QApplication(sys.argv)
+        splash = show_vitaloom_splash(app)
+        splash_message(splash, "初始化织机内核…", app)
+
+        kernel = EditorKernel()
+        splash_message(splash, "加载官方插件与用户扩展…", app)
+
+        print("📦 正在按分层策略加载插件...")
+        kernel.load_plugins_layered(
+            {
+                "official_mod": ["builtin/editor_extensions"],
+                "user_mod": ["plugins"],
+            }
+        )
+        splash_message(splash, "恢复布局与项目…", app)
+        kernel.show()
+        finish_splash(splash, kernel)
+
+        print("✅ VitaLoom Engine 启动成功！")
+        sys.exit(app.exec())
     except ImportError as e:
-        print(f"错误: 无法导入启动器 - {e}")
-        print("请确保所有依赖已安装，或模块文件存在")
-        
-        # 降级到命令行模式
-        print("\n正在切换到命令行模式...")
-        
-        # 这里直接实现命令行模式，避免依赖其他文件
-        def print_menu():
-            print("=" * 60)
-            print("欢迎使用 AI生命体模拟系统")
-            print("=" * 60)
-            print("1. 运行 Tool继承算法模拟器")
-            print("   - 模拟AI生命体通过工具学习和记忆遗传的进化过程")
-            print("   - 可视化展示生物的结构和行为")
-            print("2. 运行 AI生命体编辑器")
-            print("   - 基于PyQt6的可视化编辑器")
-            print("   - 支持创建和编辑AI生命体的结构和属性")
-            print("3. 退出系统")
-            print("=" * 60)
-        
-        def run_tool_simulation():
-            print("\n正在启动 Tool继承算法模拟器...")
-            try:
-                from ai_organism.simulation import inheritance_simulation
-                inheritance_simulation.main()
-            except ImportError as e:
-                print(f"\n错误: 无法导入Tool继承算法模拟器模块 - {e}")
-                print("请确保所有依赖已安装，或模块文件存在")
-            except Exception as e:
-                print(f"\n错误: Tool继承算法模拟器运行失败 - {e}")
-                import traceback
-                traceback.print_exc()
-        
-        def run_organism_editor():
-            print("\n正在启动 AI生命体编辑器...")
-            try:
-                from ai_organism.editor.ui import pyqt_organism_editor
-                pyqt_organism_editor.main()
-            except ImportError as e:
-                print(f"\n错误: 无法导入AI生命体编辑器模块 - {e}")
-                print("请确保PyQt6已安装，或模块文件存在")
-            except Exception as e:
-                print(f"\n错误: AI生命体编辑器运行失败 - {e}")
-                import traceback
-                traceback.print_exc()
-        
-        while True:
-            print_menu()
-            choice = input("请输入您的选择 (1-3): ")
-            
-            if not choice.isdigit():
-                print("\n错误: 请输入数字 (1-3)！")
-                continue
-            
-            choice_int = int(choice)
-            
-            if choice_int == 1:
-                run_tool_simulation()
-            elif choice_int == 2:
-                run_organism_editor()
-            elif choice_int == 3:
-                print("\n感谢使用AI生命体模拟系统，再见！")
-                sys.exit(0)
-            else:
-                print("\n错误: 请输入1-3之间的数字！")
-                continue
-            
-            while True:
-                again = input("\n是否继续使用其他功能？ (y/n): ")
-                if again.lower() in ["y", "n"]:
-                    break
-                else:
-                    print("\n错误: 请输入 'y' 或 'n'！")
-            
-            if again.lower() != "y":
-                print("\n感谢使用AI生命体模拟系统，再见！")
-                break
-    except Exception as e:
-        print(f"错误: 启动器运行失败 - {e}")
+        _startup_log("ImportError 捕获", error=str(e), error_type=type(e).__name__)
+        print(f"❌ 错误: 无法导入内核 - {e}")
+        print("💡 提示: 请检查 core.VitaLoom.kernel 模块是否存在")
         import traceback
+
+        traceback.print_exc()
+        sys.exit(1)
+    except SystemExit:
+        raise
+    except Exception as e:
+        _startup_log("Exception 捕获", error=str(e), error_type=type(e).__name__)
+        print(f"❌ 错误: 启动内核失败 - {e}")
+        import traceback
+
         traceback.print_exc()
         sys.exit(1)
 
 
 if __name__ == "__main__":
+    # 当脚本直接运行时，调用main函数
     main()
-

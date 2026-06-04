@@ -1,0 +1,184 @@
+{
+  "schema_version": 2,
+  "artifact_schema": {
+    "type": "file|url",
+    "path": "本地文件路径（可选）",
+    "url": "远程 URL（可选）",
+    "sha256": "zip 文件的 sha256（hex 字符串）",
+    "signature": "Ed25519 签名（base64 字符串），消息=zip 内容 sha256 digest 的原始字节",
+    "public_key_pem": "Ed25519 公钥（PEM 字符串，可选；为空时将尝试读取 builtin/package_public_key.pem）"
+  },
+  "packages": [
+    {
+      "id": "vitalloom.core.platform",
+      "display_name": "Core Platform (Lotucosm + VitaLoom)",
+      "display_name_zh": "核心平台包（莲池 + 织机）",
+      "version": "1.0.0",
+      "category": "core",
+      "status": "required",
+      "description": "平台内核：莲池运行时 (core/Lotucosm) 与织机编辑器框架 (core/VitaLoom)。无此包无法启动编辑器或加载 .pond。",
+      "dependencies": [],
+      "conflicts": [],
+      "source": "core",
+      "provides": [
+        "lotucosm.cosmos",
+        "lotucosm.pond",
+        "lotucosm.entity",
+        "lotucosm.component",
+        "lotucosm.system",
+        "vitalloom.editor_kernel",
+        "vitalloom.simulation_transport",
+        "vitalloom.scene_manager",
+        "core.api",
+        "core.plugin.interfaces"
+      ],
+      "physical_roots": ["core/Lotucosm", "core/VitaLoom", "core/api", "core/plugin"],
+      "plugins": []
+    },
+    {
+      "id": "vitalloom.editor_essentials",
+      "display_name": "Editor Essentials (Loom UI)",
+      "display_name_zh": "织机编辑器基础包",
+      "version": "1.0.0",
+      "category": "official",
+      "status": "default",
+      "description": "官方编辑器基础体验：UI、布局、项目、检视器、场景/游戏视口入口、包管理、本地化。",
+      "dependencies": ["vitalloom.core.platform>=1.0.0"],
+      "conflicts": ["vitalloom.editor_essentials_alt"],
+      "source": "builtin",
+      "provides": [
+        "editor.dock.hierarchy",
+        "editor.dock.inspector",
+        "editor.dock.project",
+        "editor.dock.console",
+        "editor.viewport.scene",
+        "editor.package_manager"
+      ],
+      "physical_roots": ["builtin/editor_extensions"],
+      "plugins": [
+        "LocalizationPlugin",
+        "LocalizationUIPlugin",
+        "UnityDarkThemePlugin",
+        "StandardUIPlugin",
+        "HierarchyPlugin",
+        "InspectorPlugin",
+        "ProjectBrowserPlugin",
+        "ConsolePlugin",
+        "SceneViewportPlugin",
+        "GameViewportPlugin",
+        "PluginManagerPlugin",
+        "PackageManagerPlugin",
+        "EditorWorkflowPlugin",
+        "DownloaderPlugin"
+      ]
+    },
+    {
+      "id": "vitalloom.lotuspond.runtime",
+      "display_name": "Lotus Pond Runtime",
+      "display_name_zh": "莲池运行时包",
+      "version": "1.0.0",
+      "category": "official",
+      "status": "default",
+      "description": "莲池官方细胞能力：组件库、实体类型、环境/遗传/序列化/PS 演示模拟。SR 与 PS 共用类型名。",
+      "dependencies": ["vitalloom.editor_essentials>=1.0.0"],
+      "conflicts": [],
+      "source": "builtin",
+      "provides": [
+        "component.sensor",
+        "component.actuator",
+        "component.membrane",
+        "component.pvaec_engine",
+        "entity.organism",
+        "system.pond_serializer",
+        "system.environment"
+      ],
+      "physical_roots": [
+        "builtin/components",
+        "builtin/entity_types",
+        "builtin/systems"
+      ],
+      "plugins": ["CellSimulationPlugin"]
+    },
+    {
+      "id": "vitalloom.pvaec.simulation",
+      "display_name": "PVAEC Simulation",
+      "display_name_zh": "PVAEC 神经元模拟包",
+      "version": "1.0.0",
+      "category": "official",
+      "status": "default",
+      "description": "感知-验证-行动循环编排、PvaecScript 契约、生态/模拟控制面板。游戏逻辑脚本在用户工程 scripts/。",
+      "dependencies": ["vitalloom.lotuspond.runtime>=1.0.0"],
+      "conflicts": [],
+      "source": "builtin",
+      "provides": [
+        "pvaec.orchestrator",
+        "pvaec.script_base",
+        "sr.tick_context"
+      ],
+      "physical_roots": [
+        "builtin/systems/pvaec_orchestrator.py",
+        "core/Lotucosm/pvaec_script.py",
+        "core/Lotucosm/scene_runtime_context.py"
+      ],
+      "plugins": ["EcologyDashboardPlugin", "SimulationControlPlugin"]
+    },
+    {
+      "id": "vitalloom.engine.sr2d",
+      "display_name": "2D SR Engine",
+      "display_name_zh": "2D 场景运行时包",
+      "version": "1.0.0",
+      "category": "official",
+      "status": "default",
+      "description": "2D 场景播放：GameViewport tick、SR 膜拓扑、官方 sr_physics2d 刚体/弹簧、程序化渲染。",
+      "dependencies": ["vitalloom.lotuspond.runtime>=1.0.0"],
+      "conflicts": [],
+      "source": "core+builtin",
+      "provides": [
+        "sr.game_viewport",
+        "sr.physics2d",
+        "sr.membrane_topology",
+        "sr.link_physics",
+        "sr.visual_renderer"
+      ],
+      "physical_roots": [
+        "core/VitaLoom/viewports/game_viewport.py",
+        "core/VitaLoom/viewports/sr_visual_renderer.py",
+        "core/Lotucosm/sr_membrane_topology.py",
+        "core/Lotucosm/sr_link_physics.py",
+        "core/Lotucosm/sr_physics2d",
+        "core/Lotucosm/scene_runtime"
+      ],
+      "plugins": []
+    },
+    {
+      "id": "vitalloom.engine.3d",
+      "display_name": "3D World Engine",
+      "display_name_zh": "3D 引擎包（规划）",
+      "version": "0.0.0",
+      "category": "official",
+      "status": "planned",
+      "description": "预留：真 3D 世界视口、相机与空间物理。当前仓库未实现独立 3D tick，请勿依赖。",
+      "dependencies": ["vitalloom.engine.sr2d>=1.0.0"],
+      "conflicts": [],
+      "source": "planned",
+      "provides": [],
+      "physical_roots": [],
+      "plugins": []
+    },
+    {
+      "id": "vitalloom.lotuspond.cell",
+      "display_name": "LotusPond Cell Pack",
+      "display_name_zh": "莲池细胞编辑包",
+      "version": "1.0.0",
+      "category": "official",
+      "status": "optional",
+      "description": "细胞内 PS 组件图编辑与演示（CellEditor / CellSimulation）。主世界 SR 演示可不装。",
+      "dependencies": ["vitalloom.editor_essentials>=1.0.0"],
+      "conflicts": [],
+      "source": "builtin",
+      "provides": ["editor.viewport.cell", "ps.cell_simulation"],
+      "physical_roots": ["builtin/editor_extensions/cell_editor_plugin.py"],
+      "plugins": ["CellEditorPlugin"]
+    }
+  ]
+}

@@ -1,0 +1,268 @@
+{
+  "name": "迷你地牢 · 第一课",
+  "version": "1.3",
+  "sr_game_mode": true,
+  "sr_demo_legend": {
+    "title": "教程 · Roguelike",
+    "lines": [
+      "WASD 移动 · 鼠标瞄准 · 左键/Space 挥砍",
+      "贴图 manifest.json · 开局随机障碍柱（proc_seed 可改）",
+      "清史莱姆后抵近右侧出口 · HUD 提示，模拟持续运行",
+      "HP 归零 Game Over · 点 ⏹ 结束",
+      "路引 #12345（Ctrl+Shift+C 复制 seed）"
+    ]
+  },
+  "pond_config": {
+    "name": "教程地牢",
+    "size": [
+      920,
+      620
+    ],
+    "initial_components": 0,
+    "initial_organisms": 0,
+    "proc_seed": 12345,
+    "proc_obstacles": 5,
+    "sr_physics2d": {
+      "restitution": 0.38,
+      "game_contact_iterations": 4,
+      "game_mover_padding": 6.0,
+      "max_speed": 280.0
+    }
+  },
+  "sr_play_goals": {
+    "player_id": "player_rl",
+    "hud_victory_key": "dungeon_clear",
+    "hud_defeat_key": "player_dead",
+    "pause_on_complete": false,
+    "victory_title_zh": "地牢试炼完成",
+    "victory_banner_zh": "你清光了史莱姆并抵达出口。",
+    "defeat_title_zh": "游戏结束",
+    "defeat_banner_zh": "冒险者 HP 归零。",
+    "hint_zh": "先点击游戏画布，再按 WASD"
+  },
+  "sr_pause_on_extinction": false,
+  "entities": [
+    {
+      "id": "player_rl",
+      "name": "冒险者",
+      "type": "game_actor",
+      "position": [
+        320.0,
+        310.0
+      ],
+      "radius": 22.0,
+      "scripts": [
+        {
+          "name": "player_controller",
+          "type": "PlayerController",
+          "properties": {}
+        }
+      ],
+      "sr_visual": {
+        "sprite": "player",
+        "flip_x": false
+      }
+    },
+    {
+      "id": "level_01",
+      "name": "关卡导演",
+      "type": "game_prop",
+      "position": [
+        0.0,
+        0.0
+      ],
+      "radius": 1.0,
+      "scripts": [
+        {
+          "name": "game_director",
+          "type": "GameDirector",
+          "properties": {}
+        }
+      ],
+      "sr_visual": {
+        "sprite": "wall",
+        "alpha": 0.9
+      },
+      "pinned": true
+    },
+    {
+      "id": "enemy_01",
+      "name": "史莱姆·甲",
+      "type": "game_actor",
+      "position": [
+        480.0,
+        260.0
+      ],
+      "radius": 16.0,
+      "scripts": [
+        {
+          "name": "enemy_chaser",
+          "type": "EnemyChaser",
+          "properties": {}
+        }
+      ],
+      "sr_visual": {
+        "sprite": "slime"
+      }
+    },
+    {
+      "id": "enemy_02",
+      "name": "史莱姆·乙",
+      "type": "game_actor",
+      "position": [
+        520.0,
+        360.0
+      ],
+      "radius": 16.0,
+      "scripts": [
+        {
+          "name": "enemy_chaser",
+          "type": "EnemyChaser",
+          "properties": {}
+        }
+      ],
+      "sr_visual": {
+        "sprite": "slime"
+      }
+    },
+    {
+      "id": "enemy_03",
+      "name": "史莱姆·丙",
+      "type": "game_actor",
+      "position": [
+        420.0,
+        400.0
+      ],
+      "radius": 16.0,
+      "scripts": [
+        {
+          "name": "enemy_chaser",
+          "type": "EnemyChaser",
+          "properties": {}
+        }
+      ],
+      "sr_visual": {
+        "sprite": "slime"
+      }
+    },
+    {
+      "id": "exit_gate",
+      "name": "出口",
+      "type": "game_prop",
+      "position": [
+        760.0,
+        310.0
+      ],
+      "radius": 20.0,
+      "scripts": [],
+      "sr_visual": {
+        "sprite": "exit"
+      }
+    },
+    {
+      "id": "wall_n1",
+      "name": "墙",
+      "type": "game_prop",
+      "position": [
+        200.0,
+        80.0
+      ],
+      "radius": 28.0,
+      "scripts": [],
+      "sr_visual": {
+        "sprite": "wall",
+        "alpha": 0.9
+      },
+      "pinned": true
+    },
+    {
+      "id": "wall_n2",
+      "name": "墙",
+      "type": "game_prop",
+      "position": [
+        460.0,
+        80.0
+      ],
+      "radius": 28.0,
+      "scripts": [],
+      "sr_visual": {
+        "sprite": "wall",
+        "alpha": 0.9
+      },
+      "pinned": true
+    },
+    {
+      "id": "wall_n3",
+      "name": "墙",
+      "type": "game_prop",
+      "position": [
+        720.0,
+        80.0
+      ],
+      "radius": 28.0,
+      "scripts": [],
+      "sr_visual": {
+        "sprite": "wall",
+        "alpha": 0.9
+      },
+      "pinned": true
+    },
+    {
+      "id": "wall_s1",
+      "name": "墙",
+      "type": "game_prop",
+      "position": [
+        200.0,
+        540.0
+      ],
+      "radius": 28.0,
+      "scripts": [],
+      "sr_visual": {
+        "sprite": "wall",
+        "alpha": 0.9
+      },
+      "pinned": true
+    },
+    {
+      "id": "wall_s2",
+      "name": "墙",
+      "type": "game_prop",
+      "position": [
+        460.0,
+        540.0
+      ],
+      "radius": 28.0,
+      "scripts": [],
+      "sr_visual": {
+        "sprite": "wall",
+        "alpha": 0.9
+      },
+      "pinned": true
+    },
+    {
+      "id": "wall_s3",
+      "name": "墙",
+      "type": "game_prop",
+      "position": [
+        720.0,
+        540.0
+      ],
+      "radius": 28.0,
+      "scripts": [],
+      "sr_visual": {
+        "sprite": "wall",
+        "alpha": 0.9
+      },
+      "pinned": true
+    }
+  ],
+  "connections": [],
+  "viewport_state": {
+    "pan_offset": [
+      0.0,
+      0.0
+    ],
+    "zoom_level": 1.0
+  },
+  "modified_at": "2026-06-03 22:20:03"
+}

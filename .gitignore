@@ -7,4 +7,36 @@ wheels/
 *.egg-info
 
 # Virtual environments
-.venv
+.venv/
+venv/
+
+# Tool caches
+.mypy_cache/
+.pytest_cache/
+
+# AI / IDE local artifacts (not part of release)
+.trae/
+.cursor/
+
+# Local editor state (copy from editor_config.json.example)
+data/system/editor_config.json
+
+# Runtime logs and temp outputs (SR sessions, episode telemetry)
+logs/
+*.log
+run_log.txt
+run_out.txt
+full_log.txt
+temp_err.txt
+err.json
+
+# Local history snapshots
+.history/
+
+# 内部维护工具输出（勿提交）
+docs/legacy_gap_matrix.csv
+docs/legacy_gap_matrix.md
+
+# Pytest 临时工程（tests 可能在 projects/ 下创建）
+projects/_pytest_*/
+projects/_maint_test_*/

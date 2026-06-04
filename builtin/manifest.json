@@ -1,0 +1,47 @@
+{
+  "name": "VitaLoom",
+  "version": "1.0.0",
+  "description": "官方内置模组 - 提供基础组件、系统和实体类型",
+  "author": "Lotucosm Team",
+  "core_api_version": "1.0.0",
+  "dependencies": [],
+  "components": [
+    "sensors",
+    "actuators",
+    "hybrid",
+    "membrane",
+    "PVAECEngine"
+  ],
+  "systems": [
+    "pvaec_orchestrator",
+    "environment",
+    "inheritance",
+    "mutation",
+    "selection",
+    "simulation",
+    "pond_serializer",
+    "pond_saver"
+  ],
+  "entity_types": [
+    "organism",
+    "intelligent_organism",
+    "simple_organism",
+    "component_acquisition",
+    "reproduction"
+  ],
+  "editor_extensions": [
+    "scene_viewport_plugin",
+    "inspector_plugin",
+    "hierarchy_plugin",
+    "project_browser_plugin",
+    "game_viewport_plugin",
+    "ecology_dashboard_plugin",
+    "plugin_manager_plugin",
+    "package_manager_plugin",
+    "console_plugin",
+    "standard_ui_plugin",
+    "unity_dark_theme_plugin",
+    "downloader_plugin",
+    "editor_workflow_plugin"
+  ]
+}

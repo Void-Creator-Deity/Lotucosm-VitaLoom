@@ -1,0 +1,27 @@
+{
+  "name": "织机教程 · 迷你 Roguelike",
+  "description": "莲池生命织机引擎教学：ScriptBase + SR，非 PVAEC",
+  "version": "1.0.0",
+  "sr_engine_mode": "game",
+  "presentation": {
+    "tagline_zh": "用织机做 2D 小游戏 · 固定地牢",
+    "editor_entry_hint_zh": "打开 dungeon_01.pond → ▶ → 点击画布 → WASD 移动，清史莱姆后靠出口",
+    "default_speed": 1.0
+  },
+  "enabled_plugins": [],
+  "recommended_packages": [
+    "vitalloom.core.platform",
+    "vitalloom.editor_essentials",
+    "vitalloom.lotuspond.runtime",
+    "vitalloom.engine.sr2d"
+  ],
+  "active_scene": "dungeon_01.pond",
+  "created_at": "2026-05-21 12:00:00",
+  "modified_at": "2026-05-21 12:00:00",
+  "settings": {
+    "auto_save": true,
+    "auto_save_interval": 300,
+    "backup_enabled": true,
+    "backup_count": 3
+  }
+}
