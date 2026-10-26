@@ -1,13 +1,14 @@
 [project]
 name = "lotucosm-vitaloom"
 version = "1.0.0"
-description = "莲池生命织机 (Lotucosm + VitaLoom) with PVAEC simulation extension"
+description = "Lotucosm-VitaLoom living-world editor packaged as a FrameCore plugin"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.11"
 license = { text = "MIT" }
 authors = [{ name = "Lotucosm-VitaLoom Contributors" }]
 classifiers = [
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Operating System :: OS Independent",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
@@ -23,11 +24,21 @@ dependencies = [
 dev = [
     "pytest>=8.0",
     "flake8>=7.3.0",
+    "pyinstaller>=6.0",
+    "cryptography>=42.0",
+]
+native-build = [
+    "cmake>=3.18,<4",
+    "ninja>=1.11",
+    "pybind11>=2.12",
+    "scikit-build-core>=0.9",
 ]
 
 [project.urls]
-Homepage = "https://github.com/your-org/lotucosm-vitaloom"
-Documentation = "https://github.com/your-org/lotucosm-vitaloom/blob/main/docs/INDEX.md"
+Homepage = "https://github.com/Void-Creator-Deity/Lotucosm-VitaLoom"
+Repository = "https://github.com/Void-Creator-Deity/Lotucosm-VitaLoom"
+Documentation = "https://github.com/Void-Creator-Deity/Lotucosm-VitaLoom/blob/main/docs/INDEX.md"
+Issues = "https://github.com/Void-Creator-Deity/Lotucosm-VitaLoom/issues"
 
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
@@ -35,7 +46,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["core*", "builtin*"]
+include = ["FrameCore*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -1,0 +1,19 @@
+{
+  "name": "PVAEC · 细胞演化（unified_pond 试点）",
+  "description": "在标准细胞演化工程上启用 unified_pond：SR 显示 + PS Pond 真源。将本文件字段合并到 project.json 或整文件替换后试验。",
+  "runtime_mode": "unified_pond",
+  "developmental_profile": {
+    "enabled": true,
+    "initial_stage": 0,
+    "plasticity_window": 120,
+    "plasticity_penalty": true
+  },
+  "social": {
+    "enabled": true
+  },
+  "evolution_defaults": {
+    "developmental_ladder_enabled": true,
+    "social_learning_enabled": true
+  },
+  "_note": "其余字段与 project.json 相同；打开工程 → ▶ 运行 → 生态 Dock 查看 bridged_organism_count"
+}

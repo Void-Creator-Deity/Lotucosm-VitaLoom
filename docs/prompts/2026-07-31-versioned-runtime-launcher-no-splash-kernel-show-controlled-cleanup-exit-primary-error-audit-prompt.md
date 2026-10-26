@@ -1,0 +1,5 @@
+# Fresh-session handoff: E147 complete
+
+E147 is closed. The no-splash Kernel-show controlled-cleanup test exposed a real defect: secondary `SystemExit(218)` from `dismiss_splash(None)` masked primary `SystemExit(217)`. The Launcher cleanup handler now catches `(Exception, SystemExit)`, logs the secondary failure warning-only, and preserves the original primary exit. KeyboardInterrupt remains outside both cleanup classifications. Evidence: focused 1 passed after correction, versioned-runtime composition 69 passed, smoke plugins=13/20, four guards OK, signature 2 passed, scoped compile and hygiene passed.
+
+The only next gate is E148: apply a direct splash-enabled Kernel-show regression to the corrected cleanup classification, proving an owned splash cleanup SystemExit cannot mask the primary Kernel-show SystemExit and the normal pre-show splash sequence is preserved.

@@ -1,80 +1,62 @@
-# 织机引擎教学 · 迷你 Roguelike
+# 织机教程 · 迷你 Roguelike
 
-工程：[projects/织机教程-迷你Roguelike](../projects/织机教程-迷你Roguelike/)
+工程：`workspace/projects/samples/织机教程-迷你Roguelike`
 
-## 产品边界
+## 定位
 
-| | 织机教程 | PVAEC · 细胞演化 |
-|---|----------|------------------|
-| 官方包 | `vitalloom.core.platform` + `editor_essentials` + `lotuspond.runtime` + `engine.sr2d` | 另加 `pvaec.simulation` |
-| 用途 | 学做游戏（输入、贴图、ScriptBase） | 学 AI 演化 / 膜拓扑 |
-| 通关 | HUD 横幅，**模拟继续**（`pause_on_complete: false`） | 演示目标达成可 **自动暂停** |
+这是莲池织机的 **SR 2D 游戏教程工程**。它展示：
 
-`vitalloom.pvaec.simulation` 是**官方研究扩展**，不是做普通 2D 游戏的必装项。
+- `ScriptBase.sr_step(ctx, dt)` 游戏脚本；
+- 键盘/鼠标输入；
+- sprite manifest 与动画；
+- 2D 接触物理；
+- 关卡胜负 HUD 键。
 
-## 学习路径
+它不是 PVAEC 工程，不要求 `vitalloom.pvaec.simulation`。
 
-### 课节 1 · 输入与瞄准
+## 与 PVAEC 工程的边界
 
-- 画布捕获键盘 + 鼠标 → `SceneRuntimeTickContext.input`
-- `ctx.input.keys_down`（WASD / 方向键 / Space）
-- `ctx.input.mouse_scene_xy`、`mouse_left_clicked` — 鼠标瞄准 + 左键挥砍
-- 参考：[player_controller.py](../projects/织机教程-迷你Roguelike/scripts/player_controller.py)
+| 项目 | 能力包 | 运行语义 | 结束语义 |
+|---|---|---|---|
+| 织机教程 · 迷你 Roguelike | `core.platform` + `editor_essentials` + `lotuspond.runtime` + `engine.sr2d` | 游戏输入、战斗、出口 | 清场并到出口后通关暂停；HP 归零失败暂停 |
+| PVAEC · 细胞演化 | 另加 `pvaec.simulation` | 连续演化、内稳态、膜/趋化 | 演示目标只提示，不自动打断演化 |
 
-### 课节 2 · 实体视觉
+## 玩法闭环
 
-```json
-"sr_visual": { "sprite": "player", "anim": "player_walk", "flip_x": false, "alpha": 1.0 }
-```
+1. 点击游戏画布获取输入焦点。
+2. WASD / 方向键移动。
+3. 鼠标瞄准，左键或 Space 攻击。
+4. 清空 `enemy_*`。
+5. 抵近 `exit_gate`。
+6. `game_director.py` 设置 `sr_debug_hud["dungeon_clear"] = 1`。
+7. `sr_play_goals.hud_victory_key = "dungeon_clear"` 触发 Victory，并暂停本局。
 
-- [assets/manifest.json](../projects/织机教程-迷你Roguelike/assets/manifest.json) 定义 `sprites` / `animations`
-- 脚本改 `get_visual().anim` / `flip_x`，或 `self.set_sprite(...)`
+失败条件：
 
-### 课节 3 · 战斗反馈
+1. 敌人贴近玩家造成持续伤害。
+2. `player_controller.py` 将 HP 降到 0。
+3. 设置 `sr_debug_hud["player_dead"] = 1`。
+4. `sr_play_goals.hud_defeat_key = "player_dead"` 触发 Game Over，并暂停本局。
 
-- `ctx.damage_requests` — 宿主扣血，HP 归零后移除
-- `ctx.fx_requests` — 飘字 / 挥砍弧（`sr_game_effects.py`）
-- 扇形判定：`core/Lotucosm/sr_game_combat.py`
-
-### 课节 4 · 关卡与路引
-
-- `pond_config.proc_seed` / `proc_obstacles` — 开局程序化障碍（同 seed 布局一致）
-- [game_director.py](../projects/织机教程-迷你Roguelike/scripts/game_director.py) 挂 `level_01` 实体，`spawn_requests` 刷墙
-- `sr_play_goals.hud_victory_key` + `hud_defeat_key`（`player_dead`）
-
-### 课节 4b · 2D 物理（与 PVAEC 共用）
-
-官方 **`sr.physics2d`**（`SrPhysics2DWorld`）同时服务本教程与 PVAEC 主世界，**无需另装插件**：
-
-| 工程 | 自动模式 | 接触 |
-|------|----------|------|
-| 织机教程（`sr_game_mode: true`） | `GAME` | 边墙 AABB、`proc_wall_*` 柱、玩家/史莱姆互撞 |
-| PVAEC 主世界 | `PVAEC` | 细胞圆-圆、营养/场域锚、膜弹簧 |
-
-在 `pond_config.sr_physics2d` 调参（教程常用 `game_contact_iterations`、`max_speed`）：
+## 关键场景字段
 
 ```json
-"sr_physics2d": {
-  "restitution": 0.38,
-  "game_contact_iterations": 4,
-  "game_mover_padding": 6.0,
-  "max_speed": 280.0
+{
+  "sr_game_mode": true,
+  "sr_play_goals": {
+    "player_id": "player_rl",
+    "hud_victory_key": "dungeon_clear",
+    "hud_defeat_key": "player_dead",
+    "pause_on_complete": true
+  },
+  "sr_pause_on_extinction": false
 }
 ```
 
-详见 [docs/sr_physics2d.md](sr_physics2d.md)。
-
-### 课节 5 · 通关语义
-
-- 清史莱姆 + 抵近出口 → `dungeon_clear=1` → **Victory 横幅，不暂停**
-- HP 归零 → `player_dead=1` → **Game Over 并暂停**
+`pause_on_complete: true` 在这个工程里是有意的：教程游戏需要明确的通关结算，不应该只闪横幅继续空跑。
 
 ## 验收
 
-- 点击画布 → WASD + 鼠标瞄准 → 左键/Space 挥砍（扇形朝鼠标）
-- 清怪 + 出口 → Victory 横幅，▶ 仍在跑；HP 归零才停
-- `pytest tests/test_engine_tutorial_* tests/test_sr_game_* tests/test_sr_input_state.py -q`
-
-## 明确不做（scope）
-
-五层换关、遗物三选一、后端存档、Tilemap 编辑器 — 见 Rift Delve 策划案「明确不做」；教程保持单层 ScriptBase 教学。
+```powershell
+python -B -m pytest -q -p no:cacheprovider tests\test_engine_tutorial_roguelike_scene.py tests\test_sr_game_defaults.py tests\test_sr_game_scene.py tests\test_game_viewport_play_goals.py tests\test_sr_play_goals_hud_victory.py
+```

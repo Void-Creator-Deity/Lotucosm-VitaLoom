@@ -1,6 +1,6 @@
 # Lotucosm 核心排错索引
 
-运行 SR/PS 出错时，按现象查下表；编辑器问题见 [core/VitaLoom/README.md](../core/VitaLoom/README.md)。
+运行 SR/PS 出错时，按现象查下表；编辑器问题见 [README_VITALOOM.md](guides/README_VITALOOM.md)。
 
 ## 现象 → 优先查看
 
@@ -18,10 +18,10 @@
 | SR 中枢不动 / 速度封顶异常 | `CentralBrainPvaec.act`、`MindProfile.max_speed` | `bounds` 宽高 ≤0 时 `think` 返回零加速度 |
 | MindProfile 与场景不一致 | `MindProfile.from_dict`、`.pond` 中 `mind` 字段 | 见 [sr_mind_profile_fields.md](sr_mind_profile_fields.md) |
 | 演化基因未遗传 | `mind_dict_mutate`、`GENE_KEYS` | 仅 `wander_amp`/`gain_high_stress`/`mem_alpha` 三键 |
-| 插件 Dock 未出现 | `IDockProvider`、`PluginLoader`（VitaLoom） | 须实现 `create_dock_widget` + `get_dock_config` |
+| 插件 Dock 未出现 | `LegacyEditorPluginAdapter`、`LayoutManager`（VitaLoom） | 新插件检查 `dock_surface` 与 Adapter-local factory；仅旧插件 fallback 需要 `create_dock_widget` + `get_dock_config` |
 | 事件订阅无回调 | `core/api/events.EventBus.publish` vs `event_system.EventBus.emit` | 两套总线：字符串 `EventType` 与 `Enum EventType`，勿混用 |
 | 用户脚本 `exec` 失败 | `ScriptRuntime.execute`、`get_script_runtime` | 全局注入 `cosmos`/`publish`；异常见日志 `脚本执行失败` |
-| 启动器模式打不开 | `launcher.LauncherApp.run_mode` | GUI 路径依赖 `project_root`；推荐 `main.py` / `run_editor.bat` |
+| 启动器模式打不开 | `main.py` / Hub 启动链路 | GUI 路径依赖 `FRAMECORE_ROOT`、大插件根和 `plugin_manifest.json`；推荐直接运行 `python main.py` |
 
 ## 模块速查
 
@@ -38,6 +38,6 @@
 | `runtime_entities.py` | 按类型字符串在莲池中创建实体 |
 | `sr_mind_profile.py` | SR 中枢可调参数 dataclass |
 | `sr_mind_gene.py` | MindProfile 子集突变 |
-| `sr_central_brain_pvaec.py` | SR 场景中枢 PVAEC 脚本类 |
-| `core/plugin/interfaces.py` | 编辑器插件契约接口 |
+| `workspace/projects/*/scripts/central_brain_pvaec.py` | SR 场景中枢 PVAEC 脚本类（工程内实现） |
+| `core/VitaLoom/kernel/plugin_interfaces.py` | 历史编辑器接口兼容表面；新作者应使用 `IRuntimePlugin` + `editor_contributions` |
 | `core/api/*` | 装饰器、双事件总线、脚本运行时 |

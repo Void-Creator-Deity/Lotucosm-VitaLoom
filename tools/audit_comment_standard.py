@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """注释规范审计：统计缺模块 docstring 的 .py（报告用，不阻断 CI）。
 
-职责: 扫描 core/、builtin/、plugins/、projects/、tests/（可传根目录）。
+职责: 扫描 FrameCore/、workspace/、tools/、tests/（可传根目录）。
 用法: python tools/audit_comment_standard.py [path]
 
 排错: 见 docs/comment_standard.md；金样 sr_membrane_topology.py。
@@ -13,7 +13,18 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-SKIP_PARTS = {".cursor", ".git", "__pycache__", "node_modules", ".history", ".venv", "venv"}
+SKIP_PARTS = {
+    ".cursor",
+    ".git",
+    "__pycache__",
+    "node_modules",
+    ".history",
+    ".venv",
+    "venv",
+    "dist",
+    "build",
+    "tools_legacy",
+}
 SKIP_SUFFIX = (".bak_",)
 
 

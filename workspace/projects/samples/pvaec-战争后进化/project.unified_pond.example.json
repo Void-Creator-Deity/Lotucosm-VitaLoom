@@ -1,0 +1,14 @@
+{
+  "name": "PVAEC · 战争后进化（unified_pond 试点）",
+  "description": "在战争后进化工程上启用 unified_pond：SR 三幕演示 + PS 真源对照。",
+  "runtime_mode": "unified_pond",
+  "developmental_profile": {
+    "enabled": true,
+    "initial_stage": 0,
+    "plasticity_window": 100
+  },
+  "social": {
+    "enabled": false
+  },
+  "_note": "合并到 project.json 后运行；生态 Dock 可看 bridged_organism_count 与 reproduction_events"
+}

@@ -1,0 +1,5 @@
+# E213 Fresh-Session Prompt -- WorldBridge Mapping Ledger Closure and Unified-Runtime Admission Gate
+
+E213 is complete. The deterministic closure review proved all 15 mapping-ledger entries agree with their decision payloads, but it explicitly rejects lossless mapping, tick merge, full unified replay, unified Pond default readiness, and runtime admission. The runtime remains `dual`; unified Pond remains opt-in. Evidence: focused `13 passed in 0.54s`; full offscreen repository baseline using `.venv\python.exe` passed `2087 passed, 34 skipped, 50 subtests passed in 166.11s`.
+
+The next active gate is E214: inventory the real SR and PS tick, queued-input, persistence, and replay boundaries before any unification proposal. Keep every no-claim boundary intact; do not change default runtime behavior or merge loops without deterministic admission evidence.

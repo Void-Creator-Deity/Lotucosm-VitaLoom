@@ -100,7 +100,7 @@ def test_apply_entity_script_property_to_scene_injected_manager() -> None:
 
 def test_inspector_rows_schema_groups_for_evo_central_brain() -> None:
     repo = pathlib.Path(__file__).resolve().parents[1]
-    script_path = repo / "projects" / "pvaec-细胞演化" / "scripts" / "evo_central_brain_pvaec.py"
+    script_path = repo / "workspace" / "projects" / "samples" / "pvaec-细胞演化" / "scripts" / "evo_central_brain_pvaec.py"
     if not script_path.is_file():
         return
     scripts_dir = str(script_path.parent)
@@ -115,7 +115,7 @@ def test_inspector_rows_schema_groups_for_evo_central_brain() -> None:
 
 def test_inspector_rows_schema_sensor_patrol_pvaec() -> None:
     repo = pathlib.Path(__file__).resolve().parents[1]
-    script_path = repo / "projects" / "pvaec-细胞演化" / "scripts" / "sensor_patrol_pvaec.py"
+    script_path = repo / "workspace" / "projects" / "samples" / "pvaec-细胞演化" / "scripts" / "sensor_patrol_pvaec.py"
     if not script_path.is_file():
         return
     scripts_dir = str(script_path.parent)
@@ -127,7 +127,7 @@ def test_inspector_rows_schema_sensor_patrol_pvaec() -> None:
 
 def test_inspector_rows_schema_actuator_pulse_pvaec() -> None:
     repo = pathlib.Path(__file__).resolve().parents[1]
-    script_path = repo / "projects" / "pvaec-细胞演化" / "scripts" / "actuator_pulse_pvaec.py"
+    script_path = repo / "workspace" / "projects" / "samples" / "pvaec-细胞演化" / "scripts" / "actuator_pulse_pvaec.py"
     if not script_path.is_file():
         return
     scripts_dir = str(script_path.parent)

@@ -9,9 +9,18 @@
 | **帧循环 · PVAEC 六步** | `PVAECCycle.run_cycle` ← `Organism.update` | `enable_pvaec_cycle_per_tick=true` 且已挂载 `MemorySystem` | 感知→记忆→行动→执行→验证→再记忆（单体内学习） |
 | **世代循环 · 编排器** | `PVAECOrchestrator.run_cycle` ← `EvolutionRunner` | `Pond.time % evolution_generation_interval == 0` | 感知→变异→行动→适应度→选择/繁殖（替换整代种群） |
 
-二者可单独或同时开启，便于做对照实验（见 `data/experiments/quick_evolution_only.json`）。
+二者可单独或同时开启，便于做对照实验（见 `workspace/experiments/quick_evolution_only.json`）。
 
-## 一键运行（推荐）
+## 一键运行（推荐 · 织机）
+
+1. `python main.py`
+2. **视图 → 面板 → 莲池演化实验**
+3. 选择预设（如 `pvaec_homeostasis_loop.json`）→ 调整参数 → **运行实验**
+4. 点击 **打开导出目录** 查看 `summary.json` 与 `metrics.csv`
+
+「莲池生态」Dock 在实验运行/完成后显示 PS 摘要（与 SR ▶ 播放统计并列）。
+
+## 终端 / CI（备选）
 
 在项目根目录：
 
@@ -19,7 +28,7 @@
 python tools/run_ps_experiment.py
 ```
 
-默认读取 `data/experiments/pvaec_homeostasis_loop.json`，在 `data/experiment_runs/<名称>_<时间>/` 生成：
+默认读取 `workspace/experiments/pvaec_homeostasis_loop.json`，在 `workspace/state/experiment_runs/<名称>_<时间>/` 生成：
 
 - `summary.json` — 配置、最终指标、全程快照
 - `metrics.csv` — 按 `snapshot_interval` 采样的时间序列（可导入 Excel / pandas）
@@ -27,7 +36,7 @@ python tools/run_ps_experiment.py
 常用参数：
 
 ```bash
-python tools/run_ps_experiment.py data/experiments/quick_evolution_only.json
+python tools/run_ps_experiment.py workspace/experiments/quick_evolution_only.json
 python tools/run_ps_experiment.py --ticks 500 --seed 123 --name my_run
 python tools/run_ps_experiment.py --no-export
 ```
@@ -65,19 +74,20 @@ python tools/run_ps_experiment.py --no-export
 
 ## 与编辑器 / SR 的关系
 
-- **PS 实验**（本文）：`Pond` + `Organism`，无 GUI，适合批量与论文式指标。
+- **PS 实验**（本文）：`Pond` + `Organism` + `PsExperimentService`；**主入口为织机「莲池演化实验」Dock**。
 - **SR 主世界**：`GameViewport` + `PvaecScript`，适合场景叙事与可视化；验收见 `tests/test_pvaec_cell_evolution_scripts_smoke.py`。
+- 二者 tick **不合并**（Phase C defer）；可在同一编辑器会话中并行：▶ 看 SR 细胞 + Dock 跑 PS 批实验。
 
 不要在 SR 脚本路径里期待 PS 的 `memory_genes` 世代遗传；代际记忆走 `InheritanceSystem` + 莲池编排器。
 
 ## 维护与回归
 
 ```bash
-python -m pytest tests/test_ps_experiment_runner.py -q
+python -m pytest tests/test_ps_experiment_runner.py tests/test_ps_experiment_service.py -q
 python tools/run_routine_maintenance.py
 ```
 
 ## 延伸阅读
 
-- [README_PVAEC.md](../README_PVAEC.md) — PVAEC 循环与 PS/SR 分工
+- [README_PVAEC.md](guides/README_PVAEC.md) — PVAEC 循环与 PS/SR 分工
 - [sr_extension_guide.md](sr_extension_guide.md) — 扩展 SR 脚本

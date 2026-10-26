@@ -1,0 +1,7 @@
+# E218 Fresh-Session Prompt -- WorldBridge Live Dual-Lane Comparability Time-Series Aggregation and Drift-Classification Gate
+
+E218 is complete. A Qt-free read-only aggregator now accepts explicitly indexed, validated E217 evaluations; rejects duplicate sample IDs, indices, source digests, malformed evidence, and digest tampering; preserves pair churn as explicit absence; and reconstructs per-field observations before admitting stable, repeated-mismatch, intermittent, or insufficient classifications. Full offscreen evidence passed `2130 passed, 34 skipped, 55 subtests passed in 205.98s`; focused and wider scopes passed `13 passed` and `92 passed, 5 subtests passed`; all E213-E218 guards and explicit temporary compilation passed.
+
+Continue only with E219: define a bounded, opt-in, Qt-free live comparability capture-session producer that collects repeated actual E216/E217 hand-offs into E218 samples with explicit session lifecycle, sample indices, stop/error semantics, pair-churn evidence, and copy isolation. A GameViewport adapter may feed this contract, but it must not own the contract or change default bridge behavior.
+
+Do not compare SR/PS clocks, infer time alignment or causality, invent missing samples, turn classifications into correction commands, claim replay/atomic/lossless/default readiness, change `.pond`, Registry/Inspector/SR2D/manifests, or elevate Qt above the L0-L4 runtime/plugin boundary.

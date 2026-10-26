@@ -7,8 +7,10 @@ import unittest
 from core.Lotucosm.pvaec_script import PvaecScript
 from core.Lotucosm.scene_runtime_context import SceneRuntimeTickContext
 from core.Lotucosm.sr_interoception import (
+    exafference_predictability,
     homeostatic_success,
     interoception_for_entity,
+    pvaec_verify_triple,
 )
 
 
@@ -60,6 +62,24 @@ class PvaecInteroceptionTests(unittest.TestCase):
         )
         s.pvaec_step(ctx, 0.05)
         self.assertGreaterEqual(getattr(s, "_pvaec_last_success", 0.0), 0.5)
+        comps = getattr(s, "_pvaec_verify_components", {})
+        self.assertIn("homeo", comps)
+        self.assertIn("reaff", comps)
+        self.assertIn("exaff", comps)
+
+    def test_exafference_stable_when_obs_unchanged(self):
+        obs = {
+            "intrinsic_speed": 10.0,
+            "sensor_pull": 0.2,
+            "ambient_field": 100.0,
+        }
+        score = exafference_predictability(obs, dict(obs), 0.0, 0.0, 0.05)
+        self.assertGreater(score, 0.6)
+
+    def test_pvaec_verify_triple_weights(self):
+        self.assertAlmostEqual(pvaec_verify_triple(1.0, 1.0, 1.0), 1.0)
+        self.assertAlmostEqual(pvaec_verify_triple(0.0, 1.0, 0.0), 0.25)
+        self.assertAlmostEqual(pvaec_verify_triple(1.0, 0.0, 0.0), 0.5)
 
 
 if __name__ == "__main__":

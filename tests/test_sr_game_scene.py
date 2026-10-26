@@ -6,7 +6,7 @@ import unittest
 
 from core.Lotucosm.sr_game_scene import normalize_entity_for_game, normalize_game_scene_data
 
-_TUTORIAL = "projects/织机教程-迷你Roguelike"
+_TUTORIAL = "workspace/projects/samples/织机教程-迷你Roguelike"
 
 
 class SrGameSceneTests(unittest.TestCase):
@@ -37,7 +37,7 @@ class SrGameSceneTests(unittest.TestCase):
         self.assertEqual(exit_e["type"], "game_prop")
         self.assertEqual(exit_e["sr_visual"]["sprite"], "exit")
 
-    def test_normalize_scene_forces_infinite_play(self) -> None:
+    def test_normalize_scene_preserves_configured_completion_pause(self) -> None:
         scene = {
             "entities": [
                 {"id": "player_rl", "type": "organism", "position": [0, 0]},
@@ -49,7 +49,7 @@ class SrGameSceneTests(unittest.TestCase):
         out = normalize_game_scene_data(scene, _TUTORIAL)
         self.assertTrue(out["sr_game_mode"])
         self.assertFalse(out["sr_pause_on_extinction"])
-        self.assertFalse(out["sr_play_goals"]["pause_on_complete"])
+        self.assertTrue(out["sr_play_goals"]["pause_on_complete"])
         self.assertEqual(out["entities"][0]["type"], "game_actor")
 
 

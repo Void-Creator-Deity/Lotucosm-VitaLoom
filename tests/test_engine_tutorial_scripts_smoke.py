@@ -10,7 +10,7 @@ from core.Lotucosm.scene_runtime_context import RuntimePeerSnapshot, SceneRuntim
 from core.VitaLoom.viewports.sr_input_state import SrInputSnapshot
 
 _ROOT = Path(__file__).resolve().parents[1]
-_SCRIPTS = _ROOT / "projects" / "织机教程-迷你Roguelike" / "scripts"
+_SCRIPTS = _ROOT / "workspace" / "projects" / "samples" / "织机教程-迷你Roguelike" / "scripts"
 
 
 def _load_cls(module_slug: str, class_name: str):
@@ -66,6 +66,32 @@ class EngineTutorialScriptsSmokeTests(unittest.TestCase):
         s.start()
         s.sr_step(_ctx(), 0.016)
         self.assertGreater(ent.velocity[0], 0.0)
+
+    def test_player_controller_sets_player_dead_when_hp_is_drained(self) -> None:
+        s = PlayerController()
+        ent = _Fake()
+        ent.sr_debug_hud = {"hp": 1.0, "hp_max": 100.0}
+        ent.velocity = [12.0, -4.0]
+        s.entity = ent
+        s.start()
+        s.sr_step(
+            _ctx(
+                input=SrInputSnapshot(keys_down=frozenset()),
+                peers=(
+                    RuntimePeerSnapshot(
+                        "enemy_01",
+                        "game_actor",
+                        (338.0, 310.0),
+                        16.0,
+                        40.0,
+                        1.0,
+                    ),
+                ),
+            ),
+            1.0,
+        )
+        self.assertEqual(ent.sr_debug_hud.get("player_dead"), 1)
+        self.assertEqual(ent.velocity, [0.0, 0.0])
 
     def test_enemy_chaser_step(self) -> None:
         s = EnemyChaser()

@@ -1,0 +1,9 @@
+# Fresh-session handoff: E91 complete
+
+Repository root: `D:\????\VS Code  ??\?????????ai???\Lotucosm-VitaLoom-?????`
+
+E91 is complete. `EditorKernel.closeEvent()` was audited through a real exact-object Plugin Host publication lease. After a settled `shutdown_plugins()` report, a first thrown unpublication blocks the Qt close (`event.ignore()`; no `event.accept()`), retains both the exact active lease and its published Host, and does not force teardown. A later settled retry releases that same lease and only then accepts. The added proof uses an isolated `InMemoryRuntimeCapabilityRegistry`, so it cannot initialize the process-wide Qt-backed `EditorContext` before a `QApplication`; no production change was necessary. Evidence: focused `7 passed in 0.19s`; adjacency `99 passed in 2.62s`; root smoke `plugins=13/20`; four guardrails OK; Anaconda signature `2 passed in 0.28s`.
+
+The one active gate is **E92 -- Editor Kernel CloseEvent Project World Capability Release Failure Semantics Audit**. Begin after successful Plugin Host capability release and audit Project World capability removal plus composition-lease release at the real Qt close boundary. Prove a failure blocks acceptance, exposes a clear error, preserves only the retry state that remains valid, and succeeds on a later settled retry without a force path, second authority, or change to Project World command ownership.
+
+Use `.venv\python.exe -B` with `QT_QPA_PLATFORM=offscreen` and `PYTHONDONTWRITEBYTECODE=1`. Source checks use `compile(path.read_text(encoding='utf-8-sig'), str(path), 'exec')`, never `py_compile`. Signature tests use `D:\app\anaconda3\python.exe` because `.venv` lacks `cryptography`; do not install dependencies. Preserve the plugin-shaped runtime boundary, do not stage/commit/push/reset/restore/clean/delete user work, retain QPainter as default, and do not claim OpenGL/native or whole-refactor completion.

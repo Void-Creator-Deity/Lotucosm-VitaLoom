@@ -1,0 +1,3 @@
+# Fresh-session handoff: E158 complete
+
+E158 directly proves malformed explicit L1 services fail before UI allocation: dual-invalid inputs stop at the real registry validator with event-bus validation unreachable, while a valid registry plus malformed bus validates in registry-then-bus order and preserves exact TypeError semantics. Kernel, layers, splash adapters, cleanup, app event-loop lookup, and default-registry construction are forbidden; no splash-dismiss warning appears. Full versioned-runtime, smoke, guards, signature, and hygiene evidence passed. Continue only with E159: audit completed startup and event-loop handoff using valid explicitly supplied services, preserving the Qt-free FrameCore L0/runtime boundary and all public seams.

@@ -1,0 +1,9 @@
+# Fresh-session handoff: E108 complete
+
+E108 is complete. The E106 splash-adapter wrapper has real offscreen-Qt parity: using a real `QApplication`, `QTimer.singleShot(0, ...)`, and nested `QEventLoop`, the success callback ran only after `finish_splash(...)` returned, deleted once, and emitted no warning. A controlled callback-time `deleteLater()` failure logged `Failed to delete splash after editor startup handoff` and did not escape event processing. No E108 production change was needed.
+
+Current evidence: focused real-Qt proof `2 passed, 55 deselected`; interface suite `57 passed`; adjacent offscreen `100 passed`; editor smoke `suite=lotucosm.vitaloom.suite`, `product=lotucosm-vitaloom@1.0.0`, `plugins=13/20`; four guardrails `OK`; independent Anaconda signature `2 passed`. `.venv` lacks `cryptography`; do not install it merely to run that signature suite.
+
+Next gate is E109: audit a synchronous `app.exec()` entry failure after `kernel.show()`, `splash.finish(kernel)`, and successful zero-delay callback scheduling. Prove exact primary-error identity, the completed-splash lifecycle state, and the semantics of any already-scheduled deletion callback. Keep asynchronous callback-time failures adapter-owned; Launcher must not gain QApplication or splash-lifecycle authority. Correct only a demonstrated defect.
+
+Preserve E102--E108 semantics and all architecture constraints: Qt-free L0--L4 engine-plugin contracts, `.pond`, AI command registry, Inspector command binding, SR2D, manifests, plugin discovery, project/recovery ownership, and renderer defaults. Before switching topics, update plan/status/context/index/prompt, run focused evidence plus interface/offscreen/smoke/guardrail/signature checks, perform scoped hygiene, record skips, and leave exactly one next gate. Never stage, commit, reset, restore, clean, or delete pre-existing work.

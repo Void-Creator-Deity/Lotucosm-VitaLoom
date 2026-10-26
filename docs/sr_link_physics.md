@@ -72,10 +72,10 @@
 
 ## 模块
 
-- [`core/Lotucosm/sr_link_physics.py`](../core/Lotucosm/sr_link_physics.py) — 分类、弹簧、步进  
-- [`core/Lotucosm/sr_membrane_topology.py`](../core/Lotucosm/sr_membrane_topology.py) — `build_membrane_attachments` 仅消费 hard  
-- [`core/VitaLoom/viewports/game_viewport.py`](../core/VitaLoom/viewports/game_viewport.py) — tick 接入  
-- [`core/VitaLoom/viewports/sr_visual_renderer.py`](../core/VitaLoom/viewports/sr_visual_renderer.py) — 骨架/弹簧绘制  
+- [`core/Lotucosm/sr_link_physics.py`](../FrameCore/plugins/lotucosm-vitaloom/versions/1.0.0/runtime/core/Lotucosm/sr_link_physics.py) — 分类、弹簧、步进
+- [`core/Lotucosm/sr_membrane_topology.py`](../FrameCore/plugins/lotucosm-vitaloom/versions/1.0.0/runtime/core/Lotucosm/sr_membrane_topology.py) — `build_membrane_attachments` 仅消费 hard
+- [`core/VitaLoom/viewports/game_viewport.py`](../FrameCore/plugins/lotucosm-vitaloom/versions/1.0.0/runtime/core/VitaLoom/viewports/game_viewport.py) — tick 接入
+- [`core/VitaLoom/viewports/sr_visual_renderer.py`](../FrameCore/plugins/lotucosm-vitaloom/versions/1.0.0/runtime/core/VitaLoom/viewports/sr_visual_renderer.py) — 骨架/弹簧绘制
 
 ## 参考概念（非逐行复现）
 

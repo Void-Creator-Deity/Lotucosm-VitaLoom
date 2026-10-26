@@ -1,4 +1,4 @@
-"""
+﻿"""
 SceneViewportPlugin：场景总线订阅生命周期。
 职责: 断言/回归上述契约。
 时机: pytest 全量或单文件执行。
@@ -8,6 +8,7 @@ SceneViewportPlugin：场景总线订阅生命周期。
 """
 
 import unittest
+from unittest.mock import patch
 
 from builtin.editor_extensions.scene_viewport_plugin import SceneViewportPlugin
 
@@ -24,6 +25,11 @@ class _DummyEventBus:
         self.unsubscribed.append((event_name, callback.__name__))
 
 
+class _DummyViewport:
+    def deleteLater(self):
+        pass
+
+
 class _DummyContext:
     def __init__(self):
         self.event_bus = _DummyEventBus()
@@ -34,6 +40,11 @@ class SceneViewportPluginSubscriptionTests(unittest.TestCase):
         plugin = SceneViewportPlugin()
         ctx = _DummyContext()
         plugin.on_load(ctx)
+        with patch(
+            "core.VitaLoom.viewports.scene_viewport.SceneViewport",
+            _DummyViewport,
+        ):
+            plugin.create_viewport_widget()
         plugin.on_unload()
 
         subscribed_events = {name for name, _ in ctx.event_bus.subscribed}

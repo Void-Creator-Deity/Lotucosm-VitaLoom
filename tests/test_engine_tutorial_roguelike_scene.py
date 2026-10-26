@@ -7,8 +7,8 @@ import unittest
 from pathlib import Path
 
 _ROOT = Path(__file__).resolve().parents[1]
-_SCENE = _ROOT / "projects" / "织机教程-迷你Roguelike" / "scenes" / "dungeon_01.pond"
-_MANIFEST = _ROOT / "projects" / "织机教程-迷你Roguelike" / "assets" / "manifest.json"
+_SCENE = _ROOT / "workspace" / "projects" / "samples" / "织机教程-迷你Roguelike" / "scenes" / "dungeon_01.pond"
+_MANIFEST = _ROOT / "workspace" / "projects" / "samples" / "织机教程-迷你Roguelike" / "assets" / "manifest.json"
 
 
 class EngineTutorialRoguelikeSceneTests(unittest.TestCase):
@@ -42,7 +42,7 @@ class EngineTutorialRoguelikeSceneTests(unittest.TestCase):
         self.assertEqual(goals.get("hud_victory_key"), "dungeon_clear")
         self.assertEqual(goals.get("hud_defeat_key"), "player_dead")
         self.assertFalse(data.get("sr_pause_on_extinction"))
-        self.assertFalse(data["sr_play_goals"].get("pause_on_complete"))
+        self.assertTrue(data["sr_play_goals"].get("pause_on_complete"))
         player = next(e for e in data["entities"] if e["id"] == "player_rl")
         self.assertEqual(player.get("type"), "game_actor")
         self.assertNotIn("energy", player)

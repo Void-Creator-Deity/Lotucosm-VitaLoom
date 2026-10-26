@@ -1,5 +1,9 @@
 # -*- coding: utf-8
-"""膜 PBD 约束。"""
+"""膜 PBD 约束。
+
+职责: 锁定 PVAEC 膜 PBD 约束对节点偏移的稳定修正。
+排错: 失败时检查 sr_membrane_pbd 的距离约束和迭代参数。
+"""
 from __future__ import annotations
 
 import unittest

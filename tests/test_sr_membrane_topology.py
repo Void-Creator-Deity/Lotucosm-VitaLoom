@@ -34,7 +34,7 @@ from core.Lotucosm.sr_membrane_topology import (
 )
 
 _ROOT = Path(__file__).resolve().parents[1]
-_EVO = _ROOT / "projects" / "pvaec-细胞演化" / "scripts" / "evo_central_brain_pvaec.py"
+_EVO = _ROOT / "workspace" / "projects" / "samples" / "pvaec-细胞演化" / "scripts" / "evo_central_brain_pvaec.py"
 
 
 def _load_evo():

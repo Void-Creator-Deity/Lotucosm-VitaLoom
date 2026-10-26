@@ -1,0 +1,23 @@
+{
+  "resolved_capabilities": {
+    "vitalloom.core.platform": "1.0.0",
+    "vitalloom.editor_essentials": "1.0.0",
+    "vitalloom.engine.sr2d": "1.0.0",
+    "vitalloom.lotuspond.runtime": "1.0.0",
+    "vitalloom.pvaec.simulation": "1.0.0"
+  },
+  "resolved_product": {
+    "id": "lotucosm-vitaloom",
+    "version": "1.0.0"
+  },
+  "resolved_suite": {
+    "id": "lotucosm.vitaloom.suite",
+    "version": "1.0.0"
+  },
+  "runtime_backend_selection": {
+    "sr2d": {
+      "requested": "auto"
+    }
+  },
+  "schema_version": 1
+}

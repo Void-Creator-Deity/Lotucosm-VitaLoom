@@ -1,0 +1,29 @@
+{
+  "name": "post_war_recovery",
+  "notes": "PS 批实验：灾难窗 tick 50–85 对齐 SR peace_until/war_until（约 1 tick ≈ 1 s）。",
+  "ticks": 400,
+  "seed": 77,
+  "pond_size": [640, 480],
+  "max_population": 24,
+  "initial_organisms": 14,
+  "initial_components": 0,
+  "evolution_generation_interval": 40,
+  "enable_generation_orchestrator": true,
+  "enable_pvaec_cycle_per_tick": true,
+  "equip_sensor_actuator": true,
+  "snapshot_interval": 20,
+  "developmental_ladder_enabled": true,
+  "developmental_initial_stage": 0,
+  "use_verify_triple": true,
+  "social_learning_enabled": false,
+  "output_dir": "workspace/state/experiment_runs",
+  "selection_pressure": 0.68,
+  "elitism_rate": 0.1,
+  "mutation_rate": 0.09,
+  "disaster_window": {
+    "start_tick": 50,
+    "end_tick": 85,
+    "selection_pressure_boost": 0.22,
+    "max_population_cap": 10
+  }
+}

@@ -1,0 +1,5 @@
+# Fresh-session handoff: E132 complete; E133 planned
+
+E128--E132 now close every boundary after a splash can be allocated: E130 covers adapter-owned presentation exits before return; E131 covers Launcher-held message exits; E128 covers Kernel/project/plugin startup exits; E132 covers native finish and deferred-scheduling exits; E129 covers completed-handoff event-loop exits.
+
+Start **E133 -- Versioned Runtime Launcher Pre-Splash Failure Boundary Audit**. Read `docs/superpowers/plans/2026-07-31-versioned-runtime-launcher-pre-splash-failure-boundary-audit.md`. Audit validation/protocol exits before `splash = None` exists. Preserve exact ordinary-error/SystemExit behavior, prove no Qt splash/Kernel/Host/Project World/event-loop side effect occurs, and retain the Qt-free FrameCore L0 boundary. Correct only a demonstrated defect and leave exactly one next gate.

@@ -1,0 +1,735 @@
+{
+  "name": "战争后进化（三幕演示）",
+  "version": "1.0",
+  "sr_demo_legend": {
+    "title": "战争后进化 · 图例",
+    "lines": [
+      "▶ 运行后三幕：0–50s 和平繁殖 · 50–85s 战争 · 85s+ 灾后恢复",
+      "开局 3 个分化细胞（游行者/保守者/膜趋化型）；按 W 可提前发动战争",
+      "中央场域锚脉冲变强时表示战争窗；HUD 可看 war_phase",
+      "细胞靠膜趋化觅食、PVAEC 内稳态与突变繁殖在灾后重建种群",
+      "金色微粒：营养 · 淡蓝大圆：场域锚 / 战争导演"
+    ]
+  },
+  "pond_config": {
+    "name": "PVAEC · 战争后进化莲池",
+    "size": [
+      920,
+      620
+    ],
+    "initial_components": 20,
+    "initial_organisms": 3,
+    "sr_physics2d": {
+      "restitution": 0.36,
+      "contact_iterations": 4
+    },
+    "sr_fluid_coupling": {
+      "enabled": false,
+      "drift_gain": 0.14,
+      "max_drift_accel": 38.0,
+      "uptake_rate": 1.2,
+      "chemo_suppress": 0.82
+    },
+    "sr_field_grid": {
+      "enabled": false,
+      "diffusion": 0.22,
+      "decay": 0.04
+    }
+  },
+  "sr_play_goals": {
+    "survive_seconds": 180,
+    "peak_population": 10,
+    "pause_on_complete": false,
+    "hint_zh": "先和平繁殖（约 50s）；战争期代谢升高、营养稀缺；85s 后恢复期营养增加。按 W 可提前发动战争。",
+    "hint_en": "Breed in peace (~50s); war hits metabolism and food; after 85s watch survivors evolve back.",
+    "victory_title_zh": "灾后恢复 · 达标",
+    "victory_title_en": "Post-War Recovery · Goals Met",
+    "victory_banner_zh": "战争后仍达成存活与繁殖目标——演化继续。",
+    "victory_banner_en": "Survival and breeding goals met after the war — evolution continues.",
+    "extinction_title_zh": "种群灭绝",
+    "extinction_title_en": "Extinction",
+    "extinction_banner_zh": "战争或饥荒消灭了全部细胞，可调低 war_shock_drain 后重试。",
+    "extinction_banner_en": "All cells lost — lower war_shock_drain and try again."
+  },
+  "sr_war_recovery": {
+    "peace_until": 50.0,
+    "war_until": 85.0,
+    "nutrient_target_peace": 8,
+    "nutrient_target_war": 0,
+    "metabolism_multiplier_war": 1.0,
+    "war_shock_drain": 0.0,
+    "manual_trigger": true,
+    "manual_war_duration": 30.0,
+    "recovery_nutrient_boost": 3,
+    "recovery_well_feed_multiplier": 1.35,
+    "combat": {
+      "combat_enabled_in_war": true,
+      "disable_feeding_in_war": true,
+      "base_hp": 100.0,
+      "melee_damage": 20.0,
+      "melee_reach": 54.0,
+      "attack_cooldown": 0.42,
+      "kill_score": 10,
+      "respawn_delay": 2.2,
+      "max_respawns_per_lineage": 15,
+      "death_mutation_base_prob": 0.18,
+      "death_mutation_per_death": 0.09,
+      "death_mutation_cap": 0.9,
+      "online_train_on_kill": 0.05
+    }
+  },
+  "sr_pause_on_extinction": false,
+  "sr_membrane_template": {
+    "organelle_birth_cost": 20,
+    "default_edge_weight": 1.0,
+    "sensors": [
+      {
+        "suffix": "s1",
+        "dx": 60.0,
+        "dy": -30.0,
+        "radius": 14.0,
+        "script": "sensor_patrol_pvaec"
+      },
+      {
+        "suffix": "s2",
+        "dx": -60.0,
+        "dy": -50.0,
+        "radius": 14.0,
+        "script": "sensor_patrol_pvaec"
+      },
+      {
+        "suffix": "s3",
+        "dx": -30.0,
+        "dy": 60.0,
+        "radius": 14.0,
+        "script": "sensor_patrol_pvaec"
+      }
+    ],
+    "actuators": [
+      {
+        "suffix": "a1",
+        "dx": 40.0,
+        "dy": 40.0,
+        "radius": 12.0,
+        "script": "actuator_spike_combat_pvaec"
+      },
+      {
+        "suffix": "a2",
+        "dx": -50.0,
+        "dy": 20.0,
+        "radius": 12.0,
+        "script": "actuator_spike_combat_pvaec"
+      }
+    ]
+  },
+  "sr_signal_connections": [
+    {
+      "start": "sensor_mem_01",
+      "end": "actuator_cilium_01",
+      "link_kind": "soft",
+      "channel": "chemo",
+      "weight": 1.15
+    },
+    {
+      "start": "sensor_mem_02",
+      "end": "actuator_cilium_01",
+      "link_kind": "soft",
+      "channel": "chemo",
+      "weight": 1.12
+    },
+    {
+      "start": "sensor_mem_03",
+      "end": "actuator_cilium_02",
+      "link_kind": "soft",
+      "channel": "chemo",
+      "weight": 1.18
+    }
+  ],
+  "entities": [
+    {
+      "id": "ai_organism_01",
+      "name": "细胞·控制中心",
+      "type": "organism",
+      "position": [
+        460.0,
+        310.0
+      ],
+      "radius": 32.0,
+      "scripts": [
+        {
+          "name": "evo_war_recovery_brain_pvaec",
+          "type": "EvoWarRecoveryBrainPvaec",
+          "properties": {
+            "mind": {
+              "wander_amp": 6.5,
+              "gain_high_stress": 14.0,
+              "mem_alpha": 0.16,
+              "max_speed": 175.0,
+              "gain_low_stress": 5.0,
+              "evo": {
+                "mutation_rate": 0.1,
+                "mutation_sigma": 0.42,
+                "memory_gene_inheritance_rate": 0.75,
+                "memory_gene_mutation_rate": 0.015,
+                "selection_pressure": 0.62,
+                "elitism_rate": 0.08,
+                "generation_interval": 4
+              },
+              "mutation_rate": 0.1
+            },
+            "initial_energy": 125.0,
+            "initial_velocity_damp": 1.0,
+            "log_every": 90,
+            "evo": {
+              "reproduce_energy": 88.0,
+              "reproduce_cooldown": 4.0,
+              "mutation_sigma": 0.28,
+              "mem_decay": 0.38,
+              "base_metabolism": 2.3,
+              "speed_cost": 0.005,
+              "niche_cost": 16.0,
+              "feed_from_field": 1.8e-05,
+              "well_proximity_feed": 7.5,
+              "chemo_gain": 42.0,
+              "chemo_max_dist": 480.0,
+              "eat_energy_per_bite": 42.0,
+              "organelle_birth_cost": 20.0,
+              "mutation_rate": 0.1,
+              "memory_gene_inheritance_rate": 0.75,
+              "memory_gene_mutation_rate": 0.015,
+              "selection_pressure": 0.62,
+              "elitism_rate": 0.08,
+              "generation_interval": 4
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "ai_organism_02",
+      "name": "细胞·游行者",
+      "type": "organism",
+      "position": [
+        280.0,
+        380.0
+      ],
+      "radius": 28.0,
+      "scripts": [
+        {
+          "name": "evo_war_recovery_brain_pvaec",
+          "type": "EvoWarRecoveryBrainPvaec",
+          "properties": {
+            "mind": {
+              "wander_amp": 8.2,
+              "gain_high_stress": 12.0,
+              "mem_alpha": 0.2,
+              "max_speed": 190.0,
+              "gain_low_stress": 4.5,
+              "evo": {
+                "mutation_rate": 0.1,
+                "mutation_sigma": 0.42,
+                "memory_gene_inheritance_rate": 0.75,
+                "memory_gene_mutation_rate": 0.015,
+                "selection_pressure": 0.62,
+                "elitism_rate": 0.08,
+                "generation_interval": 4
+              },
+              "mutation_rate": 0.1
+            },
+            "initial_energy": 115.0,
+            "evo": {
+              "reproduce_energy": 86.0,
+              "reproduce_cooldown": 3.8,
+              "mutation_sigma": 0.32,
+              "base_metabolism": 2.4,
+              "speed_cost": 0.006,
+              "niche_cost": 14.0,
+              "eat_energy_per_bite": 40.0,
+              "mutation_rate": 0.1,
+              "memory_gene_inheritance_rate": 0.75,
+              "memory_gene_mutation_rate": 0.015,
+              "selection_pressure": 0.62,
+              "elitism_rate": 0.08,
+              "generation_interval": 4
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "ai_organism_03",
+      "name": "细胞·保守者",
+      "type": "organism",
+      "position": [
+        640.0,
+        260.0
+      ],
+      "radius": 30.0,
+      "scripts": [
+        {
+          "name": "evo_war_recovery_brain_pvaec",
+          "type": "EvoWarRecoveryBrainPvaec",
+          "properties": {
+            "mind": {
+              "wander_amp": 4.8,
+              "gain_high_stress": 16.0,
+              "mem_alpha": 0.12,
+              "max_speed": 155.0,
+              "gain_low_stress": 6.0,
+              "evo": {
+                "mutation_rate": 0.1,
+                "mutation_sigma": 0.42,
+                "memory_gene_inheritance_rate": 0.75,
+                "memory_gene_mutation_rate": 0.015,
+                "selection_pressure": 0.62,
+                "elitism_rate": 0.08,
+                "generation_interval": 4
+              },
+              "mutation_rate": 0.1
+            },
+            "initial_energy": 120.0,
+            "evo": {
+              "reproduce_energy": 92.0,
+              "reproduce_cooldown": 4.2,
+              "mutation_sigma": 0.26,
+              "base_metabolism": 2.1,
+              "speed_cost": 0.004,
+              "niche_cost": 18.0,
+              "eat_energy_per_bite": 44.0,
+              "mutation_rate": 0.1,
+              "memory_gene_inheritance_rate": 0.75,
+              "memory_gene_mutation_rate": 0.015,
+              "selection_pressure": 0.62,
+              "elitism_rate": 0.08,
+              "generation_interval": 4
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "sensor_mem_01",
+      "name": "膜受体·化学感受A",
+      "type": "sensor",
+      "position": [
+        520.0,
+        280.0
+      ],
+      "radius": 14.0,
+      "scripts": [
+        {
+          "name": "sensor_patrol_pvaec",
+          "type": "SensorPatrolPvaec",
+          "properties": {
+            "patrol": {
+              "patrol_amp": 4.0,
+              "org_pull": 8.0
+            },
+            "mind": {
+              "evo": {
+                "mutation_rate": 0.1,
+                "mutation_sigma": 0.42,
+                "memory_gene_inheritance_rate": 0.75,
+                "memory_gene_mutation_rate": 0.015,
+                "selection_pressure": 0.62,
+                "elitism_rate": 0.08,
+                "generation_interval": 4
+              },
+              "mutation_rate": 0.1
+            },
+            "evo": {
+              "mutation_rate": 0.1,
+              "mutation_sigma": 0.42,
+              "memory_gene_inheritance_rate": 0.75,
+              "memory_gene_mutation_rate": 0.015,
+              "selection_pressure": 0.62,
+              "elitism_rate": 0.08,
+              "generation_interval": 4
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "sensor_mem_02",
+      "name": "膜受体·化学感受B",
+      "type": "sensor",
+      "position": [
+        400.0,
+        260.0
+      ],
+      "radius": 14.0,
+      "scripts": [
+        {
+          "name": "sensor_patrol_pvaec",
+          "type": "SensorPatrolPvaec",
+          "properties": {
+            "patrol": {
+              "patrol_amp": 4.0,
+              "org_pull": 8.0
+            },
+            "mind": {
+              "evo": {
+                "mutation_rate": 0.1,
+                "mutation_sigma": 0.42,
+                "memory_gene_inheritance_rate": 0.75,
+                "memory_gene_mutation_rate": 0.015,
+                "selection_pressure": 0.62,
+                "elitism_rate": 0.08,
+                "generation_interval": 4
+              },
+              "mutation_rate": 0.1
+            },
+            "evo": {
+              "mutation_rate": 0.1,
+              "mutation_sigma": 0.42,
+              "memory_gene_inheritance_rate": 0.75,
+              "memory_gene_mutation_rate": 0.015,
+              "selection_pressure": 0.62,
+              "elitism_rate": 0.08,
+              "generation_interval": 4
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "sensor_mem_03",
+      "name": "膜受体·化学感受C",
+      "type": "sensor",
+      "position": [
+        430.0,
+        370.0
+      ],
+      "radius": 14.0,
+      "scripts": [
+        {
+          "name": "sensor_patrol_pvaec",
+          "type": "SensorPatrolPvaec",
+          "properties": {
+            "patrol": {
+              "patrol_amp": 4.0,
+              "org_pull": 8.0
+            },
+            "mind": {
+              "evo": {
+                "mutation_rate": 0.1,
+                "mutation_sigma": 0.42,
+                "memory_gene_inheritance_rate": 0.75,
+                "memory_gene_mutation_rate": 0.015,
+                "selection_pressure": 0.62,
+                "elitism_rate": 0.08,
+                "generation_interval": 4
+              },
+              "mutation_rate": 0.1
+            },
+            "evo": {
+              "mutation_rate": 0.1,
+              "mutation_sigma": 0.42,
+              "memory_gene_inheritance_rate": 0.75,
+              "memory_gene_mutation_rate": 0.015,
+              "selection_pressure": 0.62,
+              "elitism_rate": 0.08,
+              "generation_interval": 4
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "actuator_cilium_01",
+      "name": "纤毛·划水A",
+      "type": "actuator",
+      "position": [
+        500.0,
+        350.0
+      ],
+      "radius": 12.0,
+      "scripts": [
+        {
+          "name": "actuator_pulse_pvaec",
+          "type": "ActuatorPulsePvaec",
+          "properties": {
+            "pulse": {
+              "radial_amp": 18.0
+            },
+            "mind": {
+              "evo": {
+                "mutation_rate": 0.1,
+                "mutation_sigma": 0.42,
+                "memory_gene_inheritance_rate": 0.75,
+                "memory_gene_mutation_rate": 0.015,
+                "selection_pressure": 0.62,
+                "elitism_rate": 0.08,
+                "generation_interval": 4
+              },
+              "mutation_rate": 0.1
+            },
+            "evo": {
+              "mutation_rate": 0.1,
+              "mutation_sigma": 0.42,
+              "memory_gene_inheritance_rate": 0.75,
+              "memory_gene_mutation_rate": 0.015,
+              "selection_pressure": 0.62,
+              "elitism_rate": 0.08,
+              "generation_interval": 4
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "actuator_cilium_02",
+      "name": "纤毛·划水B",
+      "type": "actuator",
+      "position": [
+        410.0,
+        330.0
+      ],
+      "radius": 12.0,
+      "scripts": [
+        {
+          "name": "actuator_pulse_pvaec",
+          "type": "ActuatorPulsePvaec",
+          "properties": {
+            "pulse": {
+              "radial_amp": 16.0
+            },
+            "mind": {
+              "evo": {
+                "mutation_rate": 0.1,
+                "mutation_sigma": 0.42,
+                "memory_gene_inheritance_rate": 0.75,
+                "memory_gene_mutation_rate": 0.015,
+                "selection_pressure": 0.62,
+                "elitism_rate": 0.08,
+                "generation_interval": 4
+              },
+              "mutation_rate": 0.1
+            },
+            "evo": {
+              "mutation_rate": 0.1,
+              "mutation_sigma": 0.42,
+              "memory_gene_inheritance_rate": 0.75,
+              "memory_gene_mutation_rate": 0.015,
+              "selection_pressure": 0.62,
+              "elitism_rate": 0.08,
+              "generation_interval": 4
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "nutrient_01",
+      "name": "营养颗粒·甲",
+      "type": "nutrient",
+      "position": [
+        680.0,
+        200.0
+      ],
+      "radius": 11.0,
+      "scripts": []
+    },
+    {
+      "id": "nutrient_02",
+      "name": "营养颗粒·乙",
+      "type": "nutrient",
+      "position": [
+        720.0,
+        380.0
+      ],
+      "radius": 11.0,
+      "scripts": []
+    },
+    {
+      "id": "nutrient_03",
+      "name": "营养颗粒·丙",
+      "type": "nutrient",
+      "position": [
+        620.0,
+        480.0
+      ],
+      "radius": 11.0,
+      "scripts": []
+    },
+    {
+      "id": "nutrient_04",
+      "name": "营养颗粒·丁",
+      "type": "nutrient",
+      "position": [
+        240.0,
+        420.0
+      ],
+      "radius": 11.0,
+      "scripts": []
+    },
+    {
+      "id": "nutrient_05",
+      "name": "营养颗粒·戊",
+      "type": "nutrient",
+      "position": [
+        280.0,
+        180.0
+      ],
+      "radius": 11.0,
+      "scripts": []
+    },
+    {
+      "id": "field_well_alpha",
+      "name": "场域锚·α",
+      "type": "environment_well",
+      "position": [
+        220.0,
+        480.0
+      ],
+      "radius": 28.0,
+      "scripts": [
+        {
+          "name": "well_pulse_pvaec",
+          "type": "WellPulsePvaec",
+          "properties": {
+            "pulse": {
+              "omega": 0.38,
+              "phase": 0.0,
+              "emission_min": 0.25,
+              "emission_max": 0.72
+            },
+            "mind": {
+              "evo": {
+                "mutation_rate": 0.1,
+                "mutation_sigma": 0.42,
+                "memory_gene_inheritance_rate": 0.75,
+                "memory_gene_mutation_rate": 0.015,
+                "selection_pressure": 0.62,
+                "elitism_rate": 0.08,
+                "generation_interval": 4
+              },
+              "mutation_rate": 0.1
+            },
+            "evo": {
+              "mutation_rate": 0.1,
+              "mutation_sigma": 0.42,
+              "memory_gene_inheritance_rate": 0.75,
+              "memory_gene_mutation_rate": 0.015,
+              "selection_pressure": 0.62,
+              "elitism_rate": 0.08,
+              "generation_interval": 4
+            }
+          }
+        }
+      ],
+      "pinned": true
+    },
+    {
+      "id": "field_well_beta",
+      "name": "战争导演·场域锚",
+      "type": "environment_well",
+      "position": [
+        460.0,
+        80.0
+      ],
+      "radius": 30.0,
+      "scripts": [
+        {
+          "name": "war_recovery_director_pvaec",
+          "type": "WarRecoveryDirectorPvaec",
+          "properties": {
+            "mind": {
+              "evo": {
+                "mutation_rate": 0.1,
+                "mutation_sigma": 0.42,
+                "memory_gene_inheritance_rate": 0.75,
+                "memory_gene_mutation_rate": 0.015,
+                "selection_pressure": 0.62,
+                "elitism_rate": 0.08,
+                "generation_interval": 4
+              },
+              "mutation_rate": 0.1
+            },
+            "evo": {
+              "mutation_rate": 0.1,
+              "mutation_sigma": 0.42,
+              "memory_gene_inheritance_rate": 0.75,
+              "memory_gene_mutation_rate": 0.015,
+              "selection_pressure": 0.62,
+              "elitism_rate": 0.08,
+              "generation_interval": 4
+            }
+          }
+        }
+      ],
+      "pinned": true
+    },
+    {
+      "id": "nutrient_06",
+      "name": "营养颗粒·己",
+      "type": "nutrient",
+      "position": [
+        540.0,
+        520.0
+      ],
+      "radius": 11.0,
+      "scripts": []
+    },
+    {
+      "id": "nutrient_07",
+      "name": "营养颗粒·庚",
+      "type": "nutrient",
+      "position": [
+        160.0,
+        300.0
+      ],
+      "radius": 11.0,
+      "scripts": []
+    },
+    {
+      "id": "nutrient_08",
+      "name": "营养颗粒·辛",
+      "type": "nutrient",
+      "position": [
+        760.0,
+        300.0
+      ],
+      "radius": 11.0,
+      "scripts": []
+    }
+  ],
+  "components": [],
+  "resources": [],
+  "connections": [
+    {
+      "start": "ai_organism_01",
+      "end": "sensor_mem_01",
+      "weight": 1.0
+    },
+    {
+      "start": "ai_organism_01",
+      "end": "sensor_mem_02",
+      "weight": 1.0
+    },
+    {
+      "start": "ai_organism_01",
+      "end": "sensor_mem_03",
+      "weight": 1.0
+    },
+    {
+      "start": "ai_organism_01",
+      "end": "actuator_cilium_01",
+      "weight": 1.0
+    },
+    {
+      "start": "ai_organism_01",
+      "end": "actuator_cilium_02",
+      "weight": 1.0
+    }
+  ],
+  "viewport_state": {
+    "pan_offset": [
+      0.0,
+      0.0
+    ],
+    "zoom_level": 1.0
+  },
+  "modified_at": "2026-07-02 13:14:45"
+}

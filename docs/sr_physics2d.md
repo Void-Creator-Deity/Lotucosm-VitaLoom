@@ -7,8 +7,8 @@
 
 | 工程 | 自动模式 | 接触类型 |
 |------|----------|----------|
-| **`projects/pvaec-细胞演化`** | `Physics2DMode.PVAEC` | organism 互撞、营养/场域锚圆盘、膜弹簧 |
-| **`projects/织机教程-迷你Roguelike`** | `Physics2DMode.GAME` | 边墙 AABB、程序化柱圆盘、game_actor 互斥 |
+| **`workspace/projects/samples/pvaec-细胞演化`** | `Physics2DMode.PVAEC` | organism 互撞、营养/场域锚圆盘、膜弹簧 |
+| **`workspace/projects/samples/织机教程-迷你Roguelike`** | `Physics2DMode.GAME` | 边墙 AABB、程序化柱圆盘、game_actor 互斥 |
 
 二者都通过 **`GameViewportPlugin`** 加载同一 `GameViewport`；加载 `.pond` 时读 `sr_physics2d` 配置并创建 **`SrPhysics2DWorld`**。  
 `sr_game_mode: true` → 游戏轨；否则 → PVAEC 轨。**无需装两个物理插件。**
@@ -37,6 +37,15 @@ world.step(entities, dt, width, height, mode=Physics2DMode.GAME)
 # GameViewport 内部：
 world.step_for_viewport(host, entities, dt, width, height)
 ```
+
+## Adapter Boundary
+
+`SrPhysics2DWorld.step()` remains the public runtime entry point. Internally it delegates to `SrPhysics2DAdapter`.
+
+- `PythonSrPhysics2DAdapter` is the reference implementation and default fallback.
+- Future Rust/C++ adapters must pass `tests/test_sr_physics2d_world.py` and `tests/test_sr_physics2d_adapter_contract.py` before being enabled.
+- `.pond` files, `GameViewport`, and AI command flows must not call a native module directly.
+- Benchmark evidence lives in `tools/benchmark_engine.py --case sr2d`.
 
 ## 场景配置（可选，两工程通用）
 

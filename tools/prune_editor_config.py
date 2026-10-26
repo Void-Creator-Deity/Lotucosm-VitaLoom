@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""清理 data/system/editor_config.json 中的无效/临时项目路径。
+"""清理 workspace/state/system/editor_config.json 中的无效/临时项目路径。
 
 职责: 调用 ProjectManager 内置消毒逻辑并打印结果。
 时机: 最近列表含 pytest 临时目录或 last_opened 指向已删工程时手动运行。

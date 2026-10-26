@@ -10,16 +10,20 @@ PVAEC · 细胞演化工程脚本：importlib 路径加载 + pvaec_step 冒烟�
 from __future__ import annotations
 
 import importlib.util
+import random
+import sys
 import unittest
 from pathlib import Path
 
 from core.Lotucosm.scene_runtime_context import RuntimePeerSnapshot, SceneRuntimeTickContext
 
 _ROOT = Path(__file__).resolve().parents[1]
-_MW = _ROOT / "projects" / "pvaec-细胞演化" / "scripts"
+_MW = _ROOT / "workspace" / "projects" / "samples" / "pvaec-细胞演化" / "scripts"
 
 
 def _load_cls(module_slug: str, class_name: str):
+    if str(_MW) not in sys.path:
+        sys.path.insert(0, str(_MW))
     path = _MW / f"{module_slug}.py"
     spec = importlib.util.spec_from_file_location(f"mw_{module_slug}", path)
     assert spec and spec.loader
@@ -123,6 +127,17 @@ class SmokeTests(unittest.TestCase):
         for _ in range(5):
             s.pvaec_step(ctx, 0.05)
         self.assertTrue(hasattr(ent, "_sr_last_verify_success") or isinstance(ent.sr_debug_hud, dict))
+
+
+    def test_evo_script_reuses_runtime_randomness_owner(self):
+        s = EvoCentralBrainPvaec()
+        ent = _Fake()
+        ent.randomness_rng = random.Random(101)
+        ent.pond = None
+        s.on_attach(ent)
+        self.assertIs(s.randomness_rng, ent.randomness_rng)
+        self.assertIs(s._evo_rng, ent.randomness_rng)
+        self.assertEqual(s._evo_rng_mode, "runtime")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,5 @@
+# E314 fresh-session prompt
+
+继续 VitaLoom 重构主线。E313 已完成两层证据：隔离 protocol witness 可通过 checkpoint + caller-owned RNG snapshot + controlled restart 重现；当前真实 `unified_pond_step_with_trace()` capture seam 也已执行并证明 input 只停留在 SR observation、SR/PS clock domain 分离、RNG context 没有 transport，因此结果必须 quarantine，不能宣称 shared replay 或 live adapter。
+
+下一门只做 E314：设计并实现真实 SR/PS shared state transport contract，将输入队列、单调 sequence、pause/resume/reset epoch、clock/tick provenance、caller-owned RNG context/state、bridge entity↔organism identity 放入同一版本化 envelope。先做 Qt-free opt-in/quarantine transport 与真实 capture seam 的接线，补 fresh-instance round-trip、篡改拒绝、partial-failure rollback/fallback 和 parity 证据；禁止直接改 default runtime。保持 `production_live_adapter_admitted=false`、`full_unified_replay_admitted=false`、`cross_lane_replay=false`、`lossless=false`、`default_ready=false`、`live_adapter_admitted=false`、`unified_undo_redo_runtime=false`。不修改 `.pond`、`.venv`、`uv.lock`，不运行 uv/Conda 包管理器，不切换解释器，不 stage/commit/reset/clean 无关内容。完成后更新 `docs/mainline_status.md`，并只指定一个下一 gate。

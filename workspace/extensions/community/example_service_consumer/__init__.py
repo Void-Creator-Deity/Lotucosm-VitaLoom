@@ -1,0 +1,1 @@
+﻿"""VitaLoom community plugin example."""

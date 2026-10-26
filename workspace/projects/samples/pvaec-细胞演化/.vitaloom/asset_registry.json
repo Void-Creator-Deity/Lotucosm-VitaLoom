@@ -1,0 +1,332 @@
+{
+  "assets": {
+    "asset_05aa841bcbb54ae19a59baf1ef69aeee": {
+      "bytes": 2155,
+      "created_generation": 1,
+      "id": "asset_05aa841bcbb54ae19a59baf1ef69aeee",
+      "mtime_ns": 1781691336922152200,
+      "path": "assets/manifest.json",
+      "sha256": "ea65ef2855ee550afcf9346cf9e4108e9f30fe6f1bd8640c59cde3328cd745be",
+      "updated_generation": 1
+    },
+    "asset_08b7f7a4c13947ab9c49d16e118c5b7b": {
+      "bytes": 26465,
+      "created_generation": 1,
+      "id": "asset_08b7f7a4c13947ab9c49d16e118c5b7b",
+      "mtime_ns": 1784119271899769400,
+      "path": "scripts/__pycache__/evo_central_brain_pvaec.cpython-313.pyc",
+      "sha256": "2de59a0308a946d59259818f42f9aa0bcd93a9c55cc243a02ec0d4cfa795d357",
+      "updated_generation": 1
+    },
+    "asset_0bf3c68e20c24fef9b00b92af6d7cd8e": {
+      "bytes": 24298,
+      "created_generation": 1,
+      "id": "asset_0bf3c68e20c24fef9b00b92af6d7cd8e",
+      "mtime_ns": 1780399752071692400,
+      "path": "assets/audio/extinction.wav",
+      "sha256": "45220e7996f77f0988b118508e96504fbd84dd8afb2ce24ea16b4f21f5ae2ceb",
+      "updated_generation": 1
+    },
+    "asset_0f766f0be61f418d93fb41ce5f1549cb": {
+      "bytes": 6819,
+      "created_generation": 1,
+      "id": "asset_0f766f0be61f418d93fb41ce5f1549cb",
+      "mtime_ns": 1780403144624975100,
+      "path": "scripts/actuator_pulse_pvaec.py",
+      "sha256": "3fe35e6c283177f800bceab1eca89109b5aac977eb8ee12f66b5f4a09636adf7",
+      "updated_generation": 1
+    },
+    "asset_1004c230c38c4c67a77e9d9fbcfe7e68": {
+      "bytes": 17026,
+      "created_generation": 1,
+      "id": "asset_1004c230c38c4c67a77e9d9fbcfe7e68",
+      "mtime_ns": 1781691427990062700,
+      "path": "assets/sprites/central_brain.png",
+      "sha256": "dd10381ada624c119a889ec556c3cc9338cee9671cbbdbbe24389deb22652faa",
+      "updated_generation": 1
+    },
+    "asset_19959c80e74a4caf94afdd6d0aa61c2f": {
+      "bytes": 15933,
+      "created_generation": 1,
+      "id": "asset_19959c80e74a4caf94afdd6d0aa61c2f",
+      "mtime_ns": 1781691427993579200,
+      "path": "assets/sprites/sensor.png",
+      "sha256": "bf0ffe2c83ac2ef561e2d7517d7510e230ea8fe6c73693b7457e8dd36ac5e017",
+      "updated_generation": 1
+    },
+    "asset_3307a273357349b0b5bd669630f202f0": {
+      "bytes": 9776,
+      "created_generation": 1,
+      "id": "asset_3307a273357349b0b5bd669630f202f0",
+      "mtime_ns": 1781186392137758700,
+      "path": "scripts/__pycache__/actuator_pulse_pvaec.cpython-311.pyc",
+      "sha256": "166c3bd2d727cd9a521e1b43352b826c4e8f5131427bb575aa17e4444c5689e2",
+      "updated_generation": 1
+    },
+    "asset_44ddb60a6cc94c829870f871dc6719bd": {
+      "bytes": 11561,
+      "created_generation": 1,
+      "id": "asset_44ddb60a6cc94c829870f871dc6719bd",
+      "mtime_ns": 1781186392147075100,
+      "path": "scripts/__pycache__/sensor_patrol_pvaec.cpython-311.pyc",
+      "sha256": "151c35a0a2106cadee6658e98c50511c0ec5b56e5076a8032b9dfc2fd0d487ec",
+      "updated_generation": 1
+    },
+    "asset_4bf7b26a11314b818ff26141ec4eccd6": {
+      "bytes": 5761,
+      "created_generation": 1,
+      "id": "asset_4bf7b26a11314b818ff26141ec4eccd6",
+      "mtime_ns": 1784116168180563500,
+      "path": "scripts/__pycache__/well_pulse_pvaec.cpython-313.pyc",
+      "sha256": "7ff322d75668fcb38a1b4d41bed97ccfb8c7141802926299edcbcaf88acc38c0",
+      "updated_generation": 1
+    },
+    "asset_4da9d62525334a039a3854e42c3618a2": {
+      "bytes": 8208,
+      "created_generation": 1,
+      "id": "asset_4da9d62525334a039a3854e42c3618a2",
+      "mtime_ns": 1780403144496803200,
+      "path": "scripts/sensor_patrol_pvaec.py",
+      "sha256": "1d7b5b1cd6bfdc6d3bbdc9e914da1127f4f8b2014525a7c888724d07ffb9c479",
+      "updated_generation": 1
+    },
+    "asset_61b560a052f5480d82d6ab91ecc0ce59": {
+      "bytes": 505,
+      "created_generation": 1,
+      "id": "asset_61b560a052f5480d82d6ab91ecc0ce59",
+      "mtime_ns": 1787634994179297000,
+      "path": "scripts/central_brain_pvaec.py",
+      "sha256": "ec4a5493b690bfae75ec40ac0ad43262b41faae380dd2961d4b41f888e53b374",
+      "updated_generation": 1
+    },
+    "asset_73636b6ee6144ce797c20f44c3083986": {
+      "bytes": 16239,
+      "created_generation": 1,
+      "id": "asset_73636b6ee6144ce797c20f44c3083986",
+      "mtime_ns": 1781691427996087500,
+      "path": "assets/sprites/actuator.png",
+      "sha256": "7841bda40f52c6c990ece72fdfcd6d3be8053396099a7b75324a767683a74093",
+      "updated_generation": 1
+    },
+    "asset_7afaa1571cb1448b837dd0a404b5f926": {
+      "bytes": 10239,
+      "created_generation": 1,
+      "id": "asset_7afaa1571cb1448b837dd0a404b5f926",
+      "mtime_ns": 1784116168176564800,
+      "path": "scripts/__pycache__/sensor_patrol_pvaec.cpython-313.pyc",
+      "sha256": "bc6cdd6114b55cc2a59c4f162c2c419f65479aee3faadfc8a7e70ce610a17178",
+      "updated_generation": 1
+    },
+    "asset_848e9c479d6c4ad89df61d3db8c4d99e": {
+      "bytes": 8507,
+      "created_generation": 1,
+      "id": "asset_848e9c479d6c4ad89df61d3db8c4d99e",
+      "mtime_ns": 1784116168177566400,
+      "path": "scripts/__pycache__/actuator_pulse_pvaec.cpython-313.pyc",
+      "sha256": "5cc087637e47930ef1d51d8b14937a49b0cdf181cb19a578667237fa0cf127b4",
+      "updated_generation": 1
+    },
+    "asset_915a36535d904c448024b28df37e7c2d": {
+      "bytes": 6547,
+      "created_generation": 1,
+      "id": "asset_915a36535d904c448024b28df37e7c2d",
+      "mtime_ns": 1781186392148580700,
+      "path": "scripts/__pycache__/well_pulse_pvaec.cpython-311.pyc",
+      "sha256": "e186e25ba91f25d358ae768d029b4991bd42a44010edb624e18b0eae30961700",
+      "updated_generation": 1
+    },
+    "asset_920e3fbb72b749b7a91013d541c2453f": {
+      "bytes": 4889,
+      "created_generation": 1,
+      "id": "asset_920e3fbb72b749b7a91013d541c2453f",
+      "mtime_ns": 1780403144624975100,
+      "path": "scripts/well_pulse_pvaec.py",
+      "sha256": "e5ee86ab3537498d5cdb8c90c3ace33779e742178a1aa65bee06031f7c843a64",
+      "updated_generation": 1
+    },
+    "asset_923dee34d6db41199b89a386f0e364ab": {
+      "bytes": 10217,
+      "created_generation": 1,
+      "id": "asset_923dee34d6db41199b89a386f0e364ab",
+      "mtime_ns": 1780900351291948200,
+      "path": "scenes/main_scene.pond",
+      "sha256": "b8ca087a5eb20c6006373b987fe554c8340be512d0fc10773ac38bab73eb2fc4",
+      "updated_generation": 1
+    },
+    "asset_93badccfcc8f4d0da3ad86bff215964b": {
+      "bytes": 12251,
+      "created_generation": 1,
+      "id": "asset_93badccfcc8f4d0da3ad86bff215964b",
+      "mtime_ns": 1781691427999098700,
+      "path": "assets/sprites/nutrient.png",
+      "sha256": "393ea88b0742c3e9f8e0a898473d6efa53eec6ac111a9ba57550d0e4535e35af",
+      "updated_generation": 1
+    },
+    "asset_94223e10ea2a4871ab3f05b1fdf0bbf3": {
+      "bytes": 545,
+      "created_generation": 1,
+      "id": "asset_94223e10ea2a4871ab3f05b1fdf0bbf3",
+      "mtime_ns": 1791659260576967900,
+      "path": "project.lock.json",
+      "sha256": "39c9a7bfd1c5688c5c9b213e849115f1e319f70f44f0a70a581545f74be00789",
+      "updated_generation": 1
+    },
+    "asset_9b4aa2bc54d641cd92f7f71cc3c9a2bf": {
+      "bytes": 19888,
+      "created_generation": 1,
+      "id": "asset_9b4aa2bc54d641cd92f7f71cc3c9a2bf",
+      "mtime_ns": 1780399752060638000,
+      "path": "assets/audio/victory.wav",
+      "sha256": "a72319d0abeeebef4f06b8afa5a36e04fc50f9e5683987ec9be5877230bd7e58",
+      "updated_generation": 1
+    },
+    "asset_a64d8ebae4e444efa8379d208871c138": {
+      "bytes": 230377,
+      "created_generation": 1,
+      "id": "asset_a64d8ebae4e444efa8379d208871c138",
+      "mtime_ns": 1781691428107351900,
+      "path": "assets/未标题-1.png",
+      "sha256": "a2898ee9123461a7447b0c6b6f3204c7a11ea09c80078f81536087bd485f3522",
+      "updated_generation": 1
+    },
+    "asset_a66505bb66c64a26939e72781a5e17d9": {
+      "bytes": 1560,
+      "created_generation": 1,
+      "id": "asset_a66505bb66c64a26939e72781a5e17d9",
+      "mtime_ns": 1791659292173970200,
+      "path": "project.json",
+      "sha256": "8efda5bfd2b5d15a37b56235c753db02ab67cb5843457f093a230deb719e2520",
+      "updated_generation": 1
+    },
+    "asset_a7274e6290e04dfc89a949f154a4eba4": {
+      "bytes": 4034,
+      "created_generation": 1,
+      "id": "asset_a7274e6290e04dfc89a949f154a4eba4",
+      "mtime_ns": 1780403144496803200,
+      "path": "scripts/ambient_marker_drift.py",
+      "sha256": "435eb4bc65fa739caf23a8c4a4017c91a611ffbf10cd026b1a4879a20f8f9ada",
+      "updated_generation": 1
+    },
+    "asset_b0e599b9969a476ea2b12a5fa53e75a7": {
+      "bytes": 5304,
+      "created_generation": 1,
+      "id": "asset_b0e599b9969a476ea2b12a5fa53e75a7",
+      "mtime_ns": 1784116168174524400,
+      "path": "scripts/__pycache__/ambient_marker_drift.cpython-313.pyc",
+      "sha256": "90815616bfb3d85fe838e0a3ba3a47861d26888f149c0b6e4656cdff5be7e09e",
+      "updated_generation": 1
+    },
+    "asset_be2cbacef1ef4c4b99cb369b086d97c1": {
+      "bytes": 6317,
+      "created_generation": 1,
+      "id": "asset_be2cbacef1ef4c4b99cb369b086d97c1",
+      "mtime_ns": 1780403144648566900,
+      "path": "scripts/satellite_roamer_pvaec.py",
+      "sha256": "0a3859defed547472fd9b3a4f79fb56b2f372a24ea8a52fd2f0e8ed33b7db1c3",
+      "updated_generation": 1
+    },
+    "asset_c063b337593c4420827d7a08b03f2dd2": {
+      "bytes": 22763,
+      "created_generation": 1,
+      "id": "asset_c063b337593c4420827d7a08b03f2dd2",
+      "mtime_ns": 1792459299504881200,
+      "path": "scripts/evo_central_brain_pvaec.py",
+      "sha256": "e4c70c459f2de88771f8c8dc75a7102b55045ce7df59b7ca631a7b9fe283c6f3",
+      "updated_generation": 1
+    },
+    "asset_c23edc809ae844beb93ddcf463a745c8": {
+      "bytes": 6022,
+      "created_generation": 1,
+      "id": "asset_c23edc809ae844beb93ddcf463a745c8",
+      "mtime_ns": 1781186392139264600,
+      "path": "scripts/__pycache__/ambient_marker_drift.cpython-311.pyc",
+      "sha256": "4fb174c3ed25f3f0020d60c4f9f5d4ee653332bb71fe193df256408a1c030b74",
+      "updated_generation": 1
+    },
+    "asset_d16de2e77efb4a28957f6a7c10fb5587": {
+      "bytes": 30825,
+      "created_generation": 1,
+      "id": "asset_d16de2e77efb4a28957f6a7c10fb5587",
+      "mtime_ns": 1792460040573167300,
+      "path": "scripts/__pycache__/evo_central_brain_pvaec.cpython-311.pyc",
+      "sha256": "704b02fc7a186af811b0c672865db3c5839427e549fe2d9f72c1536e2c0aa78e",
+      "updated_generation": 1
+    },
+    "asset_d3055c6d11a6417ca5bb8765824e5796": {
+      "bytes": 10761,
+      "created_generation": 1,
+      "id": "asset_d3055c6d11a6417ca5bb8765824e5796",
+      "mtime_ns": 1781188008016567300,
+      "path": "scenes/challenge_scene.pond",
+      "sha256": "4142256a79342ecd5a7d1b441d5882daad03304c1293b44e53038fb58588c58f",
+      "updated_generation": 1
+    },
+    "asset_df38e40d38544acba3c87bc7a3a314ec": {
+      "bytes": 86605,
+      "created_generation": 1,
+      "id": "asset_df38e40d38544acba3c87bc7a3a314ec",
+      "mtime_ns": 1781691428023023100,
+      "path": "assets/branding/logo.png",
+      "sha256": "7d83aa56e5b1b2312d64fa39be3948517a15993ecbf9224af3943b4f2cc2a837",
+      "updated_generation": 1
+    },
+    "asset_e2d104b1afdc481baa1a0bf1f7ce7d68": {
+      "bytes": 9249,
+      "created_generation": 1,
+      "id": "asset_e2d104b1afdc481baa1a0bf1f7ce7d68",
+      "mtime_ns": 1781186392146074700,
+      "path": "scripts/__pycache__/satellite_roamer_pvaec.cpython-311.pyc",
+      "sha256": "afca81040c6efb0e950ba542efb60ab371ba28fae1ee26b5ed171aa900a00d95",
+      "updated_generation": 1
+    },
+    "asset_ea628776867347a7b915ee49b26b1cf7": {
+      "bytes": 17010,
+      "created_generation": 1,
+      "id": "asset_ea628776867347a7b915ee49b26b1cf7",
+      "mtime_ns": 1781691427988058500,
+      "path": "assets/sprites/organism.png",
+      "sha256": "684a9b60533d81fb6a96dd972dbdb91ab2f6a02fc57de3714f24e91a866313ba",
+      "updated_generation": 1
+    },
+    "asset_ecc86c59436e4fd9bd65cd3c2a3b5f34": {
+      "bytes": 11616,
+      "created_generation": 1,
+      "id": "asset_ecc86c59436e4fd9bd65cd3c2a3b5f34",
+      "mtime_ns": 1781691428000402200,
+      "path": "assets/sprites/well.png",
+      "sha256": "8de1d0931715b52a34fc05e718431067cf1c7500c0f29ea707831baeff5f4c71",
+      "updated_generation": 1
+    },
+    "asset_ee1e9963bad54584b62f714c1767d281": {
+      "bytes": 813,
+      "created_generation": 1,
+      "id": "asset_ee1e9963bad54584b62f714c1767d281",
+      "mtime_ns": 1788096748922071000,
+      "path": "scripts/__pycache__/central_brain_pvaec.cpython-311.pyc",
+      "sha256": "e41dc4d86242d2b99bc114c0d5f19fb9ee0f10a0007dd2334bec19673f14b461",
+      "updated_generation": 1
+    },
+    "asset_f1a2195c5e4b4af5b66fca6181897d36": {
+      "bytes": 8125,
+      "created_generation": 1,
+      "id": "asset_f1a2195c5e4b4af5b66fca6181897d36",
+      "mtime_ns": 1784116168179563400,
+      "path": "scripts/__pycache__/satellite_roamer_pvaec.cpython-313.pyc",
+      "sha256": "be5f720f199f6475d0bcd93240ed79d4a19e81f26662108036ce08fc12fdc0e9",
+      "updated_generation": 1
+    },
+    "asset_f3680e1ac44e4123bdfb0e98f0de9fd3": {
+      "bytes": 682,
+      "created_generation": 1,
+      "id": "asset_f3680e1ac44e4123bdfb0e98f0de9fd3",
+      "mtime_ns": 1784119271893376000,
+      "path": "scripts/__pycache__/central_brain_pvaec.cpython-313.pyc",
+      "sha256": "0e8290f5822a7f08fae98d9239220807973958268bf1da6d66fbe0d050d5933f",
+      "updated_generation": 1
+    }
+  },
+  "generation": 1,
+  "registry_revision": "d238ed3421ed18eed5bcac9c0bcd868a82c8d375d31d69ec1802a863aaf1da2b",
+  "schema_version": 1,
+  "tombstones": {}
+}

@@ -1,0 +1,5 @@
+# Fresh-session handoff: E129 complete; E130 planned
+
+E129 completed the versioned-runtime post-handoff controlled-exit audit. It added deterministic and real offscreen Qt proofs that \`SystemExit(89/91)\` from \`app.exec()\` after \`finish_splash()\` preserves its exit code, does not re-enter E128 startup dismissal, and leaves deferred \`deleteLater()\` adapter-owned. No production correction was needed. Evidence: \`74\` focused, \`50\` composition, \`142\` adjacent offscreen, green smoke/guards, and independent signature \`2 passed\`.
+
+Start **E130 -- Versioned Runtime Splash Presentation Controlled-Exit Cleanup Ownership Audit**. Focus only on the UI-adapter interval before \`show_vitaloom_splash()\` returns: a created splash may fail in \`show()\` or \`processEvents()\`, including controlled \`SystemExit\`. Prove one-owner cleanup, no duplicate Launcher cleanup, primary-error preservation, no Kernel/event-loop entry, and unchanged FrameCore L0 ownership. Close the loop with exactly one next gate; do not claim whole-refactor completion.

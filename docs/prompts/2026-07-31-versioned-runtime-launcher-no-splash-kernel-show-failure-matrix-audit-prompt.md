@@ -1,0 +1,5 @@
+# Fresh-session handoff: E144 complete
+
+E144 is closed. With `use_splash=False`, successful plugin loading reaches `kernel.show()`; direct RuntimeError/SystemExit/KeyboardInterrupt injection proves primary identity/code preservation, ordinary/controlled null cleanup only, no KeyboardInterrupt cleanup, no splash APIs, and no event loop. Evidence: direct 3 passed, versioned-runtime composition 66 passed, editor smoke plugins=13/20, four guards OK, Anaconda signature 2 passed, scoped compile and hygiene passed.
+
+The only next gate is E145: make the no-splash `kernel.show()` controlled exit primary and force `dismiss_splash(None)` to raise an ordinary cleanup failure. Prove the original SystemExit identity/code survives, cleanup is warning-only and once-only, and the event loop remains unreachable. Do not broaden handling to BaseException or move ownership into FrameCore/Launcher.

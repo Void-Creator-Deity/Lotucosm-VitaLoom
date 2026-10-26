@@ -1,0 +1,9 @@
+# Fresh-session handoff: E88 complete; E89 in progress
+
+Repository root: <repository-root>
+
+E88 is complete. Project Manager already correctly contained raised public scan_project_addons() and sync_plugins_for_project() calls in failure reports during open/close, with capability Interface resolution before the try blocks. No production runtime change was needed; coverage expanded to all open/close discovery/sync outages and incomplete public capability visibility. Evidence: focused 9 passed in 0.37s, adjacent 66 passed in 2.01s, source compilation, root smoke plugins=13/20, four guardrails, and independent signatures 2 passed in 0.21s.
+
+The one active gate is E89 -- Package Manager Public Unload Call-Failure Semantics Audit. Begin in FrameCore/plugins/lotucosm-vitaloom/versions/1.0.0/runtime/builtin/editor_extensions/package_manager_plugin.py. Audit selected-plugin and package disable paths: after a successful Project World disable command, they call public unload_plugin(). Establish whether user feedback and refresh remain truthful for a raised call or malformed report. Keep public catalog gating, Project World authority, batch behavior, and resolver/interface visibility. Do not read private Host state or add another command/sync/Host authority.
+
+Use .venv\python.exe -B with QT_QPA_PLATFORM=offscreen and PYTHONDONTWRITEBYTECODE=1. Source checks use compile(path.read_text(encoding='utf-8-sig'), str(path), 'exec'), never py_compile. Signatures use D:\app\anaconda3\python.exe because .venv lacks cryptography. The isolated editor-kernel capability pytest is still hung and not proof; only terminate its re-verified repository PID after explicit user approval. Preserve architecture and do not stage, commit, push, reset, restore, clean, or delete user work. QPainter default; OpenGL/native not default-ready; no whole-refactor completion claim.

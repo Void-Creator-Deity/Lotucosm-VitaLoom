@@ -8,8 +8,27 @@
 """
 
 import unittest
+import importlib.util
+from pathlib import Path
 
-from plugins.example_service_consumer.service_consumer_plugin import ExampleServiceConsumerPlugin
+
+def _load_example_consumer_plugin():
+    path = (
+        Path(__file__).resolve().parents[1]
+        / "workspace"
+        / "extensions"
+        / "community"
+        / "example_service_consumer"
+        / "service_consumer_plugin.py"
+    )
+    spec = importlib.util.spec_from_file_location("community_service_consumer_plugin", path)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.ExampleServiceConsumerPlugin
+
+
+ExampleServiceConsumerPlugin = _load_example_consumer_plugin()
 
 
 class TestServiceRegistryExamples(unittest.TestCase):

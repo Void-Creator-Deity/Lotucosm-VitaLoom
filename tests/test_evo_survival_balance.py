@@ -18,8 +18,8 @@ from pathlib import Path
 from core.Lotucosm.scene_runtime_context import RuntimePeerSnapshot, SceneRuntimeTickContext
 
 _ROOT = Path(__file__).resolve().parents[1]
-_SCRIPT = _ROOT / "projects" / "pvaec-细胞演化" / "scripts" / "evo_central_brain_pvaec.py"
-_SCENE = _ROOT / "projects" / "pvaec-细胞演化" / "scenes" / "main_scene.pond"
+_SCRIPT = _ROOT / "workspace" / "projects" / "samples" / "pvaec-细胞演化" / "scripts" / "evo_central_brain_pvaec.py"
+_SCENE = _ROOT / "workspace" / "projects" / "samples" / "pvaec-细胞演化" / "scenes" / "main_scene.pond"
 
 
 def _load_evo():

@@ -1,0 +1,5 @@
+# Fresh-session handoff: E130 complete; E131 planned
+
+E130 completed the splash-presentation controlled-exit audit and repaired a real defect. \`show_vitaloom_splash()\` now catches \`(Exception, SystemExit)\` only around its allocated-splash presentation work, so controlled exits from \`show()\` or \`processEvents()\` hide/defer-delete the exact splash before re-raising. Its cleanup failures remain warning-only; \`KeyboardInterrupt\` remains outside the policy. Seven direct regressions include a real offscreen QSplashScreen proof. Evidence: \`82\` focused, \`57\` composition, \`149\` adjacent offscreen, green smoke/guards, and independent signature \`2 passed\`.
+
+Start **E131 -- Versioned Runtime Splash-Message Controlled-Exit Cleanup Ownership Audit**. Focus only after \`show_vitaloom_splash()\` returned a splash to Launcher but before Kernel/event-loop handoff. Exercise each \`splash_message()\` position under ordinary failures and controlled \`SystemExit\`; prove one E128 cleanup, primary-error preservation, no later startup work, and unchanged FrameCore L0 ownership. Close the loop with exactly one next gate; do not claim whole-refactor completion.

@@ -1,0 +1,9 @@
+# E191 Fresh-Session Completion Prompt -- Project PS Experiment Preset Deterministic Guarded-History Contract Inventory Gate
+
+E191 is complete. `project.set_ps_experiment_preset` is a representative undoable project mutation with a narrow guarded-history contract: direct execution normalizes one supplied path and replaces only `project.json["ps_experiment_preset"]`; no preset source is read and no host adapter is invoked.
+
+Undo uses the owned `project.restore_ps_experiment_preset_snapshot` inverse and a complete canonical `project.json` witness. It restores exact prior absent-vs-present semantics, including legacy non-string JSON values. Redo is guarded by the exact manifest returned from undo. Independent project-manifest changes reject undo/redo before `_write_json()` and do not append failed replay audit entries. Direct callers may omit `expected_project`; only owned replay supplies it.
+
+Evidence: the focused bridge/history suite passed `50 passed, 10 subtests passed in 3.64s`; source compilation and audit/core/GUI boundary checks passed. Audit remains schema v4 with `unified_undo_redo_runtime=false`. No full-suite pytest, global unified-history, native acceleration, or OpenGL-default claim is valid.
+
+The next and only gate is E192: inventory `project.set_evolution_defaults` for a similarly exact guarded-history contract. First determine whether its arbitrary mapping payload, nested JSON data, prior absent-vs-present state, all callers, and durable replay witnesses can be represented safely. Do not bulk-migrate `project.set_active_scene` or `scene.save`, and do not create a generic manifest setter merely for E192.

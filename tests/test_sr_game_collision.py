@@ -1,5 +1,9 @@
 # -*- coding: utf-8
-"""游戏模式墙碰撞。"""
+"""游戏模式墙碰撞。
+
+职责: 锁定 Roguelike 墙体 AABB、玩家推出和敌人分离行为。
+排错: 失败时检查 sr_game_collision 的半径、墙体 sprite 和 actor 分类。
+"""
 from __future__ import annotations
 
 import unittest

@@ -1,6 +1,6 @@
-# -*- coding: utf-8 -*-
+# -*- coding: utf-8
 """
-中枢体脚本：单元测试（从引擎包导入）。
+中枢体脚本：单元测试（从工程 scripts 加载）。
 职责: 断言/回归上述契约。
 时机: pytest 全量或单文件执行。
 不变量: 不依赖人工 GUI；允许 mock SceneManager/PluginLoader。
@@ -9,11 +9,30 @@
 """
 from __future__ import annotations
 
+import importlib.util
 import math
+import sys
 import unittest
+from pathlib import Path
 
 from core.Lotucosm.scene_runtime_context import RuntimePeerSnapshot, SceneRuntimeTickContext
-from core.Lotucosm.sr_central_brain_pvaec import CentralBrainPvaec
+
+_ROOT = Path(__file__).resolve().parents[1]
+_SCRIPTS = _ROOT / "workspace" / "projects" / "samples" / "pvaec-细胞演化" / "scripts"
+
+
+def _load_central_brain():
+    if str(_SCRIPTS) not in sys.path:
+        sys.path.insert(0, str(_SCRIPTS))
+    path = _SCRIPTS / "central_brain_pvaec.py"
+    spec = importlib.util.spec_from_file_location("test_central_brain_pvaec", path)
+    assert spec and spec.loader
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod.CentralBrainPvaec
+
+
+CentralBrainPvaec = _load_central_brain()
 
 
 class _FakeEntity:
@@ -24,8 +43,13 @@ class _FakeEntity:
 
 
 class CentralBrainPvaecTests(unittest.TestCase):
-    def test_perceive_empty_peers(self):
+    def _script(self) -> CentralBrainPvaec:
         script = CentralBrainPvaec()
+        script.developmental_ladder_enabled = False
+        return script
+
+    def test_perceive_empty_peers(self):
+        script = self._script()
         ctx = SceneRuntimeTickContext(
             owner_id="ai",
             owner_type="organism",
@@ -43,7 +67,7 @@ class CentralBrainPvaecTests(unittest.TestCase):
         self.assertEqual(obs["world_height"], 600)
 
     def test_perceive_pulls_one_sensor(self):
-        script = CentralBrainPvaec()
+        script = self._script()
         p = RuntimePeerSnapshot("s1", "sensor", (10.0, 0.0), 5.0, 3.0, 0.0)
         ctx = SceneRuntimeTickContext(
             owner_id="ai",
@@ -60,14 +84,14 @@ class CentralBrainPvaecTests(unittest.TestCase):
         self.assertEqual(obs["actuator_pull"], 0.0)
 
     def test_think_invalid_world_size_returns_zero_accel(self):
-        script = CentralBrainPvaec()
+        script = self._script()
         script.entity = _FakeEntity("ai", 100.0, 100.0)
         dec = script.think({"sensor_pull": 1.0, "actuator_pull": 0.0, "world_width": -1, "world_height": 600}, 0.05)
         self.assertEqual(dec["ax"], 0.0)
         self.assertEqual(dec["ay"], 0.0)
 
     def test_act_clamps_speed(self):
-        script = CentralBrainPvaec()
+        script = self._script()
         script.entity = _FakeEntity("ai", 0.0, 0.0)
         script.entity.velocity = [1000.0, 1000.0]
         script.act({"ax": 0.0, "ay": 0.0}, 0.05)
@@ -75,7 +99,7 @@ class CentralBrainPvaecTests(unittest.TestCase):
         self.assertLessEqual(spd, 420.0 + 1e-6)
 
     def test_start_without_entity_no_crash(self):
-        script = CentralBrainPvaec()
+        script = self._script()
         script.entity = None
         script.start()
 
@@ -96,11 +120,11 @@ class CentralBrainPvaecTests(unittest.TestCase):
             "world_height": 600.0,
         }
         ent = _FakeEntity("a", 100.0, 150.0)
-        s1 = CentralBrainPvaec()
+        s1 = self._script()
         s1.entity = ent
         s1._memory = {"stress_ema": 0.1, "field_ema": 0.2, "speed_ema": 0.3}
         s1._mind = MindProfile.default_main_world()
-        s2 = CentralBrainPvaec()
+        s2 = self._script()
         s2.entity = _FakeEntity("b", 100.0, 150.0)
         s2._memory = {"stress_ema": 0.1, "field_ema": 0.2, "speed_ema": 0.3}
         s2._mind = MindProfile.from_dict({"gain_high_stress": 60.0, "wander_amp": 40.0})

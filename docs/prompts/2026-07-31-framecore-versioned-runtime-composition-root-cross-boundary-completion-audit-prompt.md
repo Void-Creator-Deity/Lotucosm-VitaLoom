@@ -1,0 +1,5 @@
+# Fresh-session handoff: E125 complete
+
+E125 proved the actual FrameCore selected product version remains the versioned runtime bootstrap identity, and exercised the real `FrameApi.run_product_entry()` / `runpy` handoff into `runtime/main.py`. `--project workspace.pond` remains intact through manifest `--editor` injection and reaches Launcher as an absolute startup path. An existing QApplication is reused; launcher return `47` is preserved and launcher exceptions become runtime-owned `SystemExit(1)`. No production correction was needed. Evidence: `3` focused, `35` bootstrap, `127` adjacent offscreen; smoke/guards/signatures green.
+
+Next and only active gate: **E126 -- Versioned Runtime Entrypoint-Mode Composition Boundary Audit**. Audit the versioned runtime's `command`, `--version`, and `--smoke-editor` mode precedence and argument/error semantics across the FrameCore manifest entry boundary. Keep root L0, Qt ownership, Kernel/Host authority, and Project World semantics unchanged; do not claim whole-refactor completion.

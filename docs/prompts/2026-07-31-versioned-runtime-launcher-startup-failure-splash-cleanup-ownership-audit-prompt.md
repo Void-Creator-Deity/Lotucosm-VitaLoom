@@ -1,0 +1,5 @@
+# Fresh-session handoff: E128 complete; E129 planned
+
+E128 completed the versioned-runtime Launcher startup-failure splash-cleanup audit. It reproduced a real gap: \`except Exception\` skipped controlled \`SystemExit\`, allowing a shown splash to remain during startup exit. \`editor_launcher.py\` now uses \`except (Exception, SystemExit)\` only around pre-handoff startup work; inner cleanup failures remain warning-only and do not replace the primary error. Five regressions prove construction/project/plugin \`RuntimeError\` paths plus \`SystemExit(71/73)\`, all without event-loop entry. Evidence is \`73\` focused, \`48\` composition, \`140\` adjacent offscreen, green smoke/guards, and independent signature \`2 passed\`.
+
+Start **E129 -- Versioned Runtime Launcher Event-Loop SystemExit Splash-Handoff Audit**. Read its plan and distinguish it rigorously from E128: test a controlled \`SystemExit\` only after successful \`finish_splash()\` handoff. Preserve its code and adapter-owned deferred cleanup, do not invoke failed-startup dismissal, and retain FrameCore L0 non-ownership. Close the loop with exactly one next gate; do not claim whole-refactor completion.

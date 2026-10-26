@@ -115,7 +115,9 @@ class ProjectOpenSwitchTests(unittest.TestCase):
 
         pm = ProjectManager()
         repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        workspace = os.path.join(repo_root, "projects", "_maint_test_last_opened")
+        workspace = os.path.join(
+            repo_root, "workspace", "projects", "user", "_maint_test_last_opened"
+        )
         cfg_path = os.path.join(workspace, "editor_config.json")
         os.makedirs(workspace, exist_ok=True)
         with open(cfg_path, "w", encoding="utf-8") as f:
@@ -170,6 +172,25 @@ class ProjectOpenSwitchTests(unittest.TestCase):
             self.assertTrue(pm._is_ephemeral_project_path(pytest_dir))
             pm._add_to_recent_projects(proj)
             self.assertNotIn(proj, pm.get_recent_projects())
+
+    def test_ephemeral_open_does_not_set_last_opened_project(self) -> None:
+        from core.VitaLoom.project.project_manager import ProjectManager
+
+        pm = ProjectManager()
+        with tempfile.TemporaryDirectory() as tmp:
+            cfg_path = os.path.join(tmp, "editor_config.json")
+            with open(cfg_path, "w", encoding="utf-8") as f:
+                json.dump({"recent_projects": []}, f)
+            orig_cfg = pm._get_config_file
+            pm._get_config_file = lambda: cfg_path  # type: ignore[method-assign]
+            try:
+                proj = self._write_project(tmp, "ephemeralOpen", "a.pond", "a.pond")
+                self.assertTrue(pm._is_ephemeral_project_path(proj))
+                self.assertTrue(pm.open_project(proj))
+                cfg = pm._read_editor_config()
+                self.assertNotIn("last_opened_project", cfg)
+            finally:
+                pm._get_config_file = orig_cfg  # type: ignore[method-assign]
 
 
 if __name__ == "__main__":

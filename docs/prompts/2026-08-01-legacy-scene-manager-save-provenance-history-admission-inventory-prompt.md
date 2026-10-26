@@ -1,0 +1,5 @@
+﻿# E201 Fresh-Session Prompt -- Legacy SceneManager Save Provenance and History-Admission Inventory Gate
+
+E201 is complete. Runtime AST inventory proves exactly three direct legacy `SceneManager.save_scene()` calls: two ProjectManager automatic Project-World lifecycle-flush routes, both history/audit excluded by E200 and fail-closed before project-manifest commit; and the latent internal `SceneManager.save_scene_as()` delegation. Standard UI explicit save remains the canonical Registry `scene.save` route. The inventory also proves there are currently no runtime callers of `save_scene_as()`.
+
+Do not route lifecycle or latent legacy persistence into undo/audit merely for consistency. Preserve schema v4 and `unified_undo_redo_runtime=false`. The one next gate is E202: make the latent `save_scene_as()` failure-atomic without breaking its public legacy seam; keep it quarantined from user semantic history/audit until a typed user-command contract can prove target ownership, witnesses, stale guards, durable policy, and host synchronization.

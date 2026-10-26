@@ -1,0 +1,9 @@
+# E192 Fresh-Session Completion Prompt -- Project Evolution Defaults Deterministic Guarded-History Contract Inventory Gate
+
+E192 is complete. `project.set_evolution_defaults` now has a narrow representative guarded-history contract. It replaces only `project.json["evolution_defaults"]`, uses detached JSON-safe snapshots for nested mappings/lists/scalars, and never reads an external source or invokes a host adapter. The PS experiment panel continues to update only its status label after the Registry result.
+
+Undo uses the owned `project.restore_evolution_defaults_snapshot` inverse with a full manifest witness. It restores exact prior absent-vs-present semantics, including legacy non-mapping JSON values. Redo is guarded by the exact post-undo manifest. Independent changes anywhere in the manifest reject replay before write/audit, and canonical restoration permits retry. Direct execution remains compatible without `expected_project`.
+
+Evidence: focused cross-history suite passed `56 passed, 10 subtests passed in 4.20s`; changed-file compilation and audit/core/GUI boundary checks passed. Audit remains schema v4 with `unified_undo_redo_runtime=false`. No full-suite pytest, unified-history, native acceleration, or OpenGL-default claim is valid.
+
+The next and only gate is E193: audit `project.set_active_scene` before attempting history migration. Its project field write can be coupled to optional scene-opening/host behavior, so first distinguish canonical manifest mutation from runtime rehydration and terminal rejection behavior. Do not migrate `scene.save` or add a generic project-manifest setter.

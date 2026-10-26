@@ -1,0 +1,5 @@
+# Fresh-session handoff: E156 complete
+
+E156 is complete. Two successful no-splash launches in one process now have direct evidence that omitted services create fresh, distinct default InMemoryRuntimeCapabilityRegistry objects per invocation. Kernel receives only capability_registry, never event_bus=None; each launch performs layers, plugin load, Kernel show, and one event-loop return without splash or cleanup behavior. No production code change was needed.
+
+Proceed only with E157 -- Versioned Runtime Launcher Mixed-Service Optionality Success-Composition Audit. Cover the two remaining successful service combinations: explicit capability registry with omitted event bus, and omitted capability registry with explicit event bus. Prove correct validation/default-construction order, exact caller-object identity where supplied, absence of event_bus=None when omitted, no default-registry construction on the explicit-registry branch, normal UI ordering, and no lifecycle/cache expansion. Preserve the Qt-free FrameCore L0/runtime boundary and all .pond, AI, Inspector, SR2D, and manifest seams; QPainter remains default. Close with full proof and exactly one next gate.

@@ -1,0 +1,19 @@
+﻿{
+    "archive_date":  "2026-10-23",
+    "manifest_role":  "pre-cleanup archive provenance",
+    "manifest_total_items":  180,
+    "cleanup_actions":  155,
+    "action_status_counts":  {
+                                 "deleted_missing":  2,
+                                 "deleted_after_acl_reset":  68,
+                                 "deleted_empty":  1,
+                                 "deleted":  84
+                             },
+    "payload_files":  0,
+    "payload_bytes":  0,
+    "legacy_tool_count":  0,
+    "pytest_log_file_count":  0,
+    "locked_pending":  0,
+    "cleanup_log":  "cleanup-actions.tsv",
+    "locked_cleanup_log":  "locked-cleanup.log"
+}

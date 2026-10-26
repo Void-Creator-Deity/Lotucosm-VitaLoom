@@ -1,0 +1,5 @@
+# Fresh-session handoff: E145 complete
+
+E145 is closed. With `use_splash=False`, successful setup reaches `kernel.show()`, whose `SystemExit(213)` remains the exact primary error even when `dismiss_splash(None)` raises an ordinary RuntimeError. Cleanup is once-only and warning-only; splash presentation and the event loop are unreachable. Evidence: direct 1 passed, versioned-runtime composition 67 passed, editor smoke plugins=13/20, four guards OK, Anaconda signature 2 passed, scoped compile and hygiene passed.
+
+The only next gate is E146: inject a primary ordinary RuntimeError at the same no-splash Kernel-show seam and a distinct cleanup RuntimeError from `dismiss_splash(None)`. Prove the primary object remains authoritative while preserving the intentional KeyboardInterrupt boundary and UI/FrameCore ownership.

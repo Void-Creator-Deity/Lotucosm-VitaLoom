@@ -1,11 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""轻量审计：扫描 traceback.print_exc 等日志/异常反模式。
-
-职责: 按 PATTERNS 正则扫 .py，输出违规路径（CI 可选）。
-时机: 本地或 CI 手动运行；与 audit_comment_standard.py 互补。
-排错: 见 docs/logging_convention.md。
-"""
+"""Audit logging and exception-handling fallback patterns."""
 
 from __future__ import annotations
 
@@ -13,27 +8,27 @@ import argparse
 import re
 import sys
 from pathlib import Path
-from typing import Iterable, List, Tuple
+from typing import Iterable
 
 
-Pattern = Tuple[str, re.Pattern[str], str]
+Pattern = tuple[str, re.Pattern[str], str]
 
 
-PATTERNS: List[Pattern] = [
+PATTERNS: list[Pattern] = [
     (
         "traceback_print_exc",
         re.compile(r"traceback\.print_exc\s*\("),
-        "检测到 traceback.print_exc()，建议改为 logger.exception(...)",
+        "traceback.print_exc() found; prefer logger.exception(...)",
     ),
     (
         "bare_except_pass",
         re.compile(r"except\s*:\s*\n\s*pass\b", re.MULTILINE),
-        "检测到 except: pass，禁止静默吞异常",
+        "except: pass found; do not silently swallow errors",
     ),
     (
         "except_exception_pass",
         re.compile(r"except\s+Exception\s*:\s*\n\s*pass\b", re.MULTILINE),
-        "检测到 except Exception: pass，建议至少记录 warning",
+        "except Exception: pass found; at least log a warning",
     ),
     (
         "logger_fstring",
@@ -41,9 +36,10 @@ PATTERNS: List[Pattern] = [
             r"(?:^|[^A-Za-z0-9_])(?:logger|self\.logger)\."
             r"(?:debug|info|warning|error|exception|critical)\s*\(\s*f[\"']"
         ),
-        "检测到 logger f-string，建议使用参数化日志占位符",
+        "logger f-string found; prefer parameterized logging placeholders",
     ),
 ]
+
 
 DEFAULT_EXCLUDES = {
     ".git",
@@ -51,7 +47,12 @@ DEFAULT_EXCLUDES = {
     "__pycache__",
     ".cursor",
     ".trae",
+    ".venv",
+    "venv",
     "mcps",
+    "dist",
+    "build",
+    "tools_legacy",
 }
 
 
@@ -67,7 +68,7 @@ def line_no_from_offset(content: str, offset: int) -> int:
 
 
 def _is_i18n_t_fallback(content: str, offset: int) -> bool:
-    """允许 _t() 翻译回退中的静默容错。"""
+    """Allow the intentionally silent translation fallback in _t()."""
     window_start = max(0, offset - 400)
     context = content[window_start:offset]
     return (
@@ -77,8 +78,8 @@ def _is_i18n_t_fallback(content: str, offset: int) -> bool:
     )
 
 
-def scan_file(path: Path) -> List[Tuple[str, int, str]]:
-    issues: List[Tuple[str, int, str]] = []
+def scan_file(path: Path) -> list[tuple[str, int, str]]:
+    issues: list[tuple[str, int, str]] = []
     try:
         text = path.read_text(encoding="utf-8")
     except UnicodeDecodeError:
@@ -96,31 +97,32 @@ def scan_file(path: Path) -> List[Tuple[str, int, str]]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="审计日志与异常处理回退模式")
+    parser = argparse.ArgumentParser(description="Audit logging and exception fallback patterns")
     parser.add_argument(
         "--root",
-        default="core",
-        help="扫描根目录（默认: core）",
+        default="FrameCore",
+        help="scan root (default: FrameCore)",
     )
     args = parser.parse_args()
 
     root = Path(args.root).resolve()
     if not root.exists():
-        print(f"[audit] root 不存在: {root}")
+        print(f"[audit] root does not exist: {root}")
         return 2
 
-    all_issues: List[Tuple[Path, str, int, str]] = []
+    all_issues: list[tuple[Path, str, int, str]] = []
     for py_file in iter_py_files(root):
         for msg, line_no, snippet in scan_file(py_file):
             all_issues.append((py_file, msg, line_no, snippet))
 
     if not all_issues:
-        print("[audit] 通过：未发现日志/异常处理回退模式")
+        print("[audit] OK: no logging/exception fallback patterns found")
         return 0
 
-    print(f"[audit] 发现 {len(all_issues)} 个问题:")
+    print(f"[audit] found {len(all_issues)} issue(s)")
+    cwd = Path.cwd()
     for file_path, msg, line_no, snippet in all_issues:
-        rel = file_path.relative_to(Path.cwd()) if file_path.is_relative_to(Path.cwd()) else file_path
+        rel = file_path.relative_to(cwd) if file_path.is_relative_to(cwd) else file_path
         print(f"- {rel}:{line_no} | {msg}")
         print(f"  -> {snippet}")
 

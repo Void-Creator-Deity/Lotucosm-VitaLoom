@@ -6,13 +6,25 @@ from __future__ import annotations
 import json
 import os
 import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+CATALOG = (
+    ROOT
+    / "FrameCore"
+    / "plugins"
+    / "lotucosm-vitaloom"
+    / "versions"
+    / "1.0.0"
+    / "runtime"
+    / "builtin"
+    / "package_index.json"
+)
 
 
 class TestPackageIndexArchitecture(unittest.TestCase):
     def setUp(self) -> None:
-        root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        path = os.path.join(root, "builtin", "package_index.json")
-        with open(path, "r", encoding="utf-8") as f:
+        with open(CATALOG, "r", encoding="utf-8") as f:
             self.index = json.load(f)
 
     def test_schema_and_required_core(self) -> None:
@@ -48,3 +60,16 @@ class TestPackageIndexArchitecture(unittest.TestCase):
         assert p3d is not None
         self.assertEqual(p3d.get("status"), "planned")
         self.assertEqual(p3d.get("plugins"), [])
+
+    def test_packages_declare_project_plugin_contributions(self) -> None:
+        for pkg in self.index.get("packages", []):
+            with self.subTest(pkg=pkg.get("id")):
+                self.assertIn("commands", pkg)
+                self.assertIsInstance(pkg["commands"], list)
+                self.assertIn("resources", pkg)
+                self.assertIsInstance(pkg["resources"], list)
+                self.assertIn("export_entries", pkg)
+                self.assertIsInstance(pkg["export_entries"], list)
+                if pkg.get("plugins") and not pkg["commands"]:
+                    self.assertIsInstance(pkg.get("ui_only_reason"), str)
+                    self.assertTrue(pkg["ui_only_reason"].strip())

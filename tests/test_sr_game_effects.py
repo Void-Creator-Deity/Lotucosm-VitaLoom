@@ -1,5 +1,9 @@
 # -*- coding: utf-8
-"""游戏战斗特效。"""
+"""游戏战斗特效。
+
+职责: 锁定 Roguelike 战斗 FX 的创建、摄取和生命周期更新。
+排错: 失败时检查 sr_game_effects 的请求字段和时间衰减逻辑。
+"""
 from __future__ import annotations
 
 import unittest

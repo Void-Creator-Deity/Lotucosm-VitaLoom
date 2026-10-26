@@ -8,6 +8,43 @@ from core.VitaLoom.viewports.sr_input_state import SrInputState, normalize_sr_ke
 
 
 class SrInputStateTests(unittest.TestCase):
+
+    def test_capture_and_restore_preserves_unconsumed_local_buffer(self) -> None:
+        state = SrInputState()
+        state.press("w")
+        state.set_mouse_scene(12.5, 8.0)
+        state.mouse_press_left()
+        captured = state.capture_state()
+        state.clear()
+
+        state.restore_state(captured)
+        assert state.capture_state() == {
+            "keys_down": ["W"],
+            "mouse_scene_xy": [12.5, 8.0],
+            "mouse_left": True,
+            "mouse_left_clicked": True,
+        }
+        assert state.snapshot().mouse_left_clicked is True
+        assert state.snapshot().mouse_left_clicked is False
+
+    def test_restore_rejects_invalid_state_without_mutation(self) -> None:
+        state = SrInputState()
+        state.press("A")
+        state.mouse_press_left()
+        before = state.capture_state()
+        invalid = (
+            {"keys_down": ["W"], "mouse_left": "yes"},
+            {**before, "mouse_scene_xy": [float("nan"), 1.0]},
+            {**before, "mouse_scene_xy": [1.0, float("inf")]},
+            {**before, "mouse_scene_xy": [True, 1.0]},
+            {**before, "unexpected": 1},
+        )
+        for payload in invalid:
+            with self.subTest(payload=payload), self.assertRaises(ValueError):
+                state.restore_state(payload)
+            self.assertEqual(state.capture_state(), before)
+        self.assertTrue(state.snapshot().mouse_left_clicked)
+
     def test_press_release_and_snapshot(self) -> None:
         st = SrInputState()
         st.press("w")

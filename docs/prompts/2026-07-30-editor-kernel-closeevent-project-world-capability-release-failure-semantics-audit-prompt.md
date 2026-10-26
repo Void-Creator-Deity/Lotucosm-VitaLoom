@@ -1,0 +1,9 @@
+# Fresh-session record: E92 complete
+
+Repository root: `<repository-root>`
+
+E92 is complete. `EditorKernel.closeEvent()` releases one exact Plugin Host publication, then exact Project World capabilities, then the Project World composition lease, and accepts only after every boundary settles. Two isolated close-event regressions now prove that a Project World capability-unregistration exception and a later composition-lease release exception both emit the established critical/ignore path, never accept or force close, and retain only the correct retryable state. The lease-failure proof also verifies removal of the still-owned capability, preservation of a later replacement, and no stale capability resurrection. No production correction was necessary.
+
+Evidence: focused close suite `9 passed in 0.19s`; Kernel/capability/Project World/Host adjacency `101 passed in 1.76s`; root smoke `plugins=13/20`; four guardrails OK; Anaconda signatures `2 passed in 0.17s`; scoped source compilation and changed-file whitespace passed. `.venv` lacks `cryptography`, so no dependency was installed. E68 remains historical broad proof (`1678 passed, 34 skipped, 34 subtests`). QPainter remains default; OpenGL/native is not default-ready; whole-refactor completion is not claimed.
+
+The sole next gate is **E93 -- Editor Kernel Initialization-Rollback Project World Teardown Failure Semantics Audit**. Audit the constructor-exception rollback path that uses `_release_project_world_host_lease()` after partial composition. Determine whether teardown failure is truthfully surfaced, preserves exact ownership/retry facts, and cannot leak stale public capability authority. Correct only a demonstrated defect. Do not add a second Host, registry, force cleanup, app shell, or alternate authority.

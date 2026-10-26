@@ -1,0 +1,28 @@
+{
+  "seed": 42,
+  "checkpoint_ticks": [20, 40, 80],
+  "cases": [
+    {
+      "name": "baseline",
+      "config": "workspace/experiments/dual_comparability_smoke.json",
+      "ticks": 80,
+      "overrides": {}
+    },
+    {
+      "name": "developmental_ladder",
+      "config": "workspace/experiments/dual_comparability_smoke.json",
+      "ticks": 80,
+      "overrides": {
+        "developmental_ladder_enabled": true,
+        "use_verify_triple": true,
+        "developmental_initial_stage": 0
+      }
+    },
+    {
+      "name": "post_war_recovery",
+      "config": "workspace/experiments/post_war_recovery.json",
+      "ticks": 80,
+      "overrides": {}
+    }
+  ]
+}

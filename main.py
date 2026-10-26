@@ -1,92 +1,113 @@
-"""Lotucosm-VitaLoom 主入口：注入 sys.path 并启动 EditorKernel。
+﻿# -*- coding: utf-8 -*-
+"""FrameCore application entrypoint.
 
-职责: 解析 project_root、可选 VITALOOM_DEBUG_STARTUP 写 .cursor/debug.log。
-时机: run_editor.bat / python main.py；插件目录由本文件传入 PluginLoader。
-排错: 闪退 → VITALOOM_DEBUG_STARTUP=1；跳过启动打开项目 → VITALOOM_SKIP_AUTO_OPEN=1；插件缺失 → core/VitaLoom/README.md。
+L0 discovers the ``lotucosm-vitaloom`` app plugin and delegates Hub entries to
+its lifecycle Adapter. Product-version Editor/Player commands remain delegated
+to the selected runtime.
 """
+from __future__ import annotations
 
-import json
-import os
 import sys
-import time
+from pathlib import Path
+
+from FrameCore.lifecycle import FrameApi, FrameAppPlugin, LifecycleRunner
+from FrameCore.product_registry import ProductVersion
+from FrameCore.suite_registry import load_default_suite_manifest
 
 
-if sys.stdout and hasattr(sys.stdout, "reconfigure"):
-    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-if sys.stderr and hasattr(sys.stderr, "reconfigure"):
-    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
-
-project_root = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, project_root)
-
-STARTUP_DEBUG = os.environ.get("VITALOOM_DEBUG_STARTUP", "0") == "1"
+DEFAULT_PRODUCT_ID = "lotucosm-vitaloom"
+_LIFECYCLE = LifecycleRunner()
+_FRAME_API: FrameApi | None = None
+_FRAME_PLUGIN: FrameAppPlugin | None = None
 
 
-def _startup_log(message: str, **data):
-    if not STARTUP_DEBUG:
+def _app_root() -> Path:
+    if getattr(sys, "frozen", False):
+        return Path(sys.executable).resolve().parent
+    return Path(__file__).resolve().parent
+
+
+def _resource_root() -> Path:
+    if getattr(sys, "frozen", False):
+        meipass = getattr(sys, "_MEIPASS", None)
+        if meipass:
+            return Path(meipass).resolve()
+    return Path(__file__).resolve().parent
+
+
+def _bootstrap_frame_plugin() -> tuple[FrameApi, FrameAppPlugin]:
+    global _FRAME_API, _FRAME_PLUGIN
+    if _FRAME_API is not None and _FRAME_PLUGIN is not None:
+        return _FRAME_API, _FRAME_PLUGIN
+
+    suite = load_default_suite_manifest(_resource_root())
+    frame_api = FrameApi(
+        app_root=_app_root(),
+        resource_root=_resource_root(),
+        suite=suite,
+    )
+    plugin = frame_api.create_lifecycle_plugin()
+    _LIFECYCLE.load(plugin, frame_api)
+    _FRAME_API = frame_api
+    _FRAME_PLUGIN = plugin
+    return frame_api, plugin
+
+
+def _frame_api() -> FrameApi:
+    return _bootstrap_frame_plugin()[0]
+
+
+def _frame_plugin() -> FrameAppPlugin:
+    return _bootstrap_frame_plugin()[1]
+
+
+def _select_product_version(product_id: str = DEFAULT_PRODUCT_ID) -> ProductVersion:
+    return _frame_api().select_product_version(product_id)
+
+
+def _run_product_entry(entry: str, extra_args: list[str] | None = None) -> None:
+    version = _select_product_version()
+    _frame_api().run_product_entry(version, entry, extra_args)
+
+
+def _run_frame_plugin_entry(entry: str, args: list[str] | None = None) -> int:
+    return int(_frame_plugin().run_entry(entry, args))
+
+
+def _format_runtime_version() -> str:
+    suite = _frame_api().suite
+    version = _select_product_version()
+    return (
+        f"{suite.display_name or suite.suite_id} {suite.version} / "
+        f"{version.product_id} {version.version}"
+    )
+
+
+def _shutdown_frame_plugin() -> None:
+    global _FRAME_API, _FRAME_PLUGIN
+    _LIFECYCLE.unload_all()
+    _FRAME_API = None
+    _FRAME_PLUGIN = None
+
+
+def main() -> None:
+    args = sys.argv[1:]
+    if "--version" in args:
+        print(_format_runtime_version())
         return
-    log_dir = os.path.join(project_root, ".cursor")
-    os.makedirs(log_dir, exist_ok=True)
-    log_path = os.path.join(log_dir, "debug.log")
-    payload = {
-        "message": message,
-        "data": data,
-        "timestamp": int(time.time() * 1000),
-    }
-    with open(log_path, "a", encoding="utf-8") as f:
-        f.write(json.dumps(payload, ensure_ascii=False) + "\n")
-
-
-def main():
-    """主函数 - 启动插件化编辑器内核"""
-    print("🌌 VitaLoom Engine - 极简内核启动中...")
-    _startup_log("main() 开始执行")
-
-    try:
-        from core.VitaLoom.kernel import EditorKernel
-        from core.VitaLoom.ui.splash_screen import finish_splash, show_vitaloom_splash, splash_message
-        from PyQt6 import QtWidgets
-
-        _startup_log("核心模块导入完成")
-        app = QtWidgets.QApplication(sys.argv)
-        splash = show_vitaloom_splash(app)
-        splash_message(splash, "初始化织机内核…", app)
-
-        kernel = EditorKernel()
-        splash_message(splash, "加载官方插件与用户扩展…", app)
-
-        print("📦 正在按分层策略加载插件...")
-        kernel.load_plugins_layered(
-            {
-                "official_mod": ["builtin/editor_extensions"],
-                "user_mod": ["plugins"],
-            }
-        )
-        splash_message(splash, "恢复布局与项目…", app)
-        kernel.show()
-        finish_splash(splash, kernel)
-
-        print("✅ VitaLoom Engine 启动成功！")
-        sys.exit(app.exec())
-    except ImportError as e:
-        _startup_log("ImportError 捕获", error=str(e), error_type=type(e).__name__)
-        print(f"❌ 错误: 无法导入内核 - {e}")
-        print("💡 提示: 请检查 core.VitaLoom.kernel 模块是否存在")
-        import traceback
-
-        traceback.print_exc()
-        sys.exit(1)
-    except SystemExit:
-        raise
-    except Exception as e:
-        _startup_log("Exception 捕获", error=str(e), error_type=type(e).__name__)
-        print(f"❌ 错误: 启动内核失败 - {e}")
-        import traceback
-
-        traceback.print_exc()
-        sys.exit(1)
+    if args and args[0] == "command":
+        _run_product_entry("command", args[1:])
+        return
+    if "--smoke-hub" in args:
+        raise SystemExit(_run_frame_plugin_entry("hub_smoke", args))
+    if "--editor" in args or "--smoke-editor" in args or "--project" in args:
+        _run_product_entry("editor", args)
+        return
+    raise SystemExit(_run_frame_plugin_entry("hub", args))
 
 
 if __name__ == "__main__":
-    # 当脚本直接运行时，调用main函数
-    main()
+    try:
+        main()
+    finally:
+        _shutdown_frame_plugin()

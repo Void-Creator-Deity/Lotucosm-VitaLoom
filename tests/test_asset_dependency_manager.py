@@ -32,6 +32,23 @@ class AssetDependencyManagerTests(unittest.TestCase):
         target = os.path.normpath(os.path.join(root, "scripts", "foo.py"))
         self.assertTrue(mgr._scene_uses_asset(scene, target, root))
 
+    def test_default_read_model_is_resolved_lazily(self):
+        with tempfile.TemporaryDirectory() as root:
+            read_model = MagicMock()
+            read_model.current_project_world_path.return_value = root
+            mgr = AssetDependencyManager()
+
+            with patch(
+                "core.VitaLoom.project.asset_dependency.get_project_world_read_model",
+                return_value=read_model,
+            ) as resolver, patch(
+                "core.VitaLoom.project.asset_index.build_project_asset_index",
+                return_value={"dependencies": {"edges": []}},
+            ):
+                self.assertEqual(mgr.get_asset_references("assets/missing.png"), [])
+
+            resolver.assert_called_once_with()
+
     def test_get_asset_references_integration(self):
         with tempfile.TemporaryDirectory() as root:
             scenes = os.path.join(root, "scenes")
@@ -44,12 +61,11 @@ class AssetDependencyManagerTests(unittest.TestCase):
             with open(pond, "w", encoding="utf-8") as f:
                 json.dump({"entities": [{"sprite_path": "assets/a.png"}]}, f)
 
-            mgr = AssetDependencyManager()
-            fake_pm = MagicMock()
-            fake_pm.get_current_project_path.return_value = root
+            read_model = MagicMock()
+            read_model.current_project_world_path.return_value = root
+            mgr = AssetDependencyManager(project_world_read_model=read_model)
 
-            with patch("core.VitaLoom.project.asset_dependency.get_project_manager", return_value=fake_pm):
-                refs = mgr.get_asset_references(png)
+            refs = mgr.get_asset_references(png)
             self.assertEqual(len(refs), 1)
             self.assertTrue(refs[0].replace("\\", "/").endswith("scenes/s.pond"))
 

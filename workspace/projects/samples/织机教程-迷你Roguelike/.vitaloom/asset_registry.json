@@ -1,0 +1,170 @@
+{
+  "assets": {
+    "asset_0c2be61b102b4994b691946bff5025de": {
+      "bytes": 225,
+      "created_generation": 1,
+      "id": "asset_0c2be61b102b4994b691946bff5025de",
+      "mtime_ns": 1780410114883325900,
+      "path": "assets/sprites/player_0.png",
+      "sha256": "a5b1d0c2e0246ed5b84cf21d7b44397a814a0d3c3183529bfe22980f02b85f39",
+      "updated_generation": 1
+    },
+    "asset_1084bd48bd6040f1bb2db6bcd7e82ab5": {
+      "bytes": 3268,
+      "created_generation": 1,
+      "id": "asset_1084bd48bd6040f1bb2db6bcd7e82ab5",
+      "mtime_ns": 1781186392155607000,
+      "path": "scripts/__pycache__/enemy_chaser.cpython-311.pyc",
+      "sha256": "6f8c8a9a7c23078327bdbc01a5af869d041ebbdea3d1e7177ac62bc3d9a86a28",
+      "updated_generation": 1
+    },
+    "asset_108b430ec8224ada87059662ef352306": {
+      "bytes": 4120,
+      "created_generation": 1,
+      "id": "asset_108b430ec8224ada87059662ef352306",
+      "mtime_ns": 1791656430051588700,
+      "path": "scripts/__pycache__/game_director.cpython-311.pyc",
+      "sha256": "5ffcebb7835d4654d771b4a2e4fadbe39dac0e95ee49c00a487cd7b0f2ebb2f1",
+      "updated_generation": 1
+    },
+    "asset_1922858ab7ed44bbaf0677650b38fbd2": {
+      "bytes": 252,
+      "created_generation": 1,
+      "id": "asset_1922858ab7ed44bbaf0677650b38fbd2",
+      "mtime_ns": 1780410114882320700,
+      "path": "assets/sprites/slime.png",
+      "sha256": "17bb952f99dc8ee55df91c76db37a0805e0af5d8c14c496be774b4c5579a7b34",
+      "updated_generation": 1
+    },
+    "asset_202d5baffb6943b8a82c94799035218d": {
+      "bytes": 2407,
+      "created_generation": 1,
+      "id": "asset_202d5baffb6943b8a82c94799035218d",
+      "mtime_ns": 1791656417537363100,
+      "path": "scripts/game_director.py",
+      "sha256": "1cd53a3d64fca9180c19eea7541bf8745a919d0980e06297df71f2c594a4700a",
+      "updated_generation": 1
+    },
+    "asset_205eb5c542ed4650b1ede0a81d420fd4": {
+      "bytes": 3807,
+      "created_generation": 1,
+      "id": "asset_205eb5c542ed4650b1ede0a81d420fd4",
+      "mtime_ns": 1784116167357734700,
+      "path": "scripts/__pycache__/game_director.cpython-313.pyc",
+      "sha256": "9d0a3e39836d8f859cd657ec17cee39b17e62a3f0ea1201c7f318ab5b8ce1712",
+      "updated_generation": 1
+    },
+    "asset_3328766b32294067a574ad6e30e3a22e": {
+      "bytes": 7058,
+      "created_generation": 1,
+      "id": "asset_3328766b32294067a574ad6e30e3a22e",
+      "mtime_ns": 1781186392158607700,
+      "path": "scripts/__pycache__/player_controller.cpython-311.pyc",
+      "sha256": "4489f4a84ffc66f7438500c10b8529d56ae0b992574dc02f956421a0ba0ac5c7",
+      "updated_generation": 1
+    },
+    "asset_335e80b3684a4fb185416674396caf0a": {
+      "bytes": 227,
+      "created_generation": 1,
+      "id": "asset_335e80b3684a4fb185416674396caf0a",
+      "mtime_ns": 1780410114883325900,
+      "path": "assets/sprites/player_1.png",
+      "sha256": "2bc1515cc5ddd7bd95031c516dbefb6f17894d2cef3be18eddceabdca6658a00",
+      "updated_generation": 1
+    },
+    "asset_44d2a78f1b0b4e2594bad0d8b7b63720": {
+      "bytes": 5217,
+      "created_generation": 1,
+      "id": "asset_44d2a78f1b0b4e2594bad0d8b7b63720",
+      "mtime_ns": 1780900351088613800,
+      "path": "scripts/player_controller.py",
+      "sha256": "5b69c65fc3d9cad90413598800c393c63bb4d27a5bcac140e550aac07498bc0a",
+      "updated_generation": 1
+    },
+    "asset_5ce239f030b94fe989558cf9420943e2": {
+      "bytes": 6976,
+      "created_generation": 1,
+      "id": "asset_5ce239f030b94fe989558cf9420943e2",
+      "mtime_ns": 1784116167353738000,
+      "path": "scripts/__pycache__/player_controller.cpython-313.pyc",
+      "sha256": "6f72757482ffcea0b3a2961db9e346d233ecd6368c42998af2ccbe70cc71544e",
+      "updated_generation": 1
+    },
+    "asset_7be87a7c6887446489759ddd20d0d52c": {
+      "bytes": 3164,
+      "created_generation": 1,
+      "id": "asset_7be87a7c6887446489759ddd20d0d52c",
+      "mtime_ns": 1784116167356737600,
+      "path": "scripts/__pycache__/enemy_chaser.cpython-313.pyc",
+      "sha256": "8fcac31c0070c6057b4a03303eb842bd2df64f3fdc7dafeb02cba13276cd8356",
+      "updated_generation": 1
+    },
+    "asset_80888687d76a4501b182c780e8a3e952": {
+      "bytes": 227,
+      "created_generation": 1,
+      "id": "asset_80888687d76a4501b182c780e8a3e952",
+      "mtime_ns": 1780410114882320700,
+      "path": "assets/sprites/exit.png",
+      "sha256": "4c2d5579ba3c412e3f673a9c7c9044d9c67610b8c98da2e1fadb552ea6fa0ab6",
+      "updated_generation": 1
+    },
+    "asset_ce118841de3d412ca611795ab7824a79": {
+      "bytes": 501,
+      "created_generation": 1,
+      "id": "asset_ce118841de3d412ca611795ab7824a79",
+      "mtime_ns": 1791659259922886200,
+      "path": "project.lock.json",
+      "sha256": "132cb4dbc0c1508c243c516403dfbf5050823647fd1f5419aa6fbb43cb1b6343",
+      "updated_generation": 1
+    },
+    "asset_d46e6bd353214ae88c069287b1cbd7fc": {
+      "bytes": 152,
+      "created_generation": 1,
+      "id": "asset_d46e6bd353214ae88c069287b1cbd7fc",
+      "mtime_ns": 1780410114882320700,
+      "path": "assets/sprites/wall.png",
+      "sha256": "754f48677a48d5a7546078277a6215cdfe38a1f290b609bf2bc0465d5c639029",
+      "updated_generation": 1
+    },
+    "asset_ea5bead5af2041f19ea919454afbf517": {
+      "bytes": 1863,
+      "created_generation": 1,
+      "id": "asset_ea5bead5af2041f19ea919454afbf517",
+      "mtime_ns": 1780900351103135900,
+      "path": "scripts/enemy_chaser.py",
+      "sha256": "ca866894a8b90951f004b82edcda0776d0d1eaeceabecc21dd336a4dd210c492",
+      "updated_generation": 1
+    },
+    "asset_f2a3bf4d7c754041b227433e0a99805d": {
+      "bytes": 5641,
+      "created_generation": 1,
+      "id": "asset_f2a3bf4d7c754041b227433e0a99805d",
+      "mtime_ns": 1782969559825673800,
+      "path": "scenes/dungeon_01.pond",
+      "sha256": "16df83d5e45782655ec8cb5f749668ff61aba56b9369e157e03e946b9fa57584",
+      "updated_generation": 1
+    },
+    "asset_f4d02ffad1044d6a8d61f022c9e26ff8": {
+      "bytes": 1027,
+      "created_generation": 1,
+      "id": "asset_f4d02ffad1044d6a8d61f022c9e26ff8",
+      "mtime_ns": 1791659292170434200,
+      "path": "project.json",
+      "sha256": "cd9e5e194e6ab43e39fd44a8da987a218914721a462735f8959ac23b107cb318",
+      "updated_generation": 1
+    },
+    "asset_faa6d875f0c34158a1359c09e80c4409": {
+      "bytes": 1131,
+      "created_generation": 1,
+      "id": "asset_faa6d875f0c34158a1359c09e80c4409",
+      "mtime_ns": 1781691336925073600,
+      "path": "assets/manifest.json",
+      "sha256": "762c084e481e3ae63f2381b917c8cc2bebab10e538424430d115e0952809d52b",
+      "updated_generation": 1
+    }
+  },
+  "generation": 1,
+  "registry_revision": "9e22f48612264c2913fa8d905ff49f731771a3ecdd3160ec9466d0dbd0e6683d",
+  "schema_version": 1,
+  "tombstones": {}
+}

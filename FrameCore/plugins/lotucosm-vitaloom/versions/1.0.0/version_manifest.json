@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "version": "1.0.0",
+  "entrypoints": {
+    "command": "runtime/main.py command",
+    "editor": "runtime/main.py --editor",
+    "player": "runtime/player.py",
+    "smoke_editor": "runtime/main.py --smoke-editor"
+  },
+  "physical_roots": [
+    "runtime/core/Lotucosm",
+    "runtime/core/VitaLoom",
+    "runtime/core/api",
+    "runtime/builtin"
+  ],
+  "builtin_capability_index": "runtime/builtin/package_index.json"
+}

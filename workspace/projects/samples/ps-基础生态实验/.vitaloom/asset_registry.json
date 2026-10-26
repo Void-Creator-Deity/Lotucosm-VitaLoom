@@ -1,0 +1,26 @@
+{
+  "assets": {
+    "asset_16ffb9ed14b7473a86ee6ea72d733859": {
+      "bytes": 645,
+      "created_generation": 1,
+      "id": "asset_16ffb9ed14b7473a86ee6ea72d733859",
+      "mtime_ns": 1791659292171869700,
+      "path": "project.json",
+      "sha256": "4bf6590e798fecbc262f15e2f25eafa15e5c7fe352511df009c49a46690a0d8d",
+      "updated_generation": 1
+    },
+    "asset_8f3af1f3241a463e8bc900366e367209": {
+      "bytes": 506,
+      "created_generation": 1,
+      "id": "asset_8f3af1f3241a463e8bc900366e367209",
+      "mtime_ns": 1791659260170270800,
+      "path": "project.lock.json",
+      "sha256": "207043472314581f1a47a2cb2941bb1ca632ec3d377639e489cea9a3f9bd96cd",
+      "updated_generation": 1
+    }
+  },
+  "generation": 1,
+  "registry_revision": "a67109c2dae215a0ca516243c73c85e65875021ad27895d01829ac42504aa12b",
+  "schema_version": 1,
+  "tombstones": {}
+}

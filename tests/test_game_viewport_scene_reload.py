@@ -77,6 +77,45 @@ class GameViewportSceneReloadTests(unittest.TestCase):
             gv._stop_simulation()
         mock_write.assert_not_called()
 
+    def test_scene_change_discards_old_epoch_and_first_tick_uses_new_lifetime(self) -> None:
+        from types import SimpleNamespace
+
+        from core.Lotucosm.runtime.world_bridge_deterministic_randomness_context import (
+            create_worldbridge_deterministic_randomness_context,
+        )
+        from core.Lotucosm.runtime.world_bridge_input_sequence import WorldBridgeInputSequence
+        from core.Lotucosm.runtime.world_bridge_tick_authority import WorldBridgeTickAuthority
+        from core.VitaLoom.viewports.sr_input_state import SrInputState
+
+        gv = GameViewport()
+        authority = WorldBridgeTickAuthority(input_sequence=WorldBridgeInputSequence())
+        authority.bind_randomness_context(
+            create_worldbridge_deterministic_randomness_context("scene-reload", "seed")
+        )
+        gv._worldbridge_tick_authority = authority
+        gv._worldbridge_input_sequence = authority.input_sequence
+        gv._worldbridge_input_events_last_tick = []
+        gv._sr_input = SrInputState()
+        gv._unified_pond = None
+        gv.is_playing = False
+        gv._using_scene_runtime = True
+
+        authority.input_sequence.append("key_down", {"key": "W"})
+        authority.begin_tick(0.05)
+        old_epoch = authority.input_sequence.pause_reset_epoch
+
+        gv._on_external_scene_context_changed("/new/scene.pond")
+        self.assertEqual(authority.current_tick(), None)
+        self.assertEqual(authority.input_sequence.pause_reset_epoch, old_epoch + 1)
+
+        authority.input_sequence.append("key_down", {"key": "D"})
+        context = authority.begin_tick(0.05, lifecycle_action="tick")
+        self.assertEqual(context["pause_reset_epoch"], old_epoch + 1)
+        self.assertEqual(
+            [event["payload"]["key"] for event in context["input_events"]],
+            ["D"],
+        )
+
     def test_capture_session_context_independent_of_later_scene(self) -> None:
         gv = GameViewport()
         gv.editor_context.current_project_path = "/proj/main"

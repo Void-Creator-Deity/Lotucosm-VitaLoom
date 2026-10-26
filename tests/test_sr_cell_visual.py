@@ -76,6 +76,41 @@ class SrCellVisualTests(unittest.TestCase):
         p.end()
         self.assertGreater(img.pixelColor(120, 120).alpha(), 0)
 
+    def _render(self, entities, edges, signal_edges):
+        img = QImage(320, 240, QImage.Format.Format_ARGB32)
+        img.fill(0)
+        p = QPainter(img)
+        SrVisualRenderer().paint_frame(
+            p,
+            320,
+            240,
+            entities=entities,
+            structural_edges=edges,
+            signal_edges=signal_edges,
+            scene_time=1.0,
+        )
+        p.end()
+        return img
+
+    def test_invisible_hub_falls_back_to_per_entity_visibility(self) -> None:
+        def build(hub_visible: bool):
+            hub = _FakeEnt("o1", "organism", 120, 120, 26)
+            hub.visible = hub_visible
+            s1 = _FakeEnt("s1", "sensor", 155, 105, 12)
+            s1.visible = True
+            a1 = _FakeEnt("a1", "actuator", 95, 145, 11)
+            a1.visible = False
+            return [hub, s1, a1], [("o1", "s1"), ("o1", "a1")]
+
+        painted = self._render(*build(True), signal_edges=[])
+        hidden = self._render(*build(False), signal_edges=[])
+        # The invisible hub is not painted as a composite cell.
+        self.assertNotEqual(
+            painted.pixelColor(120, 120).rgba(), hidden.pixelColor(120, 120).rgba()
+        )
+        # A visible member still renders on its own even though its hub is hidden.
+        self.assertGreater(hidden.pixelColor(155, 105).alpha(), 0)
+
 
 if __name__ == "__main__":
     unittest.main()

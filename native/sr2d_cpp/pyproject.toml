@@ -1,0 +1,23 @@
+[build-system]
+requires = ["scikit-build-core>=0.9", "pybind11>=2.12"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "lotucosm-vitaloom-sr2d-cpp"
+version = "1.0.0"
+description = "Optional C++ SR2D PVAEC kernel for Lotucosm-VitaLoom"
+requires-python = ">=3.11"
+
+[tool.scikit-build]
+minimum-version = "0.9"
+build-dir = "build/{wheel_tag}"
+wheel.packages = []
+cmake.version = ">=3.18,<4"
+ninja.version = ">=1.11"
+ninja.make-fallback = false
+sdist.include = [
+    "CMakeLists.txt",
+    "src/bindings.cpp",
+    "src/kernel.cpp",
+    "src/kernel.hpp",
+]

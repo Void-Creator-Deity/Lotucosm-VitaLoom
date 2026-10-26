@@ -46,7 +46,7 @@ class PluginLoaderFailureIsolationTests(unittest.TestCase):
                 root,
                 "good_plugin.py",
                 """
-from core.plugin.interfaces import IEditorPlugin
+from core.VitaLoom.kernel.plugin_interfaces import IEditorPlugin
 
 class GoodPlugin(IEditorPlugin):
     def get_plugin_info(self):
@@ -63,7 +63,7 @@ class GoodPlugin(IEditorPlugin):
                 root,
                 "bad_plugin.py",
                 """
-from core.plugin.interfaces import IEditorPlugin
+from core.VitaLoom.kernel.plugin_interfaces import IEditorPlugin
 
 class BadPlugin(IEditorPlugin):
     def get_plugin_info(self):
@@ -79,8 +79,8 @@ class BadPlugin(IEditorPlugin):
 
             loader.load_from_directories([str(root)])
 
-        self.assertIn("good_plugin", loader.loaded_plugins)
-        self.assertIn("bad_plugin", loader.failed_plugins)
+        self.assertIn("GoodPlugin", loader.loaded_plugins)
+        self.assertIn("BadPlugin", loader.failed_plugins)
         self.assertIn("good_plugin", kernel.plugin_loaded.events)
         self.assertNotIn("bad_plugin", kernel.plugin_loaded.events)
 

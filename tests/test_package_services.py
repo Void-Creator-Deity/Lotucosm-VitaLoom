@@ -10,6 +10,7 @@ package_services：安装/卸载/查询 API。
 import unittest
 import tempfile
 import os
+from pathlib import Path
 
 from builtin.editor_extensions.package_services import (
     PackageCatalogService,
@@ -18,6 +19,9 @@ from builtin.editor_extensions.package_services import (
     parse_version,
     version_gte,
 )
+
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 class _FakeProjectManager:
@@ -50,6 +54,25 @@ class TestPackageServices(unittest.TestCase):
         loaded = [[{"id": "a", "version": "1.0.0"}], [{"id": "a", "version": "1.3.0"}]]
         updates = catalog.collect_update_candidates(loaded, out)
         self.assertEqual(updates.get("a"), "1.3.0")
+
+    def test_catalog_annotates_project_lock_status(self):
+        catalog = PackageCatalogService(str(ROOT))
+        packages, _updates, errors = catalog.load_all_packages({})
+        self.assertEqual(errors, [])
+        project = ROOT / "workspace" / "projects" / "samples" / "pvaec-细胞演化"
+        annotated = catalog.annotate_project_lock_status(packages, str(project))
+        lookup = {str(pkg.get("id", "")): pkg for pkg in annotated}
+        sr2d = lookup["vitalloom.engine.sr2d"]
+        pvaec = lookup["vitalloom.pvaec.simulation"]
+        assets = lookup["vitalloom.assets.demo"]
+        self.assertTrue(sr2d["project_required"])
+        self.assertEqual(sr2d["project_lock_status"], "locked")
+        self.assertEqual(sr2d["project_lock_admission"], "current")
+        self.assertEqual(sr2d["project_locked_version"], "1.0.0")
+        self.assertEqual(pvaec["project_lock_status"], "locked")
+        self.assertEqual(pvaec["project_lock_admission"], "current")
+        self.assertFalse(assets["project_required"])
+        self.assertEqual(assets["project_lock_status"], "optional")
 
     def test_operation_state_compatibility(self):
         pm = _FakeProjectManager()

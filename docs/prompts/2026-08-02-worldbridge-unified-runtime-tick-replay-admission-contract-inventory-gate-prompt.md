@@ -1,0 +1,5 @@
+# E214 Fresh-Session Prompt -- WorldBridge Unified-Runtime Tick and Replay Admission Contract Inventory Gate
+
+E214 is complete. It proved the current WorldBridge path is a post-SR, opt-in hand-off rather than a shared scheduler: SR owns a scaled-delta seven-phase tick, while `Pond.update()` receives no bridge delta and advances its own fixed unit clock. SR input, random seed, pause/reset/error handling, checkpoints, and replay remain lane-local. Tick merge and full unified replay are not admitted.
+
+Evidence: focused `44 passed in 1.75s`; the tick/replay, ledger, and runtime-status guards passed; full offscreen regression under `.venv\python.exe` passed `2091 passed, 34 skipped, 50 subtests passed in 205.98s`. The next active gate is E215: establish a deterministic dual-lane comparability trace contract without merging runtimes or weakening any mapping boundary.

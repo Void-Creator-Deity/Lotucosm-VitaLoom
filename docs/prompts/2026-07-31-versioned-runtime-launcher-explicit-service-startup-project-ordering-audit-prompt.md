@@ -1,0 +1,3 @@
+# Fresh-session handoff: E161 complete
+
+E161 proves a relative public PathLike `.pond` startup project normalizes to an absolute path and reaches Kernel after real explicit-service validation/construction but before plugin-layer resolution and loading. No Splash/default service/cleanup access occurs in the no-splash branch. Full evidence passed. Continue only with E162: audit failure ownership if explicit-service startup-project binding itself raises, including the owned-splash cleanup boundary and exact error propagation.

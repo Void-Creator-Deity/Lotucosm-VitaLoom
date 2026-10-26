@@ -1,0 +1,5 @@
+# Fresh-session handoff: E155 complete
+
+E155 is complete. The explicit-service success path now has direct evidence that real caller-supplied L1 InMemoryRuntimeCapabilityRegistry and InMemoryRuntimeEventBus objects are validated before UI allocation, forwarded to EditorKernel unchanged by identity, and never replaced by a default registry. The complete owned-splash startup order and event-loop entry are covered; no production code change was needed.
+
+Proceed only with E156 -- Versioned Runtime Launcher Default-Service Per-Launch Isolation Audit. In one process, execute two successful `use_splash=False` launches that omit both services. Capture both Kernel constructions and prove each launch receives a fresh, distinct default InMemoryRuntimeCapabilityRegistry, passes only `capability_registry` (never `event_bus=None`), completes its own layer/load/show/event-loop sequence, and creates no process-global cache or FrameCore L0 leak. Keep the runtime boundary intact, preserve .pond/AI/Inspector/SR2D/manifest seams, retain QPainter as default, and close the phase with full proof plus exactly one next gate.

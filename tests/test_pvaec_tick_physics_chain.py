@@ -64,51 +64,29 @@ class PvaecTickPhysicsChainTests(unittest.TestCase):
     def test_game_mode_skips_fluid_coupling_in_viewport(self) -> None:
         from core.VitaLoom.viewports.game_viewport import GameViewport
 
-        gv = GameViewport.__new__(GameViewport)
-        gv._sr_game_mode = True
-        with patch("core.Lotucosm.scene_runtime.game_tick.step_game_runtime") as step:
-            GameViewport._update_scene_runtime_entities(gv, 0.05)
-            step.assert_called_once()
-        gv._sr_game_mode = False
-        gv._scene_runtime_time = 0.0
-        gv._scene_bounds = MagicMock(return_value=(400.0, 300.0))
-        gv.scene_runtime_entities = []
-        gv._sr_biosphere_load = 0.0
-        gv._sr_biosphere_prev_load = 0.0
-        gv._sr_load_max = 1.0
-        gv._sr_signal_edges = []
-        gv._scene_runtime_edges = []
-        gv._sr_membrane_attach = {}
-        gv._sr_fluid_coupling_cfg = SrFluidCouplingConfig()
-        gv._sr_field_grid = None
-        gv._scene_runtime_emissions_prev = {}
-        gv._sr_caps_game = MagicMock(return_value={})
-        gv._sr_input_snapshot = MagicMock(return_value=MagicMock())
-        gv._run_script_tick_batch = MagicMock()
-        gv._process_sr_damage_requests = MagicMock()
-        gv._process_sr_removal_requests = MagicMock()
-        gv._process_sr_spawn_requests = MagicMock()
-        gv._sync_membrane_positions = MagicMock()
-        gv._sr_inbound_for_entity = MagicMock(return_value={})
-        gv._scene_runtime_neighbor_ids = {}
-        gv._parent_organism_for_membrane_child = MagicMock(return_value=None)
-        gv._apply_actuator_coupling = MagicMock()
-        gv._apply_membrane_edge_learning = MagicMock()
-        gv._sr_physics_world = MagicMock()
-        gv._sr_nutrient_target_count = 0
-        gv._advance_sr_visual_integrators = MagicMock()
-        gv.editor_context = MagicMock(current_project_path=None)
-        gv._refresh_sr_hud = MagicMock()
-        gv._maybe_log_scene_episode = MagicMock()
-        gv._snapshot_sr_channel_out_prev = MagicMock()
-        with patch(
+        simulation_driver = MagicMock()
+        gv = SimpleNamespace(
+            _sr_game_mode=True,
+            _simulation_driver=simulation_driver,
+            scene_runtime_entities=[object()],
+            _worldbridge_begin_tick=MagicMock(),
+            _worldbridge_complete_tick=MagicMock(),
+            _worldbridge_abort_tick=MagicMock(),
+            _worldbridge_record_rng_phase=MagicMock(),
+            _worldbridge_record_clock_consumer=MagicMock(),
+            _sr_input_snapshot=MagicMock(),
+        )
+        with patch("core.Lotucosm.scene_runtime.game_tick.step_game_runtime") as step, patch(
             "core.Lotucosm.scene_runtime.session_outcome.resolve_session_outcomes"
-        ), patch(
-            "core.Lotucosm.sr_fluid_flow.apply_extracellular_drift"
-        ) as drift:
+        ):
             GameViewport._update_scene_runtime_entities(gv, 0.05)
-            drift.assert_called_once()
+            step.assert_called_once_with(gv, 0.05)
+        simulation_driver.tick.assert_not_called()
 
+        gv._sr_game_mode = False
+        with patch("core.Lotucosm.scene_runtime.session_outcome.resolve_session_outcomes"):
+            GameViewport._update_scene_runtime_entities(gv, 0.05)
+        simulation_driver.tick.assert_called_once_with(gv, 0.05)
 
 if __name__ == "__main__":
     unittest.main()

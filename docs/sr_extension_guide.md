@@ -6,15 +6,15 @@
 
 ## 1. 包体系分工（核心包 + 扩展包 + 工程）
 
-先分清两个项目：[README.md](../README.md) · 织机 [README_VITALOOM.md](../README_VITALOOM.md) · PVAEC [README_PVAEC.md](../README_PVAEC.md)。  
+先分清两个项目：[README.md](../README.md) · 织机 [README_VITALOOM.md](guides/README_VITALOOM.md) · PVAEC [README_PVAEC.md](guides/README_PVAEC.md)。
 包结构见 [package_architecture.md](package_architecture.md)。
 
 | 层 | 包 / 路径 | 职责（唯一理由变更） |
 |----|-----------|----------------------|
 | **核心包** | `vitalloom.core.platform` → `core/` | 莲池 + 织机内核；无此无编辑器 |
-| **官方扩展包** | `builtin/` + [package_index.json](../builtin/package_index.json) | 编辑器 UI、莲池组件、PVAEC 包、2D SR 包 |
-| **游戏工程** | `projects/<你的工程>/` | `.pond`、`*_pvaec.py`、资产 = **具体游戏** |
-| **社区** | `plugins/` | 可选编辑器扩展，不替代 SR tick |
+| **官方扩展包** | 产品 runtime 内 `builtin/` + [package_index.json](../FrameCore/plugins/lotucosm-vitaloom/versions/1.0.0/runtime/builtin/package_index.json) | 编辑器 UI、莲池组件、PVAEC 包、2D SR 包 |
+| **游戏工程** | `workspace/projects/<samples|user>/<你的工程>/` | `.pond`、`*_pvaec.py`、资产 = **具体游戏** |
+| **社区** | `workspace/extensions/user/` 或 `workspace/extensions/community/` | 可选编辑器扩展，不替代 SR tick |
 
 PVAEC 细胞演化示范 ≈ 核心包 + `editor_essentials` + `lotuspond.runtime` + `pvaec.simulation` + `engine.sr2d` + 本工程脚本/场景。
 
@@ -60,7 +60,7 @@ PVAEC 细胞演化示范 ≈ 核心包 + `editor_essentials` + `lotuspond.runtim
 ### 3.2 扩展时的剃刀自检（写代码前问三句）
 
 1. **能否只改 `.pond`？**（权重、`mind`、`link_kind`）→ 是则不要新脚本。
-2. **能否只拷贝改模板？**（`projects/pvaec-细胞演化/templates/`）→ 是则不要新 `core` API。
+2. **能否只拷贝改模板？**（`workspace/projects/samples/pvaec-细胞演化/templates/`）→ 是则不要新 `core` API。
 3. **是否引入了第二套真相源？**（例如插件里再聚合 chemo）→ 是则违反第一性原理，应删掉。
 
 **YAGNI 提醒**：为「以后可能要的第三连接类型」加抽象层，在 SR 未验证需求前 **不要** 做。需要时再加字段即可（`.pond` 已支持 `link_kind` 扩展）。
@@ -82,9 +82,9 @@ PVAEC 细胞演化示范 ≈ 核心包 + `editor_essentials` + `lotuspond.runtim
 
 ### 4.2 PVAEC 细胞演化工程提供
 
-- **行为**：`projects/pvaec-细胞演化/scripts/*_pvaec.py`（继承 `PvaecScript`）
+- **行为**：`workspace/projects/samples/pvaec-细胞演化/scripts/*_pvaec.py`（继承 `PvaecScript`）
 - **关卡**：`scenes/*.pond`（实体、`connections`、`sr_signal_connections`、`sr_play_goals`）
-- **可复制模板**：`projects/pvaec-细胞演化/templates/`（见该目录 README）
+- **可复制模板**：`workspace/projects/samples/pvaec-细胞演化/templates/`（见该目录 README）
 
 ### 4.3 引擎提供（所有 SR 工程共用）
 
@@ -109,6 +109,16 @@ PVAEC 细胞演化示范 ≈ 核心包 + `editor_essentials` + `lotuspond.runtim
 
 ## 5. 三种扩展路径（按剃刀从简到繁）
 
+### 项目脚本执行信任
+
+`.pond` 中引用的 Python 脚本是项目代码，会在编辑器/Player 进程内执行。项目脚本默认不受信任；在审阅源码后，必须对每个脚本单独授权：
+
+```text
+python tools/approve_project_script.py <project-directory> scripts/<script-name>.py --approve
+```
+
+授权写入项目 `project.json` 的 `script_trust.sha256_allowlist`，绑定项目相对路径和当前源码 SHA-256。源码变化后授权自动失效；不要授权来源不明的脚本。AST entropy audit 不是 Python 沙箱，也不能阻止获准脚本执行任意进程内代码。
+
 ### 路径 A · 只改场景（零代码，优先）
 
 **适合**：调趋化权重、演示目标、硬/软连接、心智参数 `mind` / `evo`。
@@ -132,7 +142,7 @@ PVAEC 细胞演化示范 ≈ 核心包 + `editor_essentials` + `lotuspond.runtim
 
 **适合**：独特受体/纤毛/中枢逻辑，仍走 SR 管道。
 
-1. 复制 `projects/pvaec-细胞演化/templates/my_sensor_pvaec_template.py` → `scripts/my_sensor_pvaec.py`。
+1. 复制 `workspace/projects/samples/pvaec-细胞演化/templates/my_sensor_pvaec_template.py` → `scripts/my_sensor_pvaec.py`。
 2. 改类名（须与 `scripts[].type` 一致，如 `MySensorPvaec`）。
 3. 在 `.pond` 对应实体 `scripts` 中填写 `name`（文件名无扩展名）与 `type`（类名）。
 4. 停止后再运行；改 `core/` 需重启编辑器。
@@ -175,13 +185,13 @@ PVAEC 细胞演化示范 ≈ 核心包 + `editor_essentials` + `lotuspond.runtim
 | `scripts/` | 同上 + `pytest tests/test_pvaec_cell_evolution_scripts_smoke.py -q` |
 | `core/` | 全量 `pytest` + **重启编辑器** |
 | `builtin/` | 重启编辑器 |
-| `plugins/` | F5 热重载（仅编辑器 UI，不改 SR tick） |
+| `workspace/extensions/user/` | F5 热重载（仅编辑器 UI，不改 SR tick） |
 
 ---
 
 ## 8. 相关文档
 
 - [sr_link_physics.md](sr_link_physics.md) — hard / soft / 独立扩散
-- [README_PVAEC.md](../README_PVAEC.md) — PS 与 SR 分工
-- [projects/pvaec-细胞演化/README.md](../projects/pvaec-细胞演化/README.md) — 演示玩法与场景字段
-- [builtin/README.md](../builtin/README.md) — 官方组件排错
+- [README_PVAEC.md](guides/README_PVAEC.md) — PS 与 SR 分工
+- [workspace/projects/samples/pvaec-细胞演化/README.md](../workspace/projects/samples/pvaec-细胞演化/README.md) — 演示玩法与场景字段
+- [builtin/README.md](../FrameCore/plugins/lotucosm-vitaloom/versions/1.0.0/runtime/builtin/README.md) — 官方组件排错

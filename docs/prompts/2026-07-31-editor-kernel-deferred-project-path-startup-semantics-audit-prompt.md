@@ -1,0 +1,9 @@
+# Fresh-session handoff: E97 complete
+
+Repository root: `D:\files\VS Code projects\Lotucosm-VitaLoom-refactor-engineization`
+
+E97 is complete with no production correction. The instance-scoped deferred path is proven: layered plugin loading finishes before scheduling; the timer callback restores/applies layout before project startup; a valid explicit directory with `project.json` calls the configured Project World session Host's `open_project()` and never falls back; absent or invalid paths call only the existing fallback; and an explicit Host failure is logged/contained without a second fallback. No environment mutation, second authority, or recovery owner was introduced.
+
+Evidence: focused `5 passed in 0.28s`; adjacent offscreen suite `135 passed in 3.60s`; root smoke `plugins=13/20`; four guardrails passed; Anaconda signatures `2 passed in 0.27s`. The changed timing test has clean CRLF/whitespace. `editor_kernel.py` compiled but has pre-existing bare-LF/trailing-whitespace hygiene, deliberately untouched. `.venv` lacks `cryptography`; do not install it. E68 is historical only. QPainter remains default and OpenGL/native is not default-ready.
+
+The one active gate is **E98 -- Editor Kernel Explicit Startup-Project Consumption Semantics Audit**. Determine whether `_startup_project_path` must intentionally persist or be consumed after a deferred startup attempt. Prove behavior under repeated callback scheduling, valid explicit project success, invalid input, and explicit-open failure/retry. Correct only a real stale-state or duplicate-open defect. Preserve `.pond`, Project World, AI commands, Inspector, SR2D, manifests, public imports, and singular Kernel/Host/registry authority. Do not restore the global environment flag or make Launcher a recovery owner. Use offscreen `.venv\python.exe -B`, compile with `utf-8-sig`, and run signatures through `D:\app\anaconda3\python.exe` without installing dependencies.

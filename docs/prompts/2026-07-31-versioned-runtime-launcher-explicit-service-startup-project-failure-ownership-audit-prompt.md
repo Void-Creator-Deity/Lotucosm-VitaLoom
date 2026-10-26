@@ -1,0 +1,3 @@
+# Fresh-session handoff: E162 complete
+
+E162 proves that after valid explicit service validation, owned-splash allocation, and Kernel construction, project-binding RuntimeError and `SystemExit(301)` remain exact primary outcomes, dismiss the owned Splash once, and cannot reach plugin layers/load, splash finish, or app.exec(). Full evidence passed. Continue only with E163: audit the no-splash equivalent, where project-binding failure must remain cleanup-free while explicit service identity and downstream non-entry remain exact.

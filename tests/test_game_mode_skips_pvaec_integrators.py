@@ -23,27 +23,36 @@ class GameModeSkipsPvaecIntegratorsTests(unittest.TestCase):
         host._refresh_sr_hud = MagicMock()
         host._maybe_log_scene_episode = MagicMock()
 
-        with patch(
-            "core.Lotucosm.scene_runtime.session_outcome.resolve_session_outcomes"
-        ) as outcome:
-            step_game_runtime(host, 0.05)
+        step_game_runtime(host, 0.05)
 
         host._sync_membrane_positions.assert_not_called()
         host._apply_actuator_coupling.assert_not_called()
         host._advance_sr_visual_integrators.assert_not_called()
-        outcome.assert_called_once_with(host)
 
-    def test_update_scene_runtime_entities_early_returns_in_game_mode(self) -> None:
+    def test_update_scene_runtime_entities_routes_game_mode_to_game_tick(self) -> None:
         from core.VitaLoom.viewports.game_viewport import GameViewport
 
         gv = GameViewport.__new__(GameViewport)
         gv._sr_game_mode = True
-        gv._sync_membrane_positions = MagicMock()
+        gv.scene_runtime_entities = [object()]
+        gv._worldbridge_begin_tick = MagicMock()
+        gv._worldbridge_complete_tick = MagicMock()
+        gv._worldbridge_abort_tick = MagicMock()
+        gv._worldbridge_record_rng_phase = MagicMock()
+        gv._sr_input_snapshot = MagicMock()
+        gv._simulation_driver = MagicMock()
 
-        with patch("core.Lotucosm.scene_runtime.game_tick.step_game_runtime") as step:
+        with patch("core.Lotucosm.scene_runtime.game_tick.step_game_runtime") as step, patch(
+            "core.Lotucosm.scene_runtime.session_outcome.resolve_session_outcomes"
+        ) as outcome:
             GameViewport._update_scene_runtime_entities(gv, 0.05)
-            step.assert_called_once_with(gv, 0.05)
-        gv._sync_membrane_positions.assert_not_called()
+
+        step.assert_called_once_with(gv, 0.05)
+        gv._worldbridge_begin_tick.assert_called_once_with(0.05)
+        gv._worldbridge_complete_tick.assert_called_once_with()
+        gv._worldbridge_abort_tick.assert_not_called()
+        outcome.assert_called_once_with(gv)
+        gv._simulation_driver.tick.assert_not_called()
 
 
 if __name__ == "__main__":

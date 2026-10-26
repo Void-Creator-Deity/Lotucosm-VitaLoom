@@ -1,0 +1,3 @@
+# Fresh-session handoff: E160 complete
+
+E160 proves no-splash startup with valid explicit L1 registry/event-bus services retains validator order and exact Kernel identities through one `app.exec()` handoff. Normal return, RuntimeError, and `SystemExit(279)` preserve their exact outcome; all splash adapters and default registry construction remain unreachable, with no cleanup warning. Full evidence passed. Continue only with E161: audit explicit-service composition with an explicit startup project, focusing on Kernel project binding and plugin-loading ordering while preserving all public seams.

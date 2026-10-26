@@ -1,0 +1,9 @@
+# Fresh-session handoff: E110 complete
+
+E110 is complete. With a real offscreen `QApplication`, real `QTimer.singleShot(0, ...)`, and nested `QEventLoop`, a controlled app adapter that raises at `exec()` entry preserves the exact entry exception after a completed splash handoff. Launcher does not invoke E95 `dismiss_splash()` or duplicate hide/delete work. The retained splash-adapter callback later deletes exactly once on success; a controlled `deleteLater()` failure is observed by the adapter as `Failed to delete splash after editor startup handoff` and does not escape Qt event processing. No E110 production change was needed.
+
+Evidence: focused `2 passed, 58 deselected`; interface `60 passed`; adjacent offscreen `103 passed`; editor smoke `suite=lotucosm.vitaloom.suite`, `product=lotucosm-vitaloom@1.0.0`, `plugins=13/20`; four guardrails `OK`; independent Anaconda signature `2 passed`. `.venv` lacks `cryptography`; do not install it for this work.
+
+Next gate is E111: audit normal `app.exec()` return-code propagation and the boundary between a deferred callback delivered before loop return and one left pending afterward. Launcher must not gain post-loop splash shutdown, deletion, or callback-observation authority. Correct only a demonstrated defect.
+
+Preserve E102--E110 semantics and all architecture constraints: Qt-free L0--L4 engine-plugin contracts, `.pond`, AI command registry, Inspector command binding, SR2D, manifests, plugin discovery, project/recovery ownership, and renderer defaults. Before switching topics, update plan/status/context/index/prompt, run focused evidence plus interface/offscreen/smoke/guardrail/signature checks, perform scoped hygiene, record skips, and leave exactly one next gate. Never stage, commit, reset, restore, clean, or delete pre-existing work.

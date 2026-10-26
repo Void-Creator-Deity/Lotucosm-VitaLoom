@@ -1,0 +1,12 @@
+# Phase E57 Historical Closure -- Qt-Free Community Plugin Authoring Contract and Legacy Interface Compatibility Quarantine
+
+Date: 2026-07-30
+Status: completed on 2026-07-30
+
+E57 is closed. Official community service, Dock, and Viewport examples now directly inherit Qt-free `IRuntimePlugin`; Dock/Viewport metadata contains only copied JSON-safe `dock_surface` / `viewport_surface` shell facts, and their concrete PyQt factories remain `LegacyEditorPluginAdapter` payload seams. The consumer's required `on_unload()` no-op restores direct-contract instantiation. Fresh headless validation also moved the sample PyQt imports into the payload factories, so discovery and metadata parsing stay available without PyQt6; an actual payload request without PyQt6 fails explicitly.
+
+Author-facing documentation is closed too: the community README teaches direct `IRuntimePlugin`, Host-copied metadata, required `on_load()` work, optional best-effort `on_editor_ready()`, and Adapter-local Qt payloads. USER_GUIDE's theme example and FAQ use `IRuntimePlugin` plus `theme_profile`; QSS is documented as an Adapter-local payload, while `IThemeProvider` is historical compatibility only. Legacy fixtures remain explicitly compatibility-only, not new-author templates.
+
+Evidence: focused runtime/community/Adapter/contribution/shutdown selection `66 passed in 3.00s`; final author/sample gate after the lazy-PyQt repair `9 passed in 0.81s`; full non-signature migration regression `1640 passed, 50 skipped, 34 subtests passed in 161.41s`; compileall and all four guardrails pass; standard/eager offscreen Editor smokes pass at `13/20` and `20/20`; signature-only is freshly verified at `2 passed in 0.29s`. No full-engine, replacement-Host, native acceleration, or OpenGL default-ready claim is made.
+
+The unique next Gate is E58 Legacy Public Plugin Interface Compatibility Contract Audit and Deprecation Documentation. Audit and document only the still-public `plugin_interfaces` compatibility contract and add bounded proof where necessary. Preserve public imports, entity/component provider layering, Loader/Host/Adapter authority, `.pond`, Project World, Inspector, SR2D, SR/PS, Player/export, package/signature authority, and the single existing UI Adapter. Do not create a second Host, Registry, callback/event bus, widget DSL, renderer, UI framework, or peer engine root.

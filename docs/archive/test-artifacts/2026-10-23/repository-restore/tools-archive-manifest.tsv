@@ -1,0 +1,4 @@
+"original_relative"	"archive_relative"	"size_bytes"	"reason"
+"tools/check_worldbridge_e480_dynamic_component_receipt.py"	"Lotucosm-VitaLoom-重构历史归档\2026-10-23\tools\refactor-phase-checkers\check_worldbridge_e480_dynamic_component_receipt.py"	"4720"	"historical phase checker outside CI/test/final-chain dependency closure"
+"tools/check_worldbridge_e481_component_identity_artifact.py"	"Lotucosm-VitaLoom-重构历史归档\2026-10-23\tools\refactor-phase-checkers\check_worldbridge_e481_component_identity_artifact.py"	"36398"	"historical phase checker outside CI/test/final-chain dependency closure"
+"tools/check_worldbridge_e536_live_handoff_transaction.py"	"Lotucosm-VitaLoom-重构历史归档\2026-10-23\tools\refactor-phase-checkers\check_worldbridge_e536_live_handoff_transaction.py"	"11575"	"historical phase checker outside CI/test/final-chain dependency closure"

@@ -9,20 +9,164 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
 
+      - name: Core boundaries
+        run: python tools/check_core_boundaries.py
+
+      - name: Release consistency
+        run: python tools/check_release_consistency.py
+
+
+      - name: Legacy CommandStack usage guard
+        run: python tools/check_legacy_command_stack_usage.py
+      - name: WorldBridge admission blocker verifier
+        run: python tools/check_worldbridge_field_admission_verification.py
+
+      - name: WorldBridge static live-mapping boundary
+        run: python tools/check_worldbridge_static_live_mapping_boundary.py
+
+      - name: WorldBridge PS graph corpus
+        run: python tools/check_worldbridge_ps_graph_corpus.py
+      - name: WorldBridge PS hierarchy authority contract
+        run: python tools/check_worldbridge_ps_hierarchy_contract.py
+
+      - name: WorldBridge E313 bounded replay corpus
+        run: python tools/check_worldbridge_e313_bounded_replay_corpus.py
+
+      - name: WorldBridge E313 live capture binding
+        run: python tools/check_worldbridge_e313_live_capture_binding.py
+
+      - name: WorldBridge E314 shared state transport
+        run: python tools/check_worldbridge_shared_state_transport.py
+
+      - name: WorldBridge E315 shared state transport binding
+        run: python tools/check_worldbridge_e315_shared_state_transport_binding.py
+
+      - name: WorldBridge E316 checkpoint restore witness
+        run: python tools/check_worldbridge_e316_checkpoint_restore_witness.py
+
+      - name: WorldBridge E317 live checkpoint gap audit
+        run: python tools/check_worldbridge_e317_live_checkpoint_gap_audit.py
+      - name: WorldBridge E366 live checkpoint admission
+        run: python tools/check_worldbridge_e366_live_checkpoint_admission.py
+      - name: WorldBridge E367 live GameViewport witness
+        run: python tools/check_worldbridge_e367_live_viewport_witness.py
+      - name: WorldBridge E369 cross-process receipt
+        run: python tools/check_worldbridge_e369_cross_process_receipt.py
+      - name: WorldBridge E370 receipt tamper matrix
+        run: python tools/check_worldbridge_e370_receipt_tamper_matrix.py
+      - name: WorldBridge E371 deterministic receipt
+        run: python tools/check_worldbridge_e371_deterministic_receipt.py
+      - name: WorldBridge E372 receipt artifact
+        run: python tools/check_worldbridge_e372_receipt_artifact.py
+      - name: WorldBridge E373 receipt integrity
+        run: python tools/check_worldbridge_e373_receipt_integrity.py
+      - name: WorldBridge E374 compatibility corpus
+        run: python tools/check_worldbridge_e374_compatibility_corpus.py
+      - name: WorldBridge E375 compatibility provenance
+        run: python tools/check_worldbridge_e375_compatibility_provenance.py
+      - name: WorldBridge E376 provenance canonical encoding
+        run: python tools/check_worldbridge_e376_provenance_canonical.py
+      - name: WorldBridge fresh SR restore parity
+        run: python tools/check_worldbridge_fresh_sr_restore.py
+      - name: WorldBridge E378 real GameViewport fresh SR
+        run: python tools/check_worldbridge_e378_real_game_viewport_fresh_sr.py
+      - name: WorldBridge E379 shared tick envelope
+        run: python tools/check_worldbridge_e379_tick_envelope.py
+      - name: WorldBridge E380 real tick execution
+        run: python tools/check_worldbridge_e380_tick_execution.py
+      - name: WorldBridge E381 continuous lifecycle sequence
+        run: python tools/check_worldbridge_e381_tick_sequence.py
+      - name: WorldBridge E382 restore receipt and compensation
+        run: python tools/check_worldbridge_e382_restore_receipt.py
+      - name: WorldBridge E384 durable receipt ledger
+        run: python tools/check_worldbridge_e384_receipt_ledger.py
+      - name: WorldBridge E385 ledger recovery boundaries
+        run: python tools/check_worldbridge_e385_ledger_recovery.py
+      - name: WorldBridge E386 project identity binding
+        run: python tools/check_worldbridge_e386_project_identity.py
+      - name: WorldBridge E387 Project World identity source
+        run: python tools/check_worldbridge_e387_project_world_identity.py
+      - name: WorldBridge E388 real Project World receipt
+        run: python tools/check_worldbridge_e388_real_project_receipt.py
+      - name: WorldBridge E389 checkpoint digest binding
+        run: python tools/check_worldbridge_e389_checkpoint_digest.py
+      - name: WorldBridge E390 component digest matrix
+        run: python tools/check_worldbridge_e390_component_digest_matrix.py
+      - name: WorldBridge E391 durable component matrix
+        run: python tools/check_worldbridge_e391_durable_component_matrix.py
+      - name: WorldBridge E392 ledger provenance
+        run: python tools/check_worldbridge_e392_ledger_provenance.py
+      - name: WorldBridge E393 Project World identity provenance
+        run: python tools/check_worldbridge_e393_project_identity_provenance.py
+      - name: WorldBridge E394 identity change matrix
+        run: python tools/check_worldbridge_e394_identity_change_matrix.py
+      - name: WorldBridge E395 identity cross-process closure
+        run: python tools/check_worldbridge_e395_identity_cross_process.py
+      - name: WorldBridge E396 ledger schema boundary
+        run: python tools/check_worldbridge_e396_ledger_schema_boundary.py
+      - name: WorldBridge E397 receipt encoding boundary
+        run: python tools/check_worldbridge_e397_receipt_encoding_boundary.py
+      - name: WorldBridge E398 atomic write failure
+        run: python tools/check_worldbridge_e398_atomic_write_failure.py
+      - name: WorldBridge E399 concurrent consumption
+        run: python tools/check_worldbridge_e399_concurrent_consumption.py
+      - name: WorldBridge E400 end-to-end chain
+        run: python tools/check_worldbridge_e400_end_to_end_chain.py
+      - name: WorldBridge E401 shared delta contract
+        run: python tools/check_worldbridge_e401_shared_delta_contract.py
+      - name: WorldBridge E402 delta lifecycle
+        run: python tools/check_worldbridge_e402_delta_lifecycle.py
+      - name: WorldBridge E403 input sequence
+        run: python tools/check_worldbridge_e403_input_sequence.py
+
+      - name: WorldBridge E562 scene-script checkpoint authority
+        run: python tools/check_worldbridge_e562_script_checkpoint_authority.py
+
+      - name: WorldBridge E563 cross-session script rehydration
+        run: python tools/check_worldbridge_e563_cross_session_script_rehydration.py
+
+      - name: WorldBridge E564 checkpoint transaction interlock
+        run: python tools/check_worldbridge_e564_checkpoint_transaction.py
+
+      - name: WorldBridge E565 cross-lane atomic checkpoint
+        run: python tools/check_worldbridge_e565_cross_lane_atomic_checkpoint.py
+
+      - name: Project World write authority interlock
+        run: python tools/check_project_write_authority.py
+
+      - name: WorldBridge E567 script portability boundary
+        run: python tools/check_worldbridge_e567_script_portability_boundary.py
+
+      - name: Bytecode compile check
+        run: python -m compileall -q FrameCore workspace tools main.py player.py
+
+      - name: War recovery sample tests
+        run: python -m pytest tests/test_sr_war_recovery.py tests/test_sr_war_combat.py tests/test_pvaec_war_recovery_sample.py -q --tb=short
+
       - name: Run tests
         env:
           QT_QPA_PLATFORM: offscreen
-        run: python -m pytest tests/ -q --tb=short
+        run: python tools/run_pytest_chunked.py --chunk-size 400
+
+      - name: Dual comparability smoke (ADR-0005)
+        run: python tools/run_dual_comparability.py --ticks 50 --seed 42 --checkpoint 25 --checkpoint 50
+
+      - name: Dual comparability matrix (developmental)
+        run: python tools/run_dual_comparability.py --matrix workspace/experiments/dual_comparability_matrix.json

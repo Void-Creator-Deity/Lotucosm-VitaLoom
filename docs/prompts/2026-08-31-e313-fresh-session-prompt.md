@@ -1,0 +1,5 @@
+# E313 fresh-session prompt
+
+继续 VitaLoom 重构主线。E312 已完成 PS 本地 membrane/component hierarchy authority contract：`Organism.components` 的 component parent 归属、`Organism.membrane` 的 `special_owned_reference` 关系、避免重复 entity-tree update 的证据均已通过；PS graph persistence round-trip 也已完成。先读取 `docs/mainline_status.md`、E312 plan 与现有 `world_bridge_input_pause_authority.py`、`world_bridge_randomness_authority.py`、`world_bridge_tick_replay_admission.py`、`world_bridge_checkpoint_restore_feasibility.py`、`world_bridge_dual_lane_trace.py`，建立 E313 计划并只推进一个 gate：用真实可执行 corpus 补齐 SR/PS shared checkpoint、输入队列/暂停恢复、随机状态 capture/restore、tick 顺序、controlled restart 与 trace comparability 证据。不要只写 policy；每个结论必须有测试、CLI 或 artifact 证据。若证据不足，明确 quarantine/fallback，不得过度宣称。
+
+保持 `cross_lane_hierarchy_authority=false`、`cross_lane_replay=false`、`lossless=false`、`default_ready=false`、`live_adapter_admitted=false`、`unified_undo_redo_runtime=false`。不要把 PS local graph/hierarchy persistence 升级为 WorldBridge live authority；不修改 `.pond`、`.venv`、`uv.lock`，不运行 uv/Conda 包管理器，不切换解释器，不 stage/commit/reset/clean 无关内容。阶段结束必须更新 `docs/mainline_status.md`，并只指定一个下一 gate。

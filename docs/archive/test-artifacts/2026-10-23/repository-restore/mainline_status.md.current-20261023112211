@@ -1,0 +1,62 @@
+# VitaLoom Mainline Status
+
+日期：2026-10-23
+
+状态：**完成**
+
+完成度：**100/100**
+
+详细历史日志已移至：
+
+`D:\文件仓库\VS Code  项目\基于继承算法实现的ai生命体\Lotucosm-VitaLoom-重构历史归档\2026-10-23\docs\mainline_status.md`
+
+## 当前架构
+
+```text
+FrameCore
+  → lotucosm-vitaloom
+  → versions/1.0.0/runtime
+  → builtin capabilities / workspace extensions
+  → Project World
+```
+
+- `FrameCore/` 是 L0 宿主。
+- `lotucosm-vitaloom` 是唯一 L1 产品大插件和递归插件宿主。
+- `runtime/core` 是引擎/插件运行时。
+- PyQt6、QPainter、OpenGL 是 UI-host adapter。
+- `workspace/projects/` 保存 Project World。
+
+## 已完成
+
+- 宿主、插件、runtime 和 Project World 边界。
+- lifecycle、包/资产/项目事务和统一写锁。
+- Hub、Editor、Player 入口和 offscreen smoke。
+- WorldBridge 字段、行为、tick、replay、mapping authority。
+- checkpoint、脚本 rehydration、跨进程恢复和 quarantine。
+- Native SR2D ABI、parity、benchmark 和 E554 admission evidence。
+- uv 环境、分块回归、release consistency 和双轨 comparability。
+
+## 最终验证
+
+- Native admission / entropy / E554：`29 passed`
+- E554 live GameViewport：proof 全 true
+- E560-E567 checker：全部通过
+- Native 三场景 120 tick：`maximum_delta=0.0`
+- 历史正式全量：`3568 collected / 3534 passed / 34 skipped`
+- core boundaries、release consistency、environment provenance、compileall：通过
+
+## 永久边界
+
+- 不声明任意第三方 executable source 可安全执行。
+- 不声明任意第三方绕过正式 API 的无锁写入会被拦截。
+- 不声明跨平台 native parity。
+- 远端 Windows CI workflow 尚无实际运行回执。
+- 100% 仅表示本次引擎化重构交付面完成。
+
+## 当前清理状态
+
+- 当前仓库只保留最终状态和有效入口。
+- 阶段 prompt/plan 已归入 `docs/history/`，旧 archive 和完整 mainline 移出仓库。
+- `dist/` 作为有效发行产物保留在根目录。
+- 69 个 Windows ACL 锁定旧测试目录仍需管理员脚本最终删除。
+- 管理员脚本位于历史归档的 `docs/archive/test-artifacts/2026-10-23/finish_locked_cleanup.ps1`。

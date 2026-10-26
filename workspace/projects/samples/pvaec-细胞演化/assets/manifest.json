@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "description": "主世界 SR 实体贴图（相对 assets/ 目录）",
+  "sources": {
+    "audio/victory.wav": {
+      "origin": "project_generated",
+      "generator": "tools/generate_sr_audio.py",
+      "license": "generated-project-owned"
+    },
+    "audio/extinction.wav": {
+      "origin": "project_generated",
+      "generator": "tools/generate_sr_audio.py",
+      "license": "generated-project-owned"
+    },
+    "branding/logo.png": {
+      "origin": "project_generated",
+      "generator": "tools/regenerate_sr_sprites.py",
+      "license": "generated-project-owned"
+    },
+    "未标题-1.png": {
+      "origin": "project_generated",
+      "generator": "tools/regenerate_sr_sprites.py",
+      "license": "generated-project-owned"
+    },
+    "sprites/organism.png": {
+      "origin": "project_generated",
+      "generator": "tools/regenerate_sr_sprites.py",
+      "license": "generated-project-owned"
+    },
+    "sprites/central_brain.png": {
+      "origin": "project_generated",
+      "generator": "tools/regenerate_sr_sprites.py",
+      "license": "generated-project-owned"
+    },
+    "sprites/sensor.png": {
+      "origin": "project_generated",
+      "generator": "tools/regenerate_sr_sprites.py",
+      "license": "generated-project-owned"
+    },
+    "sprites/actuator.png": {
+      "origin": "project_generated",
+      "generator": "tools/regenerate_sr_sprites.py",
+      "license": "generated-project-owned"
+    },
+    "sprites/nutrient.png": {
+      "origin": "project_generated",
+      "generator": "tools/regenerate_sr_sprites.py",
+      "license": "generated-project-owned"
+    },
+    "sprites/well.png": {
+      "origin": "project_generated",
+      "generator": "tools/regenerate_sr_sprites.py",
+      "license": "generated-project-owned"
+    }
+  },
+  "audio": {
+    "victory": "audio/victory.wav",
+    "extinction": "audio/extinction.wav"
+  },
+  "sprites": {
+    "organism": "sprites/organism.png",
+    "central_brain": "sprites/central_brain.png",
+    "sensor": "sprites/sensor.png",
+    "actuator": "sprites/actuator.png",
+    "nutrient": "sprites/nutrient.png",
+    "environment_well": "sprites/well.png"
+  }
+}

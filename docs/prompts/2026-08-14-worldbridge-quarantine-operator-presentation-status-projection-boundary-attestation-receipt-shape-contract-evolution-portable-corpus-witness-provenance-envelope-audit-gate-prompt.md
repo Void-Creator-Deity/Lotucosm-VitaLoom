@@ -1,0 +1,46 @@
+# VitaLoom Fresh Session Prompt -- E260 Portable Corpus Witness Provenance Envelope Audit Gate
+
+Continue VitaLoom mainline refactoring after completed E259 on 2026-08-14.
+
+## Completed boundary
+
+E259 added the Qt-free portable witness authority:
+
+`FrameCore/plugins/lotucosm-vitaloom/versions/1.0.0/runtime/core/Lotucosm/runtime/world_bridge_quarantine_operator_presentation_status_projection_boundary_attestation_receipt_shape_contract_evolution_portable_corpus_witness_audit.py`
+
+It accepts a bounded ordered corpus of canonical E258 records plus exact-current E258 contract/policy bytes and E258/status source text. It proves current E258/E257/E256 identity closure, a common receipt-shape digest, current policy closure, and deterministic provenance/source digests. It remains pure in-memory evidence: no migration execution, receipt consumption, process, IPC, dynamic source loading, command/MCP, UI, runtime admission/reconstruction, persistence, file/network I/O, replay/restore/recovery/retry, mutation, or default-ready authority exists.
+
+Verification on 2026-08-14 with the project `.venv`:
+
+- focused E259 through E250 suite: **26 passed in 54.47s**;
+- all `test_worldbridge_*.py`: **326 passed, 5 subtests passed in 124.46s**;
+- full offscreen suite: **2374 passed, 34 skipped, 55 subtests passed in 367.17s**;
+- E259/upstream guards, isolated compilation, and `git diff --check` passed; diff check had only pre-existing LF/CRLF warnings.
+
+## Mandatory preserved constraints
+
+- Runtime root remains `FrameCore/plugins/lotucosm-vitaloom/versions/1.0.0/runtime`.
+- PyQt/GameViewport remains legacy UI-host only. Keep L0-L4 engine/plugin contracts Qt-free.
+- Do not break `.pond`, command registry, Inspector binding, SR2D seams, package/project manifests.
+- Defaults remain exactly `runtime_mode == "dual"`, `unified_pond_enabled is False`, and `default_ready is False`.
+- Do not add migration execution, process/IPC/transport, dynamic source loading, command/MCP authority, receipt consumption, UI/runtime reconstruction, file/network/persistence, replay/restore/recovery/retry, quarantine clear/re-admission, mutation, or default-ready behavior.
+- Treat all inputs as caller-supplied bounded canonical bytes/text. AST analysis may inspect text but must never dynamically import or execute it.
+- Preserve pre-existing dirty/untracked work. Do not stage, commit, reset, restore, clean, delete, or alter unrelated files.
+- Before implementation, write an E260 phase plan under `docs/superpowers/plans/`; then implement, verify, update `docs/mainline_status.md`, and create exactly one E261 fresh-session prompt.
+
+## E260 objective
+
+Implement **WorldBridge Quarantine Operator Presentation Status Projection Boundary Attestation Receipt-Shape Contract Evolution Portable Corpus Witness Provenance Envelope Audit Gate**.
+
+Keep it conservative: a read-only provenance-envelope verifier over caller-supplied canonical E259 witness records. It may validate a bounded lexical corpus, exact-current E259 contract/policy bytes, and E259/status source text; it may recompute deterministic provenance-envelope, source, policy, and closure digests. It must not consume a receipt, execute a migration, or make an operational compatibility/admission/default-ready decision.
+
+At minimum, require:
+
+1. exact-current E259 contract/policy identity, two or more unique lexical records, and deterministic source-provenance envelope closure;
+2. E259 public decode/validate seams, exact E258/E257/E256 identity evidence, common receipt-shape and policy proof, canonical deterministic output;
+3. fail-closed handling for reorder/duplicate/truncate/substitute records, contract/policy/receipt-shape/provenance drift, non-canonical/duplicate-key JSON, source topology drift, forbidden operational edges, and result tampering;
+4. fixed false authority policies, focused tests, a standalone guard, and the full layered verification chain.
+
+## One next gate only
+
+After E260 closes, create exactly one E261 prompt. Keep its scope deterministic and read-only; do not grow operational migration or authority behavior.

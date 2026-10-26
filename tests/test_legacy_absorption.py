@@ -79,6 +79,55 @@ class InheritMemoryGeneStrengthTests(unittest.TestCase):
         mocked_mutate.assert_called_once()
 
 
+class OrganismMemoryGeneAdoptionTests(unittest.TestCase):
+    def test_adopt_memory_gene_validates_before_mutation(self) -> None:
+        organism = Organism("gene_owner", (0.0, 0.0))
+        gene = MemoryGene("ctx", {"move": 0.2}, 0.5)
+
+        organism.adopt_memory_gene(gene)
+
+        self.assertIs(organism.memory_genes[0], gene)
+        with self.assertRaises(TypeError):
+            organism.adopt_memory_gene(object())  # type: ignore[arg-type]
+        self.assertEqual(organism.memory_genes, [gene])
+
+    def test_replace_memory_genes_validates_atomically(self) -> None:
+        organism = Organism("gene_replace", (0.0, 0.0))
+        original = MemoryGene("original", {}, 0.5)
+        organism.adopt_memory_gene(original)
+        replacement = MemoryGene("replacement", {}, 0.7)
+
+        with self.assertRaises(TypeError):
+            organism.replace_memory_genes([replacement, object()])  # type: ignore[list-item]
+
+        self.assertEqual(organism.memory_genes, [original])
+        organism.replace_memory_genes([replacement])
+        self.assertEqual(organism.memory_genes, [replacement])
+
+
+class MemorySystemAdoptionTests(unittest.TestCase):
+    def test_adopt_memory_uses_capacity_policy_without_copying(self) -> None:
+        system = MemorySystem()
+        system.max_memories = 2
+        weak = MemoryGene("weak", {}, 0.2)
+        weak.strength = 0.1
+        strong = MemoryGene("strong", {}, 0.8)
+        strong.strength = 0.9
+        adopted = MemoryGene("adopted", {}, 0.6)
+        adopted.strength = 0.7
+        system.adopt_memory(weak)
+        system.adopt_memory(strong)
+        system.adopt_memory(adopted)
+        self.assertEqual([memory.situation for memory in system.memories], ["adopted", "strong"])
+        self.assertIs(system.memories[0], adopted)
+
+    def test_adopt_memory_rejects_invalid_input_without_mutation(self) -> None:
+        system = MemorySystem()
+        with self.assertRaises(TypeError):
+            system.adopt_memory(object())  # type: ignore[arg-type]
+        self.assertEqual(system.memories, [])
+
+
 class InheritRuntimeMemoryTests(unittest.TestCase):
     def test_runtime_memories_copied_to_child_memory_system(self):
         parent = Organism("p2", (0.0, 0.0))

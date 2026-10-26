@@ -1,0 +1,57 @@
+name: SR2D Native Wheel
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-verify-wheel:
+    name: CPython ${{ matrix.python-version }} Windows wheel
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install project test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev,native-build]"
+
+      - name: Build and verify isolated SR2D wheel
+        run: python tools/package_sr2d_cpp.py --wheel-dir dist/sr2d-cpp
+
+      - name: Install native artifact for admission
+        run: Get-ChildItem dist/sr2d-cpp/*.whl | ForEach-Object { python -m pip install --force-reinstall $_.FullName }
+
+      - name: Native backend provenance
+        run: python tools/check_sr2d_native.py
+
+      - name: Native long-horizon parity and benchmark
+        run: python tools/check_sr2d_native_admission.py --repeats 3 --strict
+
+      - name: Native regression suite
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: python -m pytest -q tests/test_sr_physics2d_adapter_contract.py tests/test_sr_physics2d_cpp_parity.py tests/test_sr_physics2d_native_parity.py tests/test_sr2d_cpp_packaging.py tests/test_sr2d_native_smoke_tool.py tests/test_sr2d_native_admission.py tests/test_worldbridge_native_entropy_audit.py
+
+      - name: Upload verified SR2D wheel
+        uses: actions/upload-artifact@v4
+        with:
+          name: lotucosm-vitaloom-sr2d-cpp-cp${{ matrix.python-version }}-windows
+          path: dist/sr2d-cpp/*.whl
+          if-no-files-found: error

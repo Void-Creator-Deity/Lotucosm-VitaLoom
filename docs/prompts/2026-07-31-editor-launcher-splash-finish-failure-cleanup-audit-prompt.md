@@ -1,0 +1,7 @@
+# Fresh-session handoff: E104 complete
+
+E104 is complete. The three existing-splash Launcher message points (initial, plugin-loading, and restore-status) were characterized for both `showMessage(...)` and message `app.processEvents()` failure. All six cases preserve the exact primary exception, call E95 `dismiss_splash(...)` exactly once, stop the remaining startup work at the correct boundary, and never enter `app.exec()`. A cleanup failure logs the existing Launcher warning without replacing the original message error.
+
+No runtime correction was required: after a splash has successfully returned from the adapter, the existing outer Launcher `try` is intentionally the sole cleanup owner. E103's conditional no-splash protocol remains intact. Proof: focused `7 passed`; interface `50 passed`; adjacent offscreen `93 passed`; root smoke `plugins=13/20`; four guardrails and Anaconda signatures `2 passed` passed. `.venv` lacks `cryptography`; no dependency was installed. QPainter remains default; OpenGL/native is not default-ready; whole refactor is not complete.
+
+One active gate: **E105 -- Editor Launcher Splash-Finish Failure Cleanup Audit**. Audit immediate finish and deferred-delete scheduling failure after `kernel.show()` for exact primary-error identity, E95 dismissal count, event-loop suppression, and coherent splash lifecycle ownership without granting Launcher application or splash lifecycle authority.

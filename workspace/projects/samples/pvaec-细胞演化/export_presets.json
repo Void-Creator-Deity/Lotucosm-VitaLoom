@@ -1,0 +1,17 @@
+{
+  "presets": [
+    {
+      "name": "Windows Desktop",
+      "platform": "win64",
+      "entry_scene": "challenge_scene.pond",
+      "packages": [
+        "vitalloom.core.platform",
+        "vitalloom.lotuspond.runtime",
+        "vitalloom.engine.sr2d",
+        "vitalloom.pvaec.simulation"
+      ],
+      "data_dirs": ["assets", "scenes", "scripts", "data"],
+      "output_dir": "dist"
+    }
+  ]
+}

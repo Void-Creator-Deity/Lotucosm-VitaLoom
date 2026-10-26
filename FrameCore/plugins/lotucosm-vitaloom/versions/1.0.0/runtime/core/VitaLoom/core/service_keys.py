@@ -1,0 +1,20 @@
+# -*- coding: utf-8 -*-
+"""EditorContext.services 键名集中定义（避免魔法字符串）。"""
+from __future__ import annotations
+
+PACKAGE_CATALOG = "package.catalog"
+PACKAGE_OPERATIONS = "package.operations"
+PLUGIN_HOST_CONTROL_OBSERVATION = "plugin_host.control_observation"
+PROJECT_WORLD_READ_MODEL = "project_world.read_model"
+PROJECT_WORLD_CONFIGURATION_HOST = "project_world.configuration_host"
+PROJECT_WORLD_RECENT_REGISTRY = "project_world.recent_registry"
+PROJECT_WORLD_CREATION_HOST = "project_world.creation_host"
+PROJECT_WORLD_MANIFEST_VALIDATION_HOST = "project_world.manifest_validation_host"
+PS_EXPERIMENT = "ps_experiment"
+PS_RUNTIME_SNAPSHOT_HOST = "simulation.ps_runtime_snapshot_host"
+SIMULATION_SR_HOST = "simulation.sr_host"
+SR_SELECTED_IDENTITY_HOST = "simulation.sr_selected_identity_host"
+WORLDBRIDGE_QUARANTINE_DIAGNOSTIC_HOST = "simulation.worldbridge_quarantine_diagnostic_host"
+SCENE_HIERARCHY = "scene.hierarchy"
+DOWNLOADER = "downloader"
+UI_CONSOLE_PANEL = "ui.console_panel"

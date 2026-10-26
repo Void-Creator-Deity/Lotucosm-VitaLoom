@@ -1,0 +1,56 @@
+{
+  "name": "PVAEC · 战争后进化",
+  "description": "仿自研 AI 生命模拟：和平繁殖 → 战争选择压 → 灾后恢复与突变演化（非 WorldBox）",
+  "version": "1.0.0",
+  "loom_editor_version": "1.0.0",
+  "sr2d_backend": "auto",
+  "manifest_validation_mode": "warn",
+  "capabilities": [
+    "sr2d",
+    "pvaec"
+  ],
+  "presentation": {
+    "tagline_zh": "三幕式 AI 演化沙盒：战争后会发生什么？",
+    "editor_entry_hint_zh": "打开场景 → ▶ 运行 → 约 45s 进入战争窗 → 80s 后观察恢复繁殖",
+    "default_speed": 1.0
+  },
+  "enabled_plugins": [],
+  "required_packages": [
+    "vitalloom.core.platform",
+    "vitalloom.editor_essentials",
+    "vitalloom.lotuspond.runtime",
+    "vitalloom.pvaec.simulation",
+    "vitalloom.engine.sr2d"
+  ],
+  "active_scene": "war_recovery_scene.pond",
+  "ps_experiment_preset": "workspace/experiments/post_war_recovery.json",
+  "evolution_defaults": {
+    "mutation_rate": 0.1,
+    "selection_pressure": 0.62,
+    "elitism_rate": 0.08,
+    "evolution_generation_interval": 4,
+    "max_population": 48,
+    "initial_organisms": 16,
+    "ticks": 600,
+    "memory_gene_inheritance_rate": 0.75,
+    "memory_gene_mutation_rate": 0.015,
+    "mutation_sigma": 0.42,
+    "gene_keys": [
+      "wander_amp",
+      "gain_high_stress",
+      "mem_alpha"
+    ]
+  },
+  "developmental_profile": {
+    "enabled": true,
+    "initial_stage": 0
+  },
+  "created_at": "2026-06-12 12:00:00",
+  "modified_at": "2026-06-12 12:00:00",
+  "settings": {
+    "auto_save": true,
+    "auto_save_interval": 300,
+    "backup_enabled": true,
+    "backup_count": 5
+  }
+}

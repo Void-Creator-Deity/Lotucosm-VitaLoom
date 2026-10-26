@@ -1,0 +1,5 @@
+# Fresh-session handoff: E166 complete
+
+E166 completed the whole-repository completion-evidence audit. Do not claim that VitaLoom is "thoroughly refactored" or feature-complete: the full non-signature suite passed (`1944 passed, 34 skipped, 34 subtests passed`), the signature suite passed separately (`2 passed`), editor smoke reported `plugins=13/20`, and project/core/GUI/release plus focused audit guards passed; however, `unified_undo_redo_runtime=false`, runtime replay is read-only, and WorldBridge is dual-mode/read-only with documented mapping loss. QPainter remains the default legacy UI-host path; OpenGL/native acceleration is not default-ready.
+
+The single next gate is **E167 -- AI Command Unified Undo/Redo Runtime Architecture Decision and Completion Gate**. Start by reading its plan and auditing whether full unified command history is a required product capability or a deliberate boundary. Preserve the versioned runtime boundary, Qt-free FrameCore L0, `.pond`, command registry, Inspector binding, SR2D seams, manifests and all unrelated dirty work. Do not stage, commit, reset, restore, clean or delete unrelated changes.

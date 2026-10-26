@@ -1,0 +1,24 @@
+{
+  "name": "PS · 基础生态实验",
+  "description": "不经过 GameViewport 的 Headless PS 示例：组件漂浮生态与吃豆模拟。",
+  "version": "1.0.0",
+  "loom_editor_version": "1.0.0",
+  "sr2d_backend": "auto",
+  "manifest_validation_mode": "warn",
+  "capabilities": [
+    "pvaec"
+  ],
+  "enabled_plugins": [],
+  "required_packages": [
+    "vitalloom.core.platform",
+    "vitalloom.editor_essentials",
+    "vitalloom.lotuspond.runtime",
+    "vitalloom.pvaec.simulation"
+  ],
+  "created_at": "2026-07-15 00:00:00",
+  "modified_at": "2026-07-15 00:00:00",
+  "settings": {
+    "auto_save": false,
+    "backup_enabled": false
+  }
+}

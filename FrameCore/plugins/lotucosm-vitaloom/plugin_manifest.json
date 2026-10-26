@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "plugin_id": "lotucosm-vitaloom",
+  "suite_id": "lotucosm.vitaloom.suite",
+  "product_id": "lotucosm-vitaloom",
+  "display_name": "Lotucosm-VitaLoom",
+  "display_name_zh": "莲池织机",
+  "kind": "living_world_editor",
+  "entry": "hub",
+  "hub": {
+    "entrypoint": "hub",
+    "module": "hub"
+  },
+  "default_version": "1.0.0",
+  "versions": ["1.0.0"],
+  "capability_catalog": "versions/1.0.0/runtime/builtin/package_index.json"
+}

@@ -1,0 +1,9 @@
+# Fresh-session record: E94 complete
+
+Repository root: `D:\????\VS Code ??\?????????ai???\Lotucosm-VitaLoom-?????`
+
+E94 is complete. The practical Kernel construction paths were mapped: product `main()` goes through the reusable `launch_editor()` seam, and `_run_editor_smoke()` is private verification-only construction. A real `EditorKernelInitializationRollbackError` passes through `launch_editor()` unchanged with its chained startup cause; failed construction does not load plugins, show a Kernel, enter the event loop, or expose a recovery object. Product `main()` prints a common failure prefix but retains the explicit `Project World rollback did not settle` marker, so it is distinguishable from an ordinary startup failure.
+
+No production correction was needed. Evidence: focused launcher/product-entry `30 passed in 0.44s`; adjacent `127 passed in 2.02s`; root smoke `13/20`; four guardrails OK; Anaconda signatures `2 passed in 0.23s`; source compilation/whitespace passed with the known unrelated `editor_kernel.py` blank-line exception left untouched. `.venv` lacks `cryptography`; E68 remains historical broad proof (`1678 passed, 34 skipped, 34 subtests`). QPainter default; OpenGL/native not default-ready; whole-refactor completion is not claimed.
+
+The sole next gate is **E95 -- Editor Launcher Initialization-Failure Splash Lifecycle Semantics Audit**. Audit splash ownership when `EditorKernel` construction or early startup fails. Prove it does not outlive a failed launch or become a recovery authority, preserve the primary startup/rollback exception, and do not add force cleanup, fallback Kernel/Host, registry, or app shell. Use `.venv\python.exe -B` with `QT_QPA_PLATFORM=offscreen` and `PYTHONDONTWRITEBYTECODE=1`; source checks use `compile(path.read_text(encoding='utf-8-sig'), str(path), 'exec')`, never `py_compile`. Signatures use `D:\app\anaconda3\python.exe` because `.venv` lacks `cryptography`.

@@ -14,7 +14,7 @@ import unittest
 from pathlib import Path
 
 _ROOT = Path(__file__).resolve().parents[1]
-_SCENES = _ROOT / "projects" / "pvaec-细胞演化" / "scenes"
+_SCENES = _ROOT / "workspace" / "projects" / "samples" / "pvaec-细胞演化" / "scenes"
 
 
 class PvaecFinalVisionSceneContractTests(unittest.TestCase):
@@ -35,6 +35,8 @@ class PvaecFinalVisionSceneContractTests(unittest.TestCase):
         goals = data["sr_play_goals"]
         self.assertGreaterEqual(goals["survive_seconds"], 150)
         self.assertGreaterEqual(goals["peak_population"], 6)
+        self.assertFalse(goals["pause_on_complete"])
+        self.assertFalse(data["sr_pause_on_extinction"])
         nutrients = [e for e in data["entities"] if e.get("type") == "nutrient"]
         self.assertEqual(len(nutrients), 4)
         orgs = [e for e in data["entities"] if e.get("type") == "organism"]

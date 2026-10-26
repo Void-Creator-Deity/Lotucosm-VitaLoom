@@ -1,0 +1,19 @@
+{
+  "name": "dual_comparability_smoke",
+  "ticks": 50,
+  "seed": 42,
+  "pond_size": [320, 240],
+  "max_population": 16,
+  "initial_organisms": 8,
+  "evolution_generation_interval": 25,
+  "enable_generation_orchestrator": true,
+  "enable_pvaec_cycle_per_tick": true,
+  "equip_sensor_actuator": true,
+  "snapshot_interval": 10,
+  "developmental_ladder_enabled": true,
+  "developmental_initial_stage": 0,
+  "use_verify_triple": true,
+  "social_learning_enabled": false,
+  "output_dir": "workspace/state/experiment_runs",
+  "notes": "ADR-0005 smoke: PS batch vs unified_bridge headless comparability"
+}

@@ -1,0 +1,7 @@
+# E193 Fresh-Session Completion Prompt -- Project Active Scene Guarded-History and Host-Side-Effect Feasibility Audit
+
+E193 is complete and deliberately blocks history migration for `project.set_active_scene`. The command currently writes `project.json["active_scene"]` before optionally calling `SceneManager.load_scene()`. That loader independently writes the current editor project's manifest, mutates current scene/context, and emits scene-loaded effects. A failed load can therefore leave a successful manifest mutation with `scene_loaded=False`.
+
+Do not add an inverse or durable replay for this command yet. The immediate E194 unblock path is authority repair: make `project.set_active_scene` canonical-only and remove its `load_scene` context authority. A UI caller may use an explicit, success-gated `scene.open` afterward, but rejected canonical commands must have no local CommandStack fallback, EventBus mutation, success signal, or scene-open rehydration. Preserve E175/E177 non-scene fallback and all manifest/.pond seams.
+
+Existing E192 proof is `56 passed, 10 subtests passed in 4.20s`; audit stays schema v4 with `unified_undo_redo_runtime=false`. No global history/full-suite/native/OpenGL claim is valid.

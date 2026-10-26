@@ -1,5 +1,9 @@
 # -*- coding: utf-8
-"""chemo 边权学习。"""
+"""chemo 边权学习。
+
+职责: 锁定 PVAEC 膜拓扑 chemo 边权学习和遗忘行为。
+排错: 失败时检查 sr_membrane_topology 的信号差分与权重夹取逻辑。
+"""
 from __future__ import annotations
 
 import unittest

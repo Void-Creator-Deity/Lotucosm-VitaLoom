@@ -1,0 +1,52 @@
+{
+  "name": "PVAEC · 细胞演化",
+  "description": "PVAEC SR 演示：细胞演化 · 入门与挑战双场景",
+  "version": "1.0.0",
+  "loom_editor_version": "1.0.0",
+  "sr2d_backend": "auto",
+  "manifest_validation_mode": "warn",
+  "capabilities": [
+    "sr2d",
+    "pvaec"
+  ],
+  "presentation": {
+    "tagline_zh": "莲池中的细胞演化演示",
+    "editor_entry_hint_zh": "打开场景 → 顶部 ▶ 运行 → 在游戏视口观看演化",
+    "default_speed": 1.0
+  },
+  "enabled_plugins": [],
+  "required_packages": [
+    "vitalloom.core.platform",
+    "vitalloom.editor_essentials",
+    "vitalloom.lotuspond.runtime",
+    "vitalloom.pvaec.simulation",
+    "vitalloom.engine.sr2d"
+  ],
+  "active_scene": "challenge_scene.pond",
+  "ps_experiment_preset": "workspace/experiments/pvaec_homeostasis_loop.json",
+  "evolution_defaults": {
+    "mutation_rate": 0.08,
+    "selection_pressure": 0.5,
+    "elitism_rate": 0.1,
+    "evolution_generation_interval": 5,
+    "max_population": 200,
+    "initial_organisms": 24,
+    "ticks": 500,
+    "memory_gene_inheritance_rate": 0.8,
+    "memory_gene_mutation_rate": 0.01,
+    "mutation_sigma": 0.38,
+    "gene_keys": ["wander_amp", "gain_high_stress", "mem_alpha"]
+  },
+  "developmental_profile": {
+    "enabled": true,
+    "initial_stage": 0
+  },
+  "created_at": "2026-02-01 21:41:29",
+  "modified_at": "2026-06-03 22:00:00",
+  "settings": {
+    "auto_save": true,
+    "auto_save_interval": 300,
+    "backup_enabled": true,
+    "backup_count": 5
+  }
+}

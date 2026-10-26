@@ -21,6 +21,7 @@ class ReproductionSmokeTests(unittest.TestCase):
         pond.add_organism(parent)
         child = try_simple_reproduction(parent, pond, min_energy_ratio=0.5)
         self.assertIsNotNone(child)
+        self.assertEqual(child.id, "offspring_p1_1")
         self.assertIn(child.id, pond.organisms)
 
 

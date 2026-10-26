@@ -1,0 +1,5 @@
+# Fresh-session handoff: E131 complete; E132 planned
+
+E131 completed the Launcher-held splash-message controlled-exit audit. Controlled exits at all three message positions preserve code, dismiss the held splash once, and prevent all later startup work. A real \`splash_message()\` process-events exit confirms the actual adapter reaches the same E128 path. No production correction was needed; \`KeyboardInterrupt\` remains outside the controlled-exit cleanup policy. Evidence: \`89\` focused, \`64\` composition, \`156\` adjacent offscreen, green smoke/guards, and independent signature \`2 passed\`.
+
+Start **E132 -- Versioned Runtime Splash-Finish Controlled-Exit Cleanup Ownership Audit**. Audit only \`finish_splash()\` before event-loop entry: native finish and deferred-callback scheduling failures, including controlled \`SystemExit\`. Distinguish incomplete handoff from E129 completed-handoff semantics, prove one E128 cleanup and primary-exit preservation, and leave exactly one next gate. Do not claim whole-refactor completion.

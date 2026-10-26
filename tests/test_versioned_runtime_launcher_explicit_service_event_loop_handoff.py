@@ -1,0 +1,151 @@
+# -*- coding: utf-8 -*-
+"""E159 proofs for explicit L1 services through Launcher event-loop handoff."""
+from __future__ import annotations
+
+import logging
+
+import pytest
+
+
+@pytest.mark.parametrize(
+    ("outcome", "expected_type"),
+    [
+        pytest.param(271, None, id="normal-return"),
+        pytest.param(
+            RuntimeError("explicit-service event loop failed"),
+            RuntimeError,
+            id="ordinary-error",
+        ),
+        pytest.param(SystemExit(269), SystemExit, id="controlled-exit"),
+    ],
+)
+def test_launcher_hands_off_explicit_services_to_event_loop_without_cleanup(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path,
+    caplog: pytest.LogCaptureFixture,
+    outcome: object,
+    expected_type: type[BaseException] | None,
+) -> None:
+    """Completed startup never reclaims splash ownership from app.exec()."""
+
+    from core.VitaLoom import editor_launcher
+    from core.VitaLoom import kernel as kernel_package
+    from core.VitaLoom.core import runtime_capability_registry
+    from core.VitaLoom.core import runtime_event_bus
+    from core.VitaLoom.ui import splash_screen
+
+    registry = runtime_capability_registry.InMemoryRuntimeCapabilityRegistry()
+    event_bus = runtime_event_bus.InMemoryRuntimeEventBus()
+    require_registry = runtime_capability_registry.require_runtime_capability_registry
+    require_event_bus = runtime_event_bus.require_runtime_event_bus
+    calls: list[object] = []
+    splash = object()
+
+    class App:
+        def exec(self) -> int:
+            calls.append("app.exec")
+            if isinstance(outcome, BaseException):
+                raise outcome
+            assert isinstance(outcome, int)
+            return outcome
+
+    class Kernel:
+        def __init__(self, **kwargs: object) -> None:
+            calls.append(("kernel.construct", kwargs))
+
+        def load_plugins_layered(self, layers: object) -> None:
+            calls.append(("kernel.load", layers))
+
+        def show(self) -> None:
+            calls.append("kernel.show")
+
+    def validate_registry(candidate: object) -> object:
+        calls.append(("registry.validate", candidate))
+        return require_registry(candidate)
+
+    def validate_event_bus(candidate: object) -> object:
+        calls.append(("event_bus.validate", candidate))
+        return require_event_bus(candidate)
+
+    def forbidden_default_registry() -> object:
+        pytest.fail("explicit registry path must not construct a default registry")
+
+    def finish(received_splash: object, received_kernel: object) -> None:
+        assert received_splash is splash
+        assert isinstance(received_kernel, Kernel)
+        calls.append("splash.finish")
+
+    def unexpected_dismiss(received_splash: object) -> None:
+        calls.append(("splash.dismiss", received_splash))
+        pytest.fail("app.exec outcomes must not trigger Launcher startup cleanup")
+
+    monkeypatch.setattr(
+        runtime_capability_registry,
+        "InMemoryRuntimeCapabilityRegistry",
+        forbidden_default_registry,
+    )
+    monkeypatch.setattr(
+        runtime_capability_registry,
+        "require_runtime_capability_registry",
+        validate_registry,
+    )
+    monkeypatch.setattr(
+        runtime_event_bus,
+        "require_runtime_event_bus",
+        validate_event_bus,
+    )
+    monkeypatch.setattr(kernel_package, "EditorKernel", Kernel)
+    monkeypatch.setattr(
+        splash_screen,
+        "show_vitaloom_splash",
+        lambda _app: calls.append("splash.show") or splash,
+    )
+    monkeypatch.setattr(
+        splash_screen,
+        "splash_message",
+        lambda *_args: calls.append("splash.message"),
+    )
+    monkeypatch.setattr(splash_screen, "finish_splash", finish)
+    monkeypatch.setattr(splash_screen, "dismiss_splash", unexpected_dismiss)
+    monkeypatch.setattr(
+        editor_launcher,
+        "default_plugin_layers",
+        lambda root: calls.append(("plugin.layers", root)) or {"l1": []},
+    )
+
+    with caplog.at_level(logging.WARNING):
+        if expected_type is None:
+            assert editor_launcher.launch_editor(
+                App(),
+                tmp_path,
+                capability_registry=registry,
+                event_bus=event_bus,
+            ) == outcome
+        else:
+            with pytest.raises(expected_type) as captured:
+                editor_launcher.launch_editor(
+                    App(),
+                    tmp_path,
+                    capability_registry=registry,
+                    event_bus=event_bus,
+                )
+            assert captured.value is outcome
+
+    assert calls == [
+        ("registry.validate", registry),
+        ("event_bus.validate", event_bus),
+        "splash.show",
+        "splash.message",
+        (
+            "kernel.construct",
+            {"capability_registry": registry, "event_bus": event_bus},
+        ),
+        "splash.message",
+        ("plugin.layers", str(tmp_path)),
+        ("kernel.load", {"l1": []}),
+        "splash.message",
+        "kernel.show",
+        "splash.finish",
+        "app.exec",
+    ]
+    assert "Failed to dismiss splash after editor startup failure" not in caplog.text

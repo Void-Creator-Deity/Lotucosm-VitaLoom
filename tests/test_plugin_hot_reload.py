@@ -8,7 +8,7 @@ from pathlib import Path
 from unittest.mock import MagicMock
 
 PLUGIN_SOURCE = '''
-from core.plugin.interfaces import IEditorPlugin
+from core.VitaLoom.kernel.plugin_interfaces import IEditorPlugin
 from typing import Dict, Any
 
 class DummyHotReloadPlugin(IEditorPlugin):
@@ -46,14 +46,18 @@ class PluginHotReloadTests(unittest.TestCase):
             plugin_path = Path(tmp) / "dummy_hot_reload_plugin.py"
             plugin_path.write_text(PLUGIN_SOURCE.format(marker=1), encoding="utf-8")
             loader._discover_plugin(plugin_path, loader.SCOPE_USER)
-            self.assertIn("DummyHotReload", loader.loaded_plugins)
-            loader._load_plugin(loader.loaded_plugins["DummyHotReload"])
-            first = loader.loaded_plugins["DummyHotReload"]
+            plugin_id = "DummyHotReloadPlugin"
+            self.assertIn(plugin_id, loader.plugin_registry)
+            loader._resolve_dependencies()
+            loader._activate_plugins_matching({plugin_id})
+            first = loader.loaded_plugins[plugin_id]
             self.assertEqual(first.MARKER, 1)
 
             plugin_path.write_text(PLUGIN_SOURCE.format(marker=2), encoding="utf-8")
-            self.assertTrue(loader.reload_plugin("DummyHotReload"))
-            second = loader.loaded_plugins["DummyHotReload"]
+            report = loader.reload_plugin(plugin_id)
+            self.assertEqual(report["status"], "settled")
+            self.assertTrue(report["completed"]["registry_replaced"])
+            second = loader.loaded_plugins[plugin_id]
             self.assertEqual(second.MARKER, 2)
             self.assertIsNot(first, second)
 

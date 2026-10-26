@@ -5,9 +5,11 @@ build/
 dist/
 wheels/
 *.egg-info
+artifacts/
 
 # Virtual environments
 .venv/
+.venv-*/
 venv/
 
 # Tool caches
@@ -19,7 +21,9 @@ venv/
 .cursor/
 
 # Local editor state (copy from editor_config.json.example)
-data/system/editor_config.json
+workspace/state/system/editor_config.json
+workspace/state/system/hub_projects.json
+workspace/state/screenshots/
 
 # Runtime logs and temp outputs (SR sessions, episode telemetry)
 logs/
@@ -40,3 +44,35 @@ docs/legacy_gap_matrix.md
 # Pytest 临时工程（tests 可能在 projects/ 下创建）
 projects/_pytest_*/
 projects/_maint_test_*/
+.pytest-*/
+.pytest_tmp/
+.pytest-chunk-*/
+.pytest-*.txt
+.pytest-*.log
+
+# Workspace-local refactor and checker scratch files
+.tmp-*/
+.tmp_*
+
+# Archived test payloads; keep README and manifests tracked
+docs/archive/test-artifacts/**/payload/
+
+# 本地打包 / 发行调试输出
+build_log.txt
+dist_stdout.txt
+dist_stderr.txt
+
+# PS 实验运行时输出（保留目录结构）
+workspace/state/experiment_runs/*
+!workspace/state/experiment_runs/.gitkeep
+
+# Test/debug debris (must use artifacts/pytest instead)
+workspace/debug_tx_*/
+workspace/e*-pytest-temp*/
+workspace/inspector_position_history_*/
+workspace/mcp_debug_*/
+workspace/mcp_repro_*/
+workspace/viewport_event_node_history_*/
+workspace/e*-admission.txt
+workspace/e*-graph-corpus.json
+workspace/state/test_temps/

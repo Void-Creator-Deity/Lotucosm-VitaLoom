@@ -1,0 +1,3 @@
+# Fresh-session handoff: E159 complete
+
+E159 directly proves valid caller-owned L1 registry and event-bus objects survive completed owned-splash startup into exactly one `app.exec()` handoff. Normal return, a real RuntimeError, and `SystemExit(269)` preserve their exact result/error identity; no path re-enters Launcher splash-dismiss cleanup. Full versioned-runtime, smoke, guards, signature, and hygiene evidence passed. Continue only with E160: audit the same post-startup event-loop handoff under the no-splash adapter branch with explicit valid services, preserving the Qt-free FrameCore L0/runtime boundary and all public seams.

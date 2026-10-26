@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "description": "织机教程 Roguelike 贴图",
+  "sources": {
+    "sprites/player_0.png": {
+      "origin": "project_generated",
+      "generator": "tools/gen_sprites.py",
+      "license": "generated-project-owned"
+    },
+    "sprites/player_1.png": {
+      "origin": "project_generated",
+      "generator": "tools/gen_sprites.py",
+      "license": "generated-project-owned"
+    },
+    "sprites/slime.png": {
+      "origin": "project_generated",
+      "generator": "tools/gen_sprites.py",
+      "license": "generated-project-owned"
+    },
+    "sprites/exit.png": {
+      "origin": "project_generated",
+      "generator": "tools/gen_sprites.py",
+      "license": "generated-project-owned"
+    },
+    "sprites/wall.png": {
+      "origin": "project_generated",
+      "generator": "tools/gen_sprites.py",
+      "license": "generated-project-owned"
+    }
+  },
+  "sprites": {
+    "player": "sprites/player_0.png",
+    "slime": "sprites/slime.png",
+    "exit": "sprites/exit.png",
+    "wall": "sprites/wall.png"
+  },
+  "animations": {
+    "player_walk": ["sprites/player_0.png", "sprites/player_1.png"]
+  }
+}
