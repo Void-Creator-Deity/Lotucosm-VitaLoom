@@ -4,6 +4,7 @@ import copy
 import json
 import os
 import random
+import traceback
 from dataclasses import replace
 from pathlib import Path
 
@@ -157,7 +158,19 @@ def _build_e367_witness() -> dict[str, object]:
 
 
 if __name__ == "__main__":
-    result = build_e367_witness()
+    try:
+        result = build_e367_witness()
+    except Exception as error:
+        detail = {
+            "error_type": type(error).__name__,
+            "message": str(error),
+            "traceback": traceback.format_exc()[-1500:],
+        }
+        print(
+            "::error title=WorldBridge E367 exception::"
+            + json.dumps(detail, ensure_ascii=True, sort_keys=True)
+        )
+        raise
     print(json.dumps(result, ensure_ascii=False, sort_keys=True))
     checks = {
         "contract_valid": result["contract_valid"],
