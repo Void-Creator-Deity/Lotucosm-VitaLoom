@@ -159,11 +159,28 @@ def _build_e367_witness() -> dict[str, object]:
 if __name__ == "__main__":
     result = build_e367_witness()
     print(json.dumps(result, ensure_ascii=False, sort_keys=True))
-    raise SystemExit(
-        0
-        if result["contract_valid"]
-        and result["aggregate"]["opt_in_live_adapter_admitted"]
-        and result["runtime_witness"]["contract_valid"]
-        and result["runtime_status_e367"]["cleanup_complete"]
-        else 1
-    )
+    checks = {
+        "contract_valid": result["contract_valid"],
+        "aggregate_opt_in_live_adapter_admitted": result["aggregate"][
+            "opt_in_live_adapter_admitted"
+        ],
+        "runtime_witness_contract_valid": result["runtime_witness"]["contract_valid"],
+        "runtime_status_cleanup_complete": result["runtime_status_e367"][
+            "cleanup_complete"
+        ],
+    }
+    failed = [name for name, passed in checks.items() if not passed]
+    if failed:
+        detail = {
+            "failed": failed,
+            "witness_evidence": result["witness"]["evidence"],
+            "cleanup": result["cleanup"],
+            "failure_report": result["failure_report"],
+            "runtime_status_cleanup": result["runtime_status_e367"]["cleanup"],
+        }
+        print(
+            "::error title=WorldBridge E367 witness failed::"
+            + json.dumps(detail, ensure_ascii=True, sort_keys=True)
+        )
+        raise SystemExit(1)
+    raise SystemExit(0)
