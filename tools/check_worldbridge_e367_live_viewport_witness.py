@@ -18,27 +18,43 @@ except ModuleNotFoundError:  # Imported as tools.* by the focused test suite.
 
 install_runtime_paths(Path(__file__).resolve().parents[1])
 
-from PyQt6.QtCore import QCoreApplication, QEvent
-from PyQt6.QtWidgets import QApplication
-from PyQt6 import sip
+def _emit_error_annotation(title: str, detail: dict[str, object]) -> None:
+    payload = json.dumps(detail, ensure_ascii=True, sort_keys=True)
+    print(f"::error title={title}::{payload[:800]}")
 
-from core.Lotucosm.runtime.world_bridge_live_checkpoint import (
-    WorldBridgeLiveCheckpointError,
-)
-from core.Lotucosm.runtime import world_bridge_live_checkpoint_adapter as adapter_module
-from core.VitaLoom.viewports.game_viewport import GameViewport
-from core.Lotucosm.runtime.world_bridge_e366_live_checkpoint_admission import (
-    build_worldbridge_e366_live_checkpoint_admission_contract,
-)
-from core.Lotucosm.runtime.world_bridge_e367_live_viewport_witness import (
-    build_worldbridge_e367_live_viewport_witness_contract,
-)
-from core.Lotucosm.runtime.world_bridge_deterministic_randomness_context import (
-    create_worldbridge_deterministic_randomness_context,
-)
-from core.VitaLoom.simulation.runtime_worldbridge_status import (
-    build_runtime_worldbridge_status,
-)
+
+try:
+    from PyQt6.QtCore import QCoreApplication, QEvent
+    from PyQt6.QtWidgets import QApplication
+    from PyQt6 import sip
+
+    from core.Lotucosm.runtime.world_bridge_live_checkpoint import (
+        WorldBridgeLiveCheckpointError,
+    )
+    from core.Lotucosm.runtime import world_bridge_live_checkpoint_adapter as adapter_module
+    from core.VitaLoom.viewports.game_viewport import GameViewport
+    from core.Lotucosm.runtime.world_bridge_e366_live_checkpoint_admission import (
+        build_worldbridge_e366_live_checkpoint_admission_contract,
+    )
+    from core.Lotucosm.runtime.world_bridge_e367_live_viewport_witness import (
+        build_worldbridge_e367_live_viewport_witness_contract,
+    )
+    from core.Lotucosm.runtime.world_bridge_deterministic_randomness_context import (
+        create_worldbridge_deterministic_randomness_context,
+    )
+    from core.VitaLoom.simulation.runtime_worldbridge_status import (
+        build_runtime_worldbridge_status,
+    )
+except Exception as error:
+    _emit_error_annotation(
+        "WorldBridge E367 import",
+        {
+            "error_type": type(error).__name__,
+            "message": str(error)[:400],
+            "traceback_tail": traceback.format_exc().splitlines()[-3:],
+        },
+    )
+    raise
 
 
 _APP: QApplication | None = None
@@ -163,13 +179,10 @@ if __name__ == "__main__":
     except Exception as error:
         detail = {
             "error_type": type(error).__name__,
-            "message": str(error),
-            "traceback": traceback.format_exc()[-1500:],
+            "message": str(error)[:400],
+            "traceback_tail": traceback.format_exc().splitlines()[-3:],
         }
-        print(
-            "::error title=WorldBridge E367 exception::"
-            + json.dumps(detail, ensure_ascii=True, sort_keys=True)
-        )
+        _emit_error_annotation("WorldBridge E367 exception", detail)
         raise
     print(json.dumps(result, ensure_ascii=False, sort_keys=True))
     checks = {
@@ -191,9 +204,6 @@ if __name__ == "__main__":
             "failure_report": result["failure_report"],
             "runtime_status_cleanup": result["runtime_status_e367"]["cleanup"],
         }
-        print(
-            "::error title=WorldBridge E367 witness failed::"
-            + json.dumps(detail, ensure_ascii=True, sort_keys=True)
-        )
+        _emit_error_annotation("WorldBridge E367 witness failed", detail)
         raise SystemExit(1)
     raise SystemExit(0)
