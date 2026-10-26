@@ -30,6 +30,8 @@
 - 更新布局、PS、Dock 生命周期和 Hub smoke 回归测试。
 - 更新 README、文档索引、项目元数据和本更新说明。
 - 本机 Hub 项目列表、编辑配置和截图状态不进入 Git。
+- 本地 `.history/` 快照不再进入 Git，避免干净检出时触发发布门禁。
+- Windows SR2D 原生构建在 checkout 前启用 Git 长路径支持。
 
 ## 验证结果
 

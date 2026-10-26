@@ -15,6 +15,8 @@
 
 - README、文档索引和项目元数据指向实际 GitHub 仓库。
 - 本机 Hub 项目列表和截图状态移出版本控制。
+- 本地 `.history/` 快照不再进入 Git，修复干净检出的 release consistency 门禁。
+- Windows SR2D 原生构建在 checkout 前启用 Git 长路径支持。
 - 明确当前源码可用性验证范围；`dist/` 仍未重建，不作为本次同步产物。
 
 ## 2026-10-23
